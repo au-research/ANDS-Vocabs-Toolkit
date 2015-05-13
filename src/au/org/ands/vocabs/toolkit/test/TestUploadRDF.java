@@ -2,6 +2,7 @@ package au.org.ands.vocabs.toolkit.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -11,7 +12,6 @@ import org.openrdf.repository.manager.RepositoryManager;
 import org.openrdf.repository.manager.RepositoryProvider;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public final class TestUploadRDF {
     public static void main(final String[] args) {
 
     Logger logger = LoggerFactory.getLogger(
-            TestUploadRDF.class);
+            MethodHandles.lookup().lookupClass());
     logger.info("Running TestUploadRDF.");
 
     String sesameServer =

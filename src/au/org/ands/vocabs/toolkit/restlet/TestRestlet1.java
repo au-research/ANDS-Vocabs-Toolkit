@@ -1,5 +1,7 @@
 package au.org.ands.vocabs.toolkit.restlet;
 
+import java.lang.invoke.MethodHandles;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,7 +20,7 @@ public class TestRestlet1 {
     @GET
     public final String getMessage() {
         Logger logger = LoggerFactory.getLogger(
-                TestRestlet1.class);
+                MethodHandles.lookup().lookupClass());
         logger.info("Running TestRestlet1.getMessage().");
 
         return "Hello World! Again!";
