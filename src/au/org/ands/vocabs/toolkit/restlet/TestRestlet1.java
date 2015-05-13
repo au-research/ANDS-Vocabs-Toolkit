@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ public class TestRestlet1 {
 
     /** getMessage.
      * @return the message. */
-    @Produces("text/plain")
+    @Produces(MediaType.TEXT_PLAIN)
     @GET
     public final String getMessage() {
         Logger logger = LoggerFactory.getLogger(
@@ -27,7 +28,7 @@ public class TestRestlet1 {
 
     /** getMessage.
      * @return the message. */
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @GET
     public final String getMessageJson() {
         return "{\"hello\":\"Hello JSON!\"}";
