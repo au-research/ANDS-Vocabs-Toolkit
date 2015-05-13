@@ -8,4 +8,5 @@
   <root level="${root-level:-INFO}">
     <appender-ref ref="CONSOLE"/>
   </root>
+  <logger name="au.org.ands.vocabs" level="INFO" />
 </configuration>

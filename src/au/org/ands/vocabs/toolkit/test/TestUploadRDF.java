@@ -12,6 +12,8 @@ import org.openrdf.repository.manager.RepositoryProvider;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Test uploading an RDF file. */
 public final class TestUploadRDF {
@@ -23,6 +25,10 @@ public final class TestUploadRDF {
     /** main program.
      * @param args Command-line arguments. */
     public static void main(final String[] args) {
+
+    Logger logger = LoggerFactory.getLogger(
+            TestUploadRDF.class);
+    logger.info("Running TestUploadRDF.");
 
     String sesameServer =
               "http://vocabs.ands.org.au/repository/openrdf-sesame/";

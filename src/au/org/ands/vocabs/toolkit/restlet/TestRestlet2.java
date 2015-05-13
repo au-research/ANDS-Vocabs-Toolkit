@@ -4,12 +4,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /** Testing restlet. */
-@Path("testing")
-public class TestRestlet1 {
+@Path("testing2")
+public class TestRestlet2 {
 
     /** getMessage.
      * @return the message. */
@@ -17,10 +14,6 @@ public class TestRestlet1 {
     @Produces("text/plain")
     @GET
     public final String getMessage() {
-        Logger logger = LoggerFactory.getLogger(
-                TestRestlet1.class);
-        logger.info("Running TestRestlet1.getMessage().");
-
         return "Hello World! Again!";
         }
 
