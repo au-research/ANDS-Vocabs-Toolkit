@@ -4,6 +4,10 @@
   <servlet>
     <description>JAX-RS Restlets</description>
     <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    <init-param>
+    <param-name>jersey.config.server.mediaTypeMappings</param-name>
+    <param-value>txt : text/plain, xml : application/xml, json : application/json</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>

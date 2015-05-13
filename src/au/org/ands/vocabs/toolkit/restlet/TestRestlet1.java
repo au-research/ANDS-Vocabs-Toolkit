@@ -15,7 +15,6 @@ public class TestRestlet1 {
 
     /** getMessage.
      * @return the message. */
-    @Path("test.text")
     @Produces("text/plain")
     @GET
     public final String getMessage() {
@@ -28,7 +27,6 @@ public class TestRestlet1 {
 
     /** getMessage.
      * @return the message. */
-    @Path("test.json")
     @Produces("application/json")
     @GET
     public final String getMessageJson() {
