@@ -224,7 +224,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jsonp-java-net/javax.json-api-1.0.jar">
+	<classpathentry kind="lib" path="lib/jsonp-java-net/jsonp-jaxrs-1.0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>

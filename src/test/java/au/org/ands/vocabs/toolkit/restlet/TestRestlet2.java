@@ -1,5 +1,8 @@
 package au.org.ands.vocabs.toolkit.restlet;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -26,6 +29,17 @@ public class TestRestlet2 {
     public final String getMessageJson() {
         return "{\"hello\":\"Hello JSON!\"}";
         }
+
+    /** getMessage.
+     * @return the message. */
+    @Path("JsonObject")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public final JsonObject getMessageJsonObject() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        job.add("hello", "Hello JSON from ObjectBuilder");
+        return job.build();
+    }
 
     /** getException.
      * This shows how to return a status code 503 "service unavailable"
