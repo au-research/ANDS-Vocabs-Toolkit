@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE ant>
+<project basedir="." default="war" name="ANDS-Vocabs-Toolkit">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+
+ 	<property name="build" value="build" />
+	<property name="jar" value="vocabtoolkit.jar" />
+	<property name="war" value="vocabtoolkit.war" />
+	
+	<target name="clean">
+        <delete dir="${build}"/>
+        <delete file="${jar}"/>
+        <delete file="${war}"/>
+    </target>
+
+    <path id="compile-main.classpath">
+        <fileset dir="lib" includes="**/*.jar" />
+        <fileset dir="tomcatlib" includes="**/*.jar" />
+    </path>	
+	
+    <target name="compile-main">
+    	<mkdir dir="${build}" />
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
+             <src path="src/main/java"/>
+             <src path="src/test/java"/>
+             <classpath refid="compile-main.classpath"/>
+        </javac>
+    </target>
+    <target name="jar" depends="compile-main">
+    	<jar destfile="${jar}">
+    		<fileset dir="${build}" />
+   		</jar>
+   	</target>
+    <target name="war" depends="jar">
+    	<war destfile="${war}">
+    		<metainf dir="WebContent/META-INF" />
+    		<webinf dir="WebContent/WEB-INF" />
+			<!-- Need to use this trick instead of a lib element because
+			     the JAR files are stored in subdirectories.
+			     See http://stackoverflow.com/questions/2802671/how-to-perform-ant-path-mapping-in-a-war-task -->
+    		<mappedresources>
+    	        <fileset dir="lib" includes="**/*.jar" />
+   		        <chainedmapper>
+   		          <flattenmapper/>
+   		          <globmapper from="*" to="WEB-INF/lib/*"/>
+   		        </chainedmapper>
+   		    </mappedresources>
+    		<lib file="${jar}" />
+	        <fileset dir="properties" />
+       		<mappedresources>
+        	    <fileset dir="conf" />
+        	    <globmapper from="*" to="WEB-INF/classes/*"/>
+       	    </mappedresources>
+    	</war>
+    </target>
+</project>

@@ -1,1 +1,5 @@
 /bin/
+/build/
+/tomcatlib/
+/vocabtoolkit.jar
+/vocabtoolkit.war
