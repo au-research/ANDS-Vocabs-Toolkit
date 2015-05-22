@@ -8,6 +8,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import au.org.ands.vocabs.toolkit.db.model.Todo;
+import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Test of database access. */
 public final class TestDB {
@@ -26,7 +27,8 @@ public final class TestDB {
      * @param args Command-line arguments.
      */
     public static void main(final String[] args) {
-        factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+        factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME,
+                ToolkitProperties.getProperties());
         EntityManager em = factory.createEntityManager();
         // Read the existing entries and write to console
         Query q = em.createQuery("select t from Todo t");

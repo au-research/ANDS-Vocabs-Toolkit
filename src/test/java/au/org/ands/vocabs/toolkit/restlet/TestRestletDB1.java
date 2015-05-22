@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.model.Todo;
+import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Testing restlet. */
 @Path("testingDB")
@@ -26,8 +27,9 @@ public class TestRestletDB1 {
 
     /** Access to persistence context. */
     private EntityManager entityManager =
-            Persistence.createEntityManagerFactory("ANDS-Vocabs-Toolkit").
-            createEntityManager();
+            Persistence.createEntityManagerFactory("ANDS-Vocabs-Toolkit",
+                    ToolkitProperties.getProperties()).
+                    createEntityManager();
 
     /** getMessage.
      * @return the message. */
