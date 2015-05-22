@@ -37,6 +37,7 @@
     <target name="war" depends="jar">
     	<war destfile="${war}">
     		<metainf dir="WebContent/META-INF" />
+    		<metainf dir="src/main/java/META-INF" />
     		<webinf dir="WebContent/WEB-INF" />
 			<!-- Need to use this trick instead of a lib element because
 			     the JAR files are stored in subdirectories.

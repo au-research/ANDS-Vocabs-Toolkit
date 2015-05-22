@@ -46,7 +46,7 @@ public class TestRestlet1 {
         return "{\"hello\":\"Hello JSON!\"}";
         }
 
-    /** Test getting propertyies.
+    /** Test getting properties.
      * @param logger Logger. */
     public final void testProperties(final Logger logger) {
         Properties props = ToolkitProperties.getProperties();
