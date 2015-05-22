@@ -1,9 +1,7 @@
 package au.org.ands.vocabs.toolkit.restlet;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -15,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Testing restlet. */
 @Path("testing")
@@ -46,33 +46,17 @@ public class TestRestlet1 {
         return "{\"hello\":\"Hello JSON!\"}";
         }
 
-    /** Test getting a property.
+    /** Test getting propertyies.
      * @param logger Logger. */
     public final void testProperties(final Logger logger) {
-        Properties prop = new Properties();
-        InputStream input = null;
-
-        try {
-
-            input = new FileInputStream(context.getRealPath("test.properties"));
-
-            // load a properties file
-            prop.load(input);
-
-            // get the property value and print it out
-            logger.info(prop.getProperty("test.property1"));
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        Properties props = ToolkitProperties.getProperties();
+        Enumeration<?> e = props.propertyNames();
+        logger.info("All toolkit properties:");
+        while (e.hasMoreElements()) {
+          String key = (String) e.nextElement();
+          logger.info(key + " -- " + props.getProperty(key));
         }
+        logger.info("End of toolkit properties.");
     }
 
 
