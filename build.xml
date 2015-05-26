@@ -37,8 +37,12 @@
     <target name="war" depends="jar">
     	<war destfile="${war}">
     		<metainf dir="WebContent/META-INF" />
-    		<metainf dir="src/main/java/META-INF" />
     		<webinf dir="WebContent/WEB-INF" />
+			<!-- Copy persistence.xml -->
+    		<mappedresources>
+    	        <fileset dir="src/main/java/META-INF" />
+		        <globmapper from="*" to="WEB-INF/classes/META-INF/*"/>
+   		    </mappedresources>
 			<!-- Need to use this trick instead of a lib element because
 			     the JAR files are stored in subdirectories.
 			     See http://stackoverflow.com/questions/2802671/how-to-perform-ant-path-mapping-in-a-war-task -->
