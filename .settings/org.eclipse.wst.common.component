@@ -5,7 +5,6 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/conf"/>
         <wb-resource deploy-path="/" source-path="/properties"/>
-        <wb-resource deploy-path="/META-INF" source-path="/src/main/java/META-INF"/>
         <property name="java-output-path" value="/ANDS-Vocabs-Toolkit/bin"/>
         <property name="context-root" value="ANDS-Vocabs-Toolkit"/>
     </wb-module>
