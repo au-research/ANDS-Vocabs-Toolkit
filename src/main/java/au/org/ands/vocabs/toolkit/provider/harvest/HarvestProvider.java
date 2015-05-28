@@ -50,11 +50,12 @@ public abstract class HarvestProvider {
             MethodHandles.lookup().lookupClass());
 
     /** Access to the Toolkit properties. */
-    protected Properties props = ToolkitProperties.getProperties();
+    protected static final Properties PROPS =
+            ToolkitProperties.getProperties();
 
     //public Provider(final UriInfo urlInfo){
     //info = urlInfo;
-    //props = ToolkitProperties.getProperties();
+    //PROPS = ToolkitProperties.getProperties();
     //}
 
     /** Return information about the provider.

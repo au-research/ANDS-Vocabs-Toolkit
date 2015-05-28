@@ -30,9 +30,9 @@ public class PoolPartyProvider extends HarvestProvider {
 
     @Override
     public final String getInfo() {
-        String remoteUrl = props.getProperty("PoolPartyHarvester.remoteUrl");
-        String username = props.getProperty("PoolPartyHarvester.username");
-        String password = props.getProperty("PoolPartyHarvester.password");
+        String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
+        String username = PROPS.getProperty("PoolPartyHarvester.username");
+        String password = PROPS.getProperty("PoolPartyHarvester.password");
 
         logger.debug("Getting metadata from " + remoteUrl);
 
@@ -64,12 +64,12 @@ public class PoolPartyProvider extends HarvestProvider {
     @Override
     public final boolean harvest(final TaskInfo taskInfo,
             final HashMap<String, String> results) {
-        String remoteUrl = props.getProperty("PoolPartyHarvester.remoteUrl");
-        String username = props.getProperty("PoolPartyHarvester.username");
-        String password = props.getProperty("PoolPartyHarvester.password");
+        String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
+        String username = PROPS.getProperty("PoolPartyHarvester.username");
+        String password = PROPS.getProperty("PoolPartyHarvester.password");
         String projectId = taskInfo.getVocabulary().getPoolPartyId();
 
-        String format = props.getProperty("PoolPartyHarvester.defaultFormat");
+        String format = PROPS.getProperty("PoolPartyHarvester.defaultFormat");
 
 // Possible future work: support specifying particular modules.
 //        List<String> exportModules =
@@ -80,7 +80,7 @@ public class PoolPartyProvider extends HarvestProvider {
             exportModules = new ArrayList<String>();
         }
         if (exportModules.isEmpty()) {
-            exportModules.add(props.getProperty(
+            exportModules.add(PROPS.getProperty(
                     "PoolPartyHarvester.defaultExportModule"));
         }
 
