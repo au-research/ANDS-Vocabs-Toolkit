@@ -156,10 +156,10 @@ public final class TasksUtils {
      * vocabulary data.
      */
     public static String getTaskOutputPath(final TaskInfo taskInfo) {
-        Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH);
-        path.resolve(taskInfo.getVocabulary().getOwner());
-        path.resolve(taskInfo.getVocabulary().getSlug());
-        path.resolve(taskInfo.getVersion().getTitle());
+        Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH)
+                .resolve(taskInfo.getVocabulary().getOwner())
+                .resolve(taskInfo.getVocabulary().getSlug())
+                .resolve(taskInfo.getVersion().getTitle());
         return path.toString();
     }
 
