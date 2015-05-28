@@ -51,12 +51,26 @@ public final class ToolkitProperties {
         return props.getProperty(propName);
     }
 
+    /** Get a toolkit property.
+     * @param propName the property name
+     * @param defaultValue a default value to use, if there is no
+     * property with name propName
+     * @return the properties
+     */
+    public static String getProperty(final String propName,
+            final String defaultValue) {
+        if (props == null) {
+            initProperties();
+        }
+        return props.getProperty(propName, defaultValue);
+    }
+
     /** Initialize the toolkit properties.
      */
     private static void initProperties() {
         props = new Properties();
         InputStream input = MethodHandles.lookup().lookupClass().
-                    getClassLoader().getResourceAsStream(PROPS_FILE);
+                getClassLoader().getResourceAsStream(PROPS_FILE);
         if (input == null) {
             throw new RuntimeException("Can't find Toolkit properties file.");
         }
@@ -86,8 +100,8 @@ public final class ToolkitProperties {
 
         logger.info("All toolkit properties:");
         while (e.hasMoreElements()) {
-          String key = (String) e.nextElement();
-          logger.info(key + " -- " + props.getProperty(key));
+            String key = (String) e.nextElement();
+            logger.info(key + " -- " + props.getProperty(key));
         }
         logger.info("End of toolkit properties.");
     }

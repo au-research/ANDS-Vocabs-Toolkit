@@ -37,7 +37,10 @@ public class TestRestlet2 {
     @GET
     public final JsonObject getMessageJsonObject() {
         JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job2 = Json.createObjectBuilder();
         job.add("hello", "Hello JSON from ObjectBuilder");
+        job2.add("nested2", "at the bottom");
+        job.add("nested1", job2.build());
         return job.build();
     }
 
@@ -52,5 +55,24 @@ public class TestRestlet2 {
         return Response.status(Status.SERVICE_UNAVAILABLE).
                 entity("Hi there").build();
         }
+
+    /** getExceptJSON.
+     * This shows how to return a status code 503 "service unavailable"
+     * and also some JSON content.
+     * @return the message. */
+    @Path("except")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public final Response getExceptJSON() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        JsonObjectBuilder job2 = Json.createObjectBuilder();
+        job.add("hello", "Hello JSON from getExceptJSON ObjectBuilder");
+        job2.add("nested2", "at the bottom");
+        job.add("nested1", job2.build());
+        return Response.status(Status.SERVICE_UNAVAILABLE).
+                entity(job.build()).build();
+        }
+
+
 
 }

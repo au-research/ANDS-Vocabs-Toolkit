@@ -5,20 +5,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Task model class.
  */
 @Entity
 @Table(name = "task")
-//@NamedQuery(
-//        name = Task.GET_TASK_BY_ID,
-//        query = "SELECT t FROM Task t WHERE t.id = :tid")
+@NamedQuery(
+        name = Task.GET_ALL_TASKS,
+        query = "SELECT t FROM Task t")
+@XmlRootElement
 public class Task {
 
-//    /** Name of getTaskById query. */
-//    public static final String GET_TASK_BY_ID = "getTaskById";
+    /** Name of getAllTasks query. */
+    public static final String GET_ALL_TASKS = "getAllTasks";
 
     /** id. */
     private Integer id;
@@ -140,6 +143,23 @@ public class Task {
      */
     public void setVersionId(final Integer aVersionId) {
         versionId = aVersionId;
+    }
+
+    public String serialize()
+    {
+        return  "{\"id\":\""+id+"\",\"status\":\""+status+"\"}";
+//        /** status. */
+//        private String status;
+//        /** type. */
+//        private String type;
+//        /** data. */
+//        private String data;
+//        /** response. */
+//        private String response;
+//        /** vocabularyId. */
+//        private Integer vocabularyId;
+//        /** versionId. */
+//        private Integer versionId;
     }
 
 }

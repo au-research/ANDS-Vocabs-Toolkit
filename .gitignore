@@ -3,3 +3,5 @@
 /tomcatlib/
 /vocabtoolkit.jar
 /vocabtoolkit.war
+/conf/toolkit.properties
+/filestore

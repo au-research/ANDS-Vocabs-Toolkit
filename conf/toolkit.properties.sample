@@ -1,0 +1,19 @@
+## build and runtime specific system variables for ANDS Vocab Toolkit App
+## DATABASE
+
+javax.persistence.jdbc.url=jdbc:mysql://[path to DB]
+javax.persistence.jdbc.user=[db_username]
+javax.persistence.jdbc.driver=com.mysql.jdbc.Driver
+javax.persistence.jdbc.password=[db_password]
+
+## FILE STORAGE
+
+HarvesterHandler.dataPath = [path where data is stored]
+
+## POOLPARTY 
+
+PoolPartyHarvester.remoteUrl = [pool party api url]
+PoolPartyHarvester.username = [pool party username]
+PoolPartyHarvester.password = [pool party user password]
+PoolPartyHarvester.defaultFormat = RDF/XML
+PoolPartyHarvester.defaultExportModule = concepts
