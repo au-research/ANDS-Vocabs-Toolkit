@@ -37,7 +37,8 @@ public class RunTask {
     @Path("{taskId}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
-    public final HashMap<String,String> runTask(@PathParam("taskId") final int taskId) {
+    public final HashMap<String, String> runTask(
+            @PathParam("taskId") final int taskId) {
         logger.debug("called runTask, taskid = " + taskId);
         TaskInfo taskInfo = TasksUtils.getTaskInfo(taskId);
         TaskRunner runner = new TaskRunner(taskInfo);

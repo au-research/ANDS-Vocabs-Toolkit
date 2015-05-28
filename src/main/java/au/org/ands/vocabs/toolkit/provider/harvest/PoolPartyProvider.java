@@ -16,7 +16,9 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 /** Provider for PoolParty. */
 public class PoolPartyProvider extends HarvestProvider {
@@ -27,12 +29,12 @@ public class PoolPartyProvider extends HarvestProvider {
 //    private UriInfo info;
 
     @Override
-    public String getInfo() {
+    public final String getInfo() {
         String remoteUrl = props.getProperty("PoolPartyHarvester.remoteUrl");
         String username = props.getProperty("PoolPartyHarvester.username");
         String password = props.getProperty("PoolPartyHarvester.password");
 
-        logger.debug("Getting metadata from "+ remoteUrl);
+        logger.debug("Getting metadata from " + remoteUrl);
 
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(remoteUrl);
@@ -60,7 +62,7 @@ public class PoolPartyProvider extends HarvestProvider {
      * @return True, iff the harvest succeeded.
      */
     @Override
-    public boolean harvest(final TaskInfo taskInfo,
+    public final boolean harvest(final TaskInfo taskInfo,
             final HashMap<String, String> results) {
         String remoteUrl = props.getProperty("PoolPartyHarvester.remoteUrl");
         String username = props.getProperty("PoolPartyHarvester.username");
@@ -69,9 +71,7 @@ public class PoolPartyProvider extends HarvestProvider {
 
         String format = props.getProperty("PoolPartyHarvester.defaultFormat");
 
-        String basicAuth ="";
-
-        // Possible future work: support specifying particular modules.
+// Possible future work: support specifying particular modules.
 //        List<String> exportModules =
 //                info.getQueryParameters().get("exportModules");
         List<String> exportModules = null;
@@ -84,7 +84,7 @@ public class PoolPartyProvider extends HarvestProvider {
                     "PoolPartyHarvester.defaultExportModule"));
         }
 
-        logger.debug("Getting project from "+ remoteUrl);
+        logger.debug("Getting project from " + remoteUrl);
 
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(remoteUrl);
@@ -100,7 +100,7 @@ public class PoolPartyProvider extends HarvestProvider {
             WebTarget thisTarget = plainTarget.queryParam("exportModules",
                     exportModule);
 
-            logger.info("Harvesting from "+ thisTarget.toString());
+            logger.info("Harvesting from " + thisTarget.toString());
 
             Invocation.Builder invocationBuilder =
                     thisTarget.request(MediaType.APPLICATION_XML);
@@ -113,11 +113,16 @@ public class PoolPartyProvider extends HarvestProvider {
 
 //            if (exportModule.equals("concepts")) {
 //
-//                message.add("concepts_tree", createSolrJson(RDFFormat.RDFXML, is, projectId));
+//                message.add("concepts_tree",
+//                   createSolrJson(RDFFormat.RDFXML, is, projectId));
 //            }
 //            is = getInputStream(requestUrl, basicAuth);
 //            String data = getFragment(is);
-            results.put(exportModule, saveFile(projectId, exportModule, format, responseData));
+            String filePath = ToolkitFileUtils.saveFile(
+                    TasksUtils.getTaskOutputPath(taskInfo), exportModule,
+                    format, responseData);
+
+            results.put(exportModule, filePath);
         }
 
         return true;

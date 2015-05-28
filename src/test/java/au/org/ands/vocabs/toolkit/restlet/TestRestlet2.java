@@ -20,7 +20,7 @@ public class TestRestlet2 {
     @GET
     public final String getMessage() {
         return "Hello World! Again!";
-        }
+    }
 
     /** getMessage.
      * @return the message. */
@@ -28,7 +28,7 @@ public class TestRestlet2 {
     @GET
     public final String getMessageJson() {
         return "{\"hello\":\"Hello JSON!\"}";
-        }
+    }
 
     /** getMessage.
      * @return the message. */
@@ -54,7 +54,7 @@ public class TestRestlet2 {
     public final Response getExcept() {
         return Response.status(Status.SERVICE_UNAVAILABLE).
                 entity("Hi there").build();
-        }
+    }
 
     /** getExceptJSON.
      * This shows how to return a status code 503 "service unavailable"
@@ -71,7 +71,7 @@ public class TestRestlet2 {
         job.add("nested1", job2.build());
         return Response.status(Status.SERVICE_UNAVAILABLE).
                 entity(job.build()).build();
-        }
+    }
 
 
 

@@ -145,21 +145,4 @@ public class Task {
         versionId = aVersionId;
     }
 
-    public String serialize()
-    {
-        return  "{\"id\":\""+id+"\",\"status\":\""+status+"\"}";
-//        /** status. */
-//        private String status;
-//        /** type. */
-//        private String type;
-//        /** data. */
-//        private String data;
-//        /** response. */
-//        private String response;
-//        /** vocabularyId. */
-//        private Integer vocabularyId;
-//        /** versionId. */
-//        private Integer versionId;
-    }
-
 }

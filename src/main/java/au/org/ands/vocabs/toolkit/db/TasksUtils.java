@@ -1,6 +1,8 @@
 package au.org.ands.vocabs.toolkit.db;
 
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -144,6 +147,20 @@ public final class TasksUtils {
             return "{\"exception\":\"Exception while "
                     + "converting map to JSON\"}";
         }
+    }
+
+    /** Get the full path of the directory used to store the
+     * vocabulary referred to by the task.
+     * @param taskInfo The TaskInfo object representing the task.
+     * @return The full path of the directory used to store the
+     * vocabulary data.
+     */
+    public static String getTaskOutputPath(final TaskInfo taskInfo) {
+        Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH);
+        path.resolve(taskInfo.getVocabulary().getOwner());
+        path.resolve(taskInfo.getVocabulary().getSlug());
+        path.resolve(taskInfo.getVersion().getTitle());
+        return path.toString();
     }
 
 }
