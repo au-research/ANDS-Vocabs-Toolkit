@@ -56,6 +56,7 @@ public class TaskRunner {
     public final void runTask() {
         task = taskInfo.getTask();
         vocab = taskInfo.getVocabulary();
+        results.put("task_id", task.getId().toString());
         if (task.getType() == null
                 || task.getType().isEmpty()) {
             status = "ERROR";
@@ -63,7 +64,8 @@ public class TaskRunner {
                     status, "No task type specified. Nothing to do.");
             return;
         }
-        if (task.getType().equalsIgnoreCase("HARVESTTRANSFORMIMPORT")) {
+        results.put("task_type", task.getType());
+        if (task.getType().equalsIgnoreCase("HARVEST-TRANSFORM-IMPORT")) {
             boolean success = runHarvest();
             if (success) {
                 success = runTransform();
@@ -87,6 +89,8 @@ public class TaskRunner {
         HarvestProvider provider;
         String providerName = "PoolParty";
         status = "HARVESTING";
+        results.put("repository_id", TasksUtils.getTaskRepositoryId(taskInfo));
+        results.put("output_path", TasksUtils.getTaskOutputPath(taskInfo));
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Harvest in progress");
         if (vocab.getPoolPartyId() == null

@@ -96,7 +96,8 @@ public class PoolPartyProvider extends HarvestProvider {
                 .queryParam("format", format);
 
         for (String exportModule : exportModules) {
-            results.put("remoteUrl", remoteUrl);
+            results.put("poolparty_url", remoteUrl);
+            results.put("poolparty_project_id", projectId);
             WebTarget thisTarget = plainTarget.queryParam("exportModules",
                     exportModule);
 

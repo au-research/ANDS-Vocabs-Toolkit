@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.glassfish.jersey.uri.UriComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,10 +158,34 @@ public final class TasksUtils {
      */
     public static String getTaskOutputPath(final TaskInfo taskInfo) {
         Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH)
-                .resolve(taskInfo.getVocabulary().getOwner())
-                .resolve(taskInfo.getVocabulary().getSlug())
-                .resolve(taskInfo.getVersion().getTitle());
-        return path.toString();
+                .resolve(UriComponent.encode(
+                        taskInfo.getVocabulary().getOwner(),
+                        UriComponent.Type.PATH_SEGMENT))
+                .resolve(UriComponent.encode(
+                        taskInfo.getVocabulary().getSlug(),
+                        UriComponent.Type.PATH_SEGMENT))
+                .resolve(UriComponent.encode(
+                        taskInfo.getVersion().getTitle(),
+                        UriComponent.Type.PATH_SEGMENT));
+        return path.toString().toLowerCase();
+    }
+
+    /**
+     * Get the repository ID for a vocabulary's version referred to by the task.
+     *
+     * @param taskInfo
+     *            The TaskInfo object representing the task.
+     * @return The repository id for the vocabulary with this version.
+     */
+    public static String getTaskRepositoryId(final TaskInfo taskInfo) {
+        return (UriComponent.encode(taskInfo.getVocabulary().getOwner(),
+                UriComponent.Type.PATH_SEGMENT)
+                + "_"
+                + UriComponent.encode(taskInfo.getVocabulary().getSlug(),
+                        UriComponent.Type.PATH_SEGMENT)
+                + "_"
+                + UriComponent.encode(taskInfo.getVersion().getTitle(),
+                        UriComponent.Type.PATH_SEGMENT)).toLowerCase();
     }
 
 }
