@@ -1,10 +1,7 @@
 package au.org.ands.vocabs.toolkit.tasks;
 
 import java.lang.invoke.MethodHandles;
-
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonStructure;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +32,7 @@ public class TaskRunner {
     private String status;
 
     /** The results of running the task. */
-    private JsonStructure results;
-
-    /** Builder for the result. */
-    private JsonObjectBuilder message = Json.createObjectBuilder();
+    private HashMap<String, String> results = new HashMap<String, String>();
 
     /** Constructor.
      * @param aTaskInfo The TaskInfo structure describing this task.
@@ -65,7 +59,7 @@ public class TaskRunner {
         if (task.getType() == null
                 || task.getType().isEmpty()) {
             status = "ERROR";
-            TasksUtils.updateMessageAndTaskStatus(logger, task, message,
+            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "No task type specified. Nothing to do.");
             return;
         }
@@ -78,7 +72,7 @@ public class TaskRunner {
                     if (success) {
                         status = "SUCCESS";
                         TasksUtils.updateMessageAndTaskStatus(logger,
-                                task, message,
+                                task, results,
                                 status, "Completed");
                     }
                 }
@@ -93,12 +87,12 @@ public class TaskRunner {
         HarvestProvider provider;
         String providerName = "PoolParty";
         status = "HARVESTING";
-        TasksUtils.updateMessageAndTaskStatus(logger, task, message,
+        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Harvest in progress");
         if (vocab.getPoolPartyId() == null
                 || vocab.getPoolPartyId().isEmpty()) {
             status = "ERROR";
-            TasksUtils.updateMessageAndTaskStatus(logger, task, message,
+            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "No PoolParty id specified. Nothing to do.");
             return false;
         }
@@ -106,25 +100,25 @@ public class TaskRunner {
             provider = HarvestProviderUtils.getProvider(providerName);
         } catch (ClassNotFoundException e) {
             logger.error("runTask exception: ", e);
-            message.add("exception", e.toString());
+            results.put("exception", e.toString());
             return false;
         } catch (InstantiationException e) {
             logger.error("runTask exception: ", e);
-            message.add("exception", e.toString());
+            results.put("exception", e.toString());
             return false;
         } catch (IllegalAccessException e) {
             logger.error("runTask exception: ", e);
-            message.add("exception", e.toString());
+            results.put("exception", e.toString());
             return false;
         }
 
         if (provider == null) {
             status = "ERROR";
-            TasksUtils.updateMessageAndTaskStatus(logger, task, message,
+            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "Could not find Provider: " + providerName);
             return false;
         }
-        return provider.harvest(taskInfo, message);
+        return provider.harvest(taskInfo, results);
     }
 
     /** Run a transform.
@@ -144,19 +138,18 @@ public class TaskRunner {
 
 
     /** Return the results of running the task.
-     * @return The JsonStructure for the results. */
-    public final JsonStructure getResults() {
-        message.add("status", status);
-        results = message.build();
+     * @return The HashMap for the results. */
+    public final HashMap<String, String> getResults() {
+        results.put("status", status);
         logger.info("getResults results:" + results.toString());
         return results;
     }
 
-    /** Return the results of running the task as a String.
-     * @return The results as a String. */
-    public final String getResultsString() {
-        return getResults().toString();
-    }
+//    /** Return the results of running the task as a String.
+//     * @return The results as a String. */
+//    public final String getResultsString() {
+//        return getResults().toString();
+//    }
 
 
 

@@ -2,9 +2,9 @@ package au.org.ands.vocabs.toolkit.provider.harvest;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -56,12 +56,12 @@ public class PoolPartyProvider extends HarvestProvider {
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param taskInfo The TaskInfo object describing the entire task.
-     * @param message JSON Structure representing the result of the harvest.
+     * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
     @Override
     public boolean harvest(final TaskInfo taskInfo,
-            final JsonObjectBuilder message) {
+            final HashMap<String, String> results) {
         String remoteUrl = props.getProperty("PoolPartyHarvester.remoteUrl");
         String username = props.getProperty("PoolPartyHarvester.username");
         String password = props.getProperty("PoolPartyHarvester.password");
@@ -96,7 +96,7 @@ public class PoolPartyProvider extends HarvestProvider {
                 .queryParam("format", format);
 
         for (String exportModule : exportModules) {
-            message.add("remoteUrl", remoteUrl);
+            results.put("remoteUrl", remoteUrl);
             WebTarget thisTarget = plainTarget.queryParam("exportModules",
                     exportModule);
 
@@ -117,7 +117,7 @@ public class PoolPartyProvider extends HarvestProvider {
 //            }
 //            is = getInputStream(requestUrl, basicAuth);
 //            String data = getFragment(is);
-            message.add(exportModule, saveFile(projectId, exportModule, format, responseData));
+            results.put(exportModule, saveFile(projectId, exportModule, format, responseData));
         }
 
         return true;

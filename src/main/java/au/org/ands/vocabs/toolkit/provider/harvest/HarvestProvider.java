@@ -11,6 +11,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -73,11 +74,11 @@ public abstract class HarvestProvider {
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param taskInfo The TaskInfo object describing the entire task.
-     * @param message JSON Structure representing the result of the harvest.
+     * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
     public boolean harvest(final TaskInfo taskInfo,
-            final JsonObjectBuilder message) {
+            final HashMap<String,String> results) {
         //message.add("class", "HarvesterHandler");
         //return true;
         throw new IllegalArgumentException("Incorrect use of abstract class.");

@@ -48,9 +48,8 @@ public class GetInfo {
         }
     }
 
-    /** Get the list of PoolParty projects.
-     * @return The list of PoolParty projects, in JSON format,
-     * as returned by PoolParty. */
+    /** Get a complete list of tasks.
+     * @return The list of tasks. */
     @Path("systemHealthCheck")
     @Produces(MediaType.APPLICATION_JSON)
     @GET

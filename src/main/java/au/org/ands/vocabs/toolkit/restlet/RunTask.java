@@ -1,8 +1,8 @@
 package au.org.ands.vocabs.toolkit.restlet;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
 
-import javax.json.JsonStructure;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -37,7 +37,7 @@ public class RunTask {
     @Path("{taskId}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
-    public final JsonStructure runTask(@PathParam("taskId") final int taskId) {
+    public final HashMap<String,String> runTask(@PathParam("taskId") final int taskId) {
         logger.debug("called runTask, taskid = " + taskId);
         TaskInfo taskInfo = TasksUtils.getTaskInfo(taskId);
         TaskRunner runner = new TaskRunner(taskInfo);

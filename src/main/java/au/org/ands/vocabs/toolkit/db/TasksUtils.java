@@ -1,9 +1,9 @@
 package au.org.ands.vocabs.toolkit.db;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
 import java.util.List;
 
-import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -14,6 +14,9 @@ import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /** Work with database tasks. */
 public final class TasksUtils {
@@ -90,9 +93,13 @@ public final class TasksUtils {
         return taskInfo;
     }
 
-    /** Set the status and data fields for a task. */
-    public static void setTaskStatusAndData(final Task task, final String status,
-            final String data) {
+    /** Set the status and data fields for a task.
+     * @param task The task being updated
+     * @param status The updated status information
+     * @param data The updated data
+     */
+    public static void setTaskStatusAndData(final Task task,
+            final String status, final String data) {
         EntityManager em = DBContext.getEntityManager();
         em.getTransaction().begin();
         task.setStatus(status);
@@ -105,21 +112,38 @@ public final class TasksUtils {
     /** Update both message and task status.
      * @param callerLogger The Logger to use.
      * @param task The Task object.
-     * @param message The message JsonObjectBuilder object.
+     * @param results The HashMap of results.
      * @param status Status (SUCCESS, ERROR, ...)
      * @param details Detailed message data
      */
     public static void updateMessageAndTaskStatus(final Logger callerLogger,
-            final Task task, final JsonObjectBuilder message,
+            final Task task, final HashMap<String, String> results,
             final String status, final String details) {
         if ("ERROR".equals(status)) {
             logger.error(details);
         } else {
             logger.info(details);
         }
-        message.add(status, details);
+        results.put("status", details);
         TasksUtils.setTaskStatusAndData(task, status,
-                message.build().toString());
+                hashMapToJSONString(results));
+    }
+
+    /** Convert a HashMap to a string containing JSON.
+     * @param map The HashMap to be converted
+     * @return The resulting string
+     */
+    public static String hashMapToJSONString(
+            final HashMap<String, String> map) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "{\"exception\":\"Exception while "
+                    + "converting map to JSON\"}";
+        }
     }
 
 }
