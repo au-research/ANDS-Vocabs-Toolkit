@@ -29,6 +29,36 @@ public class SesameProvider extends ImporterProvider {
     private String sesameServer =
             PROPS.getProperty("SesameImporter.serverUrl");
 
+    /** Force loading of HttpClientUtils, so that shutdown works
+     * properly. Revisit this when using a later version of Tomcat,
+     * as the problem may be caused by a defect in Tomcat.
+     * For now (Tomcat 7.0.61), without this, you get an error
+     * on Tomcat shutdown:
+     * Exception in thread "RepositoryProvider-shutdownHook"
+     *  java.lang.NoClassDefFoundError:
+     *   org/apache/http/client/utils/HttpClientUtils
+     *    at org.openrdf.http.client.SesameClientImpl.shutDown(
+     *    SesameClientImpl.java:102)
+     * at org.openrdf.repository.manager.RemoteRepositoryManager.shutDown(
+     *    RemoteRepositoryManager.java:156)
+     * at org.openrdf.repository.manager.
+     *   RepositoryProvider$SynchronizedManager.shutDown(
+     *     RepositoryProvider.java:68)
+     * at org.openrdf.repository.manager.RepositoryProvider$1.run(
+     *   RepositoryProvider.java:81)
+     * Caused by: java.lang.ClassNotFoundException:
+     *    org.apache.http.client.utils.HttpClientUtils
+     *  at org.apache.catalina.loader.WebappClassLoader.loadClass(
+     *     WebappClassLoader.java:1720)
+     *  at org.apache.catalina.loader.WebappClassLoader.loadClass(
+     *     WebappClassLoader.java:1571)
+     *  ... 4 more
+     *
+     */
+    @SuppressWarnings("unused")
+    private static final Class<org.apache.http.client.utils.HttpClientUtils>
+        HTTPCLIENTUTILS_CLASS =
+            org.apache.http.client.utils.HttpClientUtils.class;
 
     /** Return information about the provider.
      * @return The information.
