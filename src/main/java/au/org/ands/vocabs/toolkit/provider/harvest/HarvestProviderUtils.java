@@ -27,7 +27,7 @@ public final class HarvestProviderUtils {
             IllegalAccessException {
         String s = "au.org.ands.vocabs.toolkit.provider.harvest."
                 + providerType
-                + "Provider";
+                + "HarvestProvider";
 
         Class<?> c = Class.forName(s);
         HarvestProvider provider =  (HarvestProvider) c.newInstance();

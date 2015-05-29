@@ -27,7 +27,7 @@ public final class ImporterProviderUtils {
             IllegalAccessException {
         String s = "au.org.ands.vocabs.toolkit.provider.importer."
                 + providerType
-                + "Provider";
+                + "ImporterProvider";
 
         Class<?> c = Class.forName(s);
         ImporterProvider provider =  (ImporterProvider) c.newInstance();

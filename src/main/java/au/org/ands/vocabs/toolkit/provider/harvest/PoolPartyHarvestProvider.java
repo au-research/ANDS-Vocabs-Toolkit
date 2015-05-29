@@ -21,7 +21,7 @@ import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 /** Provider for PoolParty. */
-public class PoolPartyProvider extends HarvestProvider {
+public class PoolPartyHarvestProvider extends HarvestProvider {
 
     /** The logger for this class. */
     private final Logger logger = LoggerFactory.getLogger(

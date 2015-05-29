@@ -16,7 +16,7 @@ import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Abstract class representing importer providers. */
-public class SesameProvider extends ImporterProvider {
+public class SesameImporterProvider extends ImporterProvider {
 
      /** Logger for this class. */
     private final Logger logger = LoggerFactory.getLogger(
