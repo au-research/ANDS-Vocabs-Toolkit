@@ -39,7 +39,7 @@ import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
-/** Abstract class representing Providers. */
+/** Abstract class representing harvester providers. */
 public abstract class HarvestProvider {
 
     // /** UriInfo data for a request. */
@@ -52,11 +52,6 @@ public abstract class HarvestProvider {
     /** Access to the Toolkit properties. */
     protected static final Properties PROPS =
             ToolkitProperties.getProperties();
-
-    //public Provider(final UriInfo urlInfo){
-    //info = urlInfo;
-    //PROPS = ToolkitProperties.getProperties();
-    //}
 
     /** Return information about the provider.
      * @return The information.
@@ -71,111 +66,6 @@ public abstract class HarvestProvider {
      */
     public abstract boolean harvest(final TaskInfo taskInfo,
             final HashMap<String, String> results);
-
-//    protected InputStream getInputStream(final URL url,
-//            final String basicAuth)
-//            throws IOException {
-//        HttpURLConnection conn;
-//        InputStream in = null;
-//        int responseCode = 0;
-//
-//        do {
-//            String protocol = url.getProtocol();
-//            boolean secure = "https".equals(protocol);
-//            if (secure) {
-//                try {
-//                    HttpsHack.disableCertCheck();
-//                    conn = (HttpsURLConnection) url.openConnection();
-//                    // dumpl all cert info
-//                    // print_https_cert((HttpsURLConnection)conn);
-//
-//                    // dump all the content
-//                    // print_content((HttpsURLConnection)conn);
-//                } catch (Exception e) {
-//                    throw new IOException(
-//                            "unable to allow connection to url: "
-//                            + url.toExternalForm());
-//                }
-//            } else {
-//                conn = (HttpURLConnection) url.openConnection();
-//            }
-//            conn.setConnectTimeout(10000);
-//            if (!(basicAuth.isEmpty())) {
-//                logger.info("basicAuth " + basicAuth);
-//                conn.setRequestProperty("Authorization", basicAuth);
-//            }
-//            conn.setRequestProperty("User-Agent",
-//                    "Mozilla/5.0 (Windows; U; Windows NT 5.1; "
-//                    + "en-US; rv:1.9.2.3) Gecko/20100401");
-//            conn.setRequestProperty("Accept-Encoding",
-//                    "compress, gzip, identify");
-//            try {
-//                responseCode = conn.getResponseCode();
-//                if (responseCode < 200 || responseCode > 299) {
-//                    conn.disconnect();
-//                    logger.error("HTTP code " + responseCode
-//                            + " connecting to url: " + url);
-//                    throw new IOException("HTTP code " + responseCode
-//                            + " connecting to url: " + url);
-//                }
-//            } catch (IOException ioe) {
-//                logger.error("HTTP code " + responseCode
-//                        + " connecting to url: " + url);
-//                if (responseCode != HttpURLConnection.HTTP_UNAVAILABLE) {
-//                    conn.disconnect();
-//                    throw ioe;
-//                }
-//            }
-//
-//            if (responseCode == HttpURLConnection.HTTP_UNAVAILABLE) {
-//                long retrySeconds = conn.getHeaderFieldInt("Retry-After",
-//                        -1);
-//                logger.error("retry seconds: " + retrySeconds);
-//                if (retrySeconds == -1) {
-//                    logger.error("could not connect to: "
-//                            + url.toExternalForm() + " , retrying");
-//                    long now = (new Date()).getTime();
-//                    long retryDate = conn
-//                            .getHeaderFieldDate("Retry-After", now);
-//                    retrySeconds = retryDate - now;
-//                }
-//
-//                if (retrySeconds == 0) {
-//                    conn.disconnect();
-//                    logger.error("Too many retries connecting to: "
-//                            + url.toExternalForm());
-//                    throw new IOException("Too many retries connecting to: "
-//                            + url);
-//                }
-//
-//                if (retrySeconds > 0) {
-//                    try {
-//                        Thread.sleep(retrySeconds * 1000);
-//                    } catch (InterruptedException ex) {
-//                        conn.disconnect();
-//                        logger.error(ex.toString());
-//                    }
-//                }
-//            }
-//        } while (responseCode == HttpURLConnection.HTTP_UNAVAILABLE);
-//
-//        String contentEncoding = conn.getHeaderField("Content-Encoding");
-//
-//        if ("compress".equals(contentEncoding)) {
-//            ZipInputStream zis = new ZipInputStream(conn.getInputStream());
-//            zis.getNextEntry();
-//            in = zis;
-//            zis.close();
-//        } else if ("gzip".equals(contentEncoding)) {
-//            in = new GZIPInputStream(conn.getInputStream());
-//        } else if ("deflate".equals(contentEncoding)) {
-//            in = new InflaterInputStream(conn.getInputStream());
-//        } else {
-//            in = conn.getInputStream();
-//        }
-//
-//        return in;
-//    }
 
     /** Get the contents of an InputStream as a String.
      * @param is The InputStream

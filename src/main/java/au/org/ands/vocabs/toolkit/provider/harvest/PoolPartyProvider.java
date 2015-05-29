@@ -83,6 +83,9 @@ public class PoolPartyProvider extends HarvestProvider {
             exportModules.add(PROPS.getProperty(
                     "PoolPartyHarvester.defaultExportModule"));
         }
+        // In future, get extra stuff. It does work!
+//        exportModules.add("adms");
+//        exportModules.add("history");
 
         logger.debug("Getting project from " + remoteUrl);
 
@@ -110,22 +113,12 @@ public class PoolPartyProvider extends HarvestProvider {
 
             String responseData = response.readEntity(String.class);
 
-//            InputStream is = getInputStream(requestUrl, basicAuth);
-
-//            if (exportModule.equals("concepts")) {
-//
-//                message.add("concepts_tree",
-//                   createSolrJson(RDFFormat.RDFXML, is, projectId));
-//            }
-//            is = getInputStream(requestUrl, basicAuth);
-//            String data = getFragment(is);
             String filePath = ToolkitFileUtils.saveFile(
                     TasksUtils.getTaskOutputPath(taskInfo), exportModule,
                     format, responseData);
 
             results.put(exportModule, filePath);
         }
-
         return true;
     }
 

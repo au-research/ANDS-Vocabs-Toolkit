@@ -1,6 +1,8 @@
 package au.org.ands.vocabs.toolkit.restlet;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
 
 /** Restlets for getting info about Toolkit supported services. */
 @Path("getInfo")
@@ -45,6 +48,25 @@ public class GetInfo {
             logger.error("Exception happened: ", e);
             // e.printStackTrace();
             return "{\"exception\":\"Can't get PoolParty provider.\"}";
+        }
+    }
+
+    /** Get the list of Sesame repositories.
+     * @return The list of repositories, in JSON format. */
+    @Path("SesameRepositories")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public final Collection<?> getInfoSesame() {
+        logger.debug("called getInfoSesame");
+        try {
+            return ImporterProviderUtils.getProvider("Sesame").getInfo();
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            logger.error("Exception happened: ", e);
+            // e.printStackTrace();
+//            return "{\"exception\":\"Can't get Sesame provider.\"}";
+            return new ArrayList<String>();
         }
     }
 

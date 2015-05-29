@@ -17,6 +17,7 @@ import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -123,12 +124,13 @@ public final class TasksUtils {
     public static void updateMessageAndTaskStatus(final Logger callerLogger,
             final Task task, final HashMap<String, String> results,
             final String status, final String details) {
-        if ("ERROR".equals(status)) {
+        if (TaskStatus.ERROR.equals(status)
+                || TaskStatus.EXCEPTION.equals(status)) {
             logger.error(details);
         } else {
             logger.info(details);
         }
-        results.put("status", details);
+        results.put("status", status);
         TasksUtils.setTaskStatusAndData(task, status,
                 hashMapToJSONString(results));
     }

@@ -1,18 +1,18 @@
-package au.org.ands.vocabs.toolkit.provider.harvest;
+package au.org.ands.vocabs.toolkit.provider.importer;
 import java.lang.invoke.MethodHandles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Utilities for harvester providers. */
-public final class HarvestProviderUtils {
+/** Utilities for importer providers. */
+public final class ImporterProviderUtils {
 
     /** Logger for this class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
     /** Private constructor for a utility class. */
-    private HarvestProviderUtils() {
+    private ImporterProviderUtils() {
     }
 
     /** Get the provider based on the name providerType.
@@ -22,16 +22,16 @@ public final class HarvestProviderUtils {
      * @throws InstantiationException If instantiation failed
      * @throws IllegalAccessException If instantiation failed
      */
-    public static HarvestProvider getProvider(final String providerType)
+    public static ImporterProvider getProvider(final String providerType)
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException {
-        String s = "au.org.ands.vocabs.toolkit.provider.harvest."
+        String s = "au.org.ands.vocabs.toolkit.provider.importer."
                 + providerType
                 + "Provider";
 
         Class<?> c = Class.forName(s);
-        HarvestProvider provider =  (HarvestProvider) c.newInstance();
-        if (!(provider instanceof HarvestProvider)) {
+        ImporterProvider provider =  (ImporterProvider) c.newInstance();
+        if (!(provider instanceof ImporterProvider)) {
             LOGGER.error("getProvider bad class:"
                     + provider.getClass().getName()
                     + ". Class not of type Provider");

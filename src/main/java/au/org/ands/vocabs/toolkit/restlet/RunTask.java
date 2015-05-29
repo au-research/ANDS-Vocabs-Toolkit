@@ -35,7 +35,7 @@ public class RunTask {
      * @return The list of PoolParty projects, in JSON format,
      * as returned by PoolParty. */
     @Path("{taskId}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @GET
     public final HashMap<String, String> runTask(
             @PathParam("taskId") final int taskId) {

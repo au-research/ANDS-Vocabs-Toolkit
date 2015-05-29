@@ -2,6 +2,7 @@ package au.org.ands.vocabs.toolkit.tasks;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +51,6 @@ public class TaskRunner {
 
 
     /** Run the task.
-     * This is broken. It should use the Task's type to determine
-     * what to do.
      */
     public final void runTask() {
         task = taskInfo.getTask();
@@ -59,27 +58,43 @@ public class TaskRunner {
         results.put("task_id", task.getId().toString());
         if (task.getType() == null
                 || task.getType().isEmpty()) {
-            status = "ERROR";
+            status = TaskStatus.ERROR;
             TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "No task type specified. Nothing to do.");
             return;
         }
         results.put("task_type", task.getType());
-        if (task.getType().equalsIgnoreCase("HARVEST-TRANSFORM-IMPORT")) {
-            boolean success = runHarvest();
-            if (success) {
-                success = runTransform();
-                if (success) {
+        StringTokenizer tTasks = new StringTokenizer(task.getType(), ",");
+        boolean success = false;
+        while (tTasks.hasMoreTokens()) {
+            String thisTask = tTasks.nextToken();
+            switch (thisTask) {
+                case "HARVEST":
+                    success = runHarvest();
+                    break;
+                case "TRANSFORM":
+                    success = runTransform();
+                    break;
+                case "IMPORT":
                     success = runImport();
-                    if (success) {
-                        status = "SUCCESS";
-                        TasksUtils.updateMessageAndTaskStatus(logger,
-                                task, results,
-                                status, "Completed");
-                    }
-                }
+                    break;
+                case "DELETE":
+                    success = runDelete();
+                    break;
+                default:
+                    results.put("invalid_sub_task", thisTask);
+                break;
+            }
+            if (!success) {
+                logger.error("ERROR while running task: " + thisTask);
+                results.put("error_subtask", thisTask);
+                status = TaskStatus.ERROR;
+                break;
             }
         }
+        status = TaskStatus.SUCCESS;
+        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                status, "All tasks completed.");
     }
 
     /** Run a harvest.
@@ -88,6 +103,7 @@ public class TaskRunner {
     public final boolean runHarvest() {
         HarvestProvider provider;
         String providerName = "PoolParty";
+        logger.debug("runHarvest");
         status = "HARVESTING";
         results.put("repository_id", TasksUtils.getTaskRepositoryId(taskInfo));
         results.put("output_path", TasksUtils.getTaskOutputPath(taskInfo));
@@ -95,29 +111,23 @@ public class TaskRunner {
                 status, "Harvest in progress");
         if (vocab.getPoolPartyId() == null
                 || vocab.getPoolPartyId().isEmpty()) {
-            status = "ERROR";
+            status = TaskStatus.ERROR;
             TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "No PoolParty id specified. Nothing to do.");
             return false;
         }
         try {
             provider = HarvestProviderUtils.getProvider(providerName);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException e) {
             logger.error("runTask exception: ", e);
-            results.put("exception", e.toString());
-            return false;
-        } catch (InstantiationException e) {
-            logger.error("runTask exception: ", e);
-            results.put("exception", e.toString());
-            return false;
-        } catch (IllegalAccessException e) {
-            logger.error("runTask exception: ", e);
-            results.put("exception", e.toString());
+            results.put(TaskStatus.EXCEPTION, e.toString());
             return false;
         }
 
         if (provider == null) {
-            status = "ERROR";
+            status = TaskStatus.ERROR;
             TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "Could not find Provider: " + providerName);
             return false;
@@ -129,6 +139,7 @@ public class TaskRunner {
      * @return True, iff the transform was successful.
      */
     public final boolean runTransform() {
+        logger.debug("runTransform");
         return true;
     }
 
@@ -136,6 +147,15 @@ public class TaskRunner {
      * @return True, iff the import was successful.
      */
     public final boolean runImport() {
+        logger.debug("runImport");
+        return true;
+    }
+
+    /** Run an Delete.
+     * @return True, iff the deleting was successful.
+     */
+    public final boolean runDelete() {
+        logger.debug("runDelete");
         return true;
     }
 

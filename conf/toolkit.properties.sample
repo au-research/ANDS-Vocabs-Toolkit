@@ -17,3 +17,6 @@ PoolPartyHarvester.username = [pool party username]
 PoolPartyHarvester.password = [pool party user password]
 PoolPartyHarvester.defaultFormat = RDF/XML
 PoolPartyHarvester.defaultExportModule = concepts
+
+# local OpenRDF Sesame server
+SesameImporter.serverUrl = [Sesame API URL]
