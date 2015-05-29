@@ -29,6 +29,8 @@ public class Task {
     private String status;
     /** type. */
     private String type;
+    /** params. */
+    private String params;
     /** data. */
     private String data;
     /** response. */
@@ -83,6 +85,21 @@ public class Task {
      */
     public void setType(final String aType) {
         type = aType;
+    }
+
+    /** Get the params.
+     * @return The params
+     */
+    @Column(name = "params", length = 255)
+    public String getParams() {
+        return params;
+    }
+
+    /** Set the params.
+     * @param aParams the params
+     */
+    public void setParams(final String aParams) {
+        params = aParams;
     }
 
     /** Get the data.
