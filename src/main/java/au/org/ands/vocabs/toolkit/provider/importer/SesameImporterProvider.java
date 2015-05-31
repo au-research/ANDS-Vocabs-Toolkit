@@ -71,12 +71,8 @@ public class SesameImporterProvider extends ImporterProvider {
             Collection<RepositoryInfo> infos =
                     manager.getAllRepositoryInfos(true);
             return infos;
-        } catch (RepositoryConfigException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (RepositoryConfigException | RepositoryException e) {
+            logger.error("Exception in Sesame getInfo()", e);
         }
         return null;
     }
