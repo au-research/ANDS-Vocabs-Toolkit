@@ -34,6 +34,7 @@ public class SesameImporterProvider extends ImporterProvider {
      * as the problem may be caused by a defect in Tomcat.
      * For now (Tomcat 7.0.61), without this, you get an error
      * on Tomcat shutdown:
+     * <pre>
      * Exception in thread "RepositoryProvider-shutdownHook"
      *  java.lang.NoClassDefFoundError:
      *   org/apache/http/client/utils/HttpClientUtils
@@ -53,6 +54,7 @@ public class SesameImporterProvider extends ImporterProvider {
      *  at org.apache.catalina.loader.WebappClassLoader.loadClass(
      *     WebappClassLoader.java:1571)
      *  ... 4 more
+     *  </pre>
      *
      */
     @SuppressWarnings("unused")
@@ -80,11 +82,35 @@ public class SesameImporterProvider extends ImporterProvider {
     /** Do an import. Update the message parameter with the result
      * of the import.
      * @param taskInfo The TaskInfo object describing the entire task.
-     * @param results HashMap representing the result of the harvest.
+     * @param results HashMap representing the result of the task.
      * @return True, iff the import succeeded.
      */
     @Override
     public final boolean doImport(final TaskInfo taskInfo,
+            final HashMap<String, String> results) {
+        // Create repository
+        createRepository(taskInfo, results);
+        // Upload the RDF
+        uploadRDF(taskInfo, results);
+        return true;
+    }
+
+    /** Create the repository within Sesame.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param results HashMap representing the result of the task.
+     * @return True, iff the repository creation succeeded.
+     */
+    public final boolean createRepository(final TaskInfo taskInfo,
+            final HashMap<String, String> results) {
+        return true;
+    }
+
+    /** Upload the RDF data into the Sesame repository.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param results HashMap representing the result of the task.
+     * @return True, iff the upload succeeded.
+     */
+    public final boolean uploadRDF(final TaskInfo taskInfo,
             final HashMap<String, String> results) {
         return true;
     }
