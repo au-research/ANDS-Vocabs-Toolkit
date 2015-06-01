@@ -233,7 +233,6 @@ public class SesameImporterProvider extends ImporterProvider {
                     return false;
                 }
             } catch (RDFParseException e) {
-                // TODO Auto-generated catch block
                 logger.error("Sesame uploadRDF, error parsing RDF: ", e);
                 return false;
             } finally {
