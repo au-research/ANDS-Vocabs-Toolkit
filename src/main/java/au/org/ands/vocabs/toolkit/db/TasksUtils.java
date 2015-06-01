@@ -191,13 +191,16 @@ public final class TasksUtils {
         return (ArrayNode) root;
     }
 
-    /** Get the full path of the directory used to store the
-     * vocabulary referred to by the task.
+    /** Get the full path of the directory used to store all
+     * the files referred to by the task.
      * @param taskInfo The TaskInfo object representing the task.
+     * @param extraPath An optional additional path component to be added
+     * at the end. If not required, pass in null or an empty string.
      * @return The full path of the directory used to store the
      * vocabulary data.
      */
-    public static String getTaskOutputPath(final TaskInfo taskInfo) {
+    public static String getTaskOutputPath(final TaskInfo taskInfo,
+            final String extraPath) {
         Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH)
                 .resolve(UriComponent.encode(
                         taskInfo.getVocabulary().getOwner(),
@@ -208,7 +211,21 @@ public final class TasksUtils {
                 .resolve(UriComponent.encode(
                         taskInfo.getVersion().getTitle(),
                         UriComponent.Type.PATH_SEGMENT));
+        if (extraPath != null && (!extraPath.isEmpty())) {
+            path.resolve(extraPath);
+        }
         return path.toString().toLowerCase();
+    }
+
+    /** Get the full path of the directory used to store all
+     * harvested data referred to by the task.
+     * @param taskInfo The TaskInfo object representing the task.
+     * at the end. If not required, pass in null or an empty string.
+     * @return The full path of the directory used to store the
+     * vocabulary data.
+     */
+    public static String getTaskHarvestOutputPath(final TaskInfo taskInfo) {
+        return getTaskOutputPath(taskInfo, ToolkitConfig.HARVEST_DATA_PATH);
     }
 
     /**

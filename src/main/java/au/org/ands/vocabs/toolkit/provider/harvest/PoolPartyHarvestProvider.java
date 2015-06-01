@@ -118,7 +118,8 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             String responseData = response.readEntity(String.class);
 
             String filePath = ToolkitFileUtils.saveFile(
-                    TasksUtils.getTaskOutputPath(taskInfo), exportModule,
+                    TasksUtils.getTaskHarvestOutputPath(taskInfo),
+                    exportModule,
                     format, responseData);
 
             results.put(exportModule, filePath);

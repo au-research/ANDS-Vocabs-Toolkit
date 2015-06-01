@@ -107,6 +107,8 @@ public class TaskRunner {
             }
         }
         status = TaskStatus.SUCCESS;
+        results.put("output_path", TasksUtils.getTaskOutputPath(taskInfo,
+                null));
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "All tasks completed.");
     }
@@ -120,8 +122,6 @@ public class TaskRunner {
         String providerName = subtask.get("provider_type").textValue();
         logger.debug("runHarvest");
         status = "HARVESTING";
-        results.put("repository_id", TasksUtils.getTaskRepositoryId(taskInfo));
-        results.put("output_path", TasksUtils.getTaskOutputPath(taskInfo));
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Harvest in progress");
         if (vocab.getPoolPartyId() == null

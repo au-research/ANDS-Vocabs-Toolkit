@@ -9,6 +9,9 @@ public final class ToolkitConfig {
     //    /** Logger. */
     //    private static Logger logger;
 
+    /** Subdirectory of the data directory used to store harvested data. */
+    public static final String HARVEST_DATA_PATH = "harvest_data";
+
     /** This is a utility class. No instantiation. */
     private ToolkitConfig() {
     }
