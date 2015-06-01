@@ -6,6 +6,8 @@ import java.util.Properties;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /** Abstract class representing importer providers. */
 public abstract class ImporterProvider {
 
@@ -20,10 +22,12 @@ public abstract class ImporterProvider {
     /** Do an import. Update the message parameter with the result
      * of the import.
      * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
      * @param results HashMap representing the result of the harvest.
      * @return True, iff the import succeeded.
      */
     public abstract boolean doImport(final TaskInfo taskInfo,
+            final JsonNode subtask,
             final HashMap<String, String> results);
 
 }
