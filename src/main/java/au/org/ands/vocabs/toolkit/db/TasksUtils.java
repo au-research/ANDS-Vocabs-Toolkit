@@ -212,7 +212,7 @@ public final class TasksUtils {
                         taskInfo.getVersion().getTitle(),
                         UriComponent.Type.PATH_SEGMENT));
         if (extraPath != null && (!extraPath.isEmpty())) {
-            path.resolve(extraPath);
+            path = path.resolve(extraPath);
         }
         return path.toString().toLowerCase();
     }
