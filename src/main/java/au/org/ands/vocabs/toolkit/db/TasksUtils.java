@@ -1,5 +1,6 @@
 package au.org.ands.vocabs.toolkit.db;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +22,9 @@ import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /** Work with database tasks. */
 public final class TasksUtils {
@@ -101,14 +104,14 @@ public final class TasksUtils {
     /** Set the status and data fields for a task.
      * @param task The task being updated
      * @param status The updated status information
-     * @param data The updated data
+     * @param response The updated response
      */
     public static void setTaskStatusAndData(final Task task,
-            final String status, final String data) {
+            final String status, final String response) {
         EntityManager em = DBContext.getEntityManager();
         em.getTransaction().begin();
         task.setStatus(status);
-        task.setData(data);
+        task.setResponse(response);
         em.merge(task);
         em.getTransaction().commit();
         em.close();
@@ -150,6 +153,42 @@ public final class TasksUtils {
             return "{\"exception\":\"Exception while "
                     + "converting map to JSON\"}";
         }
+    }
+
+    /** Parse a string containing JSON into a JsonNode.
+     * @param jsonString The String in JSON format to be converted
+     * @return The resulting JSON structure
+     */
+    public static JsonNode jsonStringToTree(
+            final String jsonString) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readTree(jsonString);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /** Parse a string containing JSON into a list of subtasks.
+     * @param jsonString The String in JSON format to be converted
+     * @return The resulting JSON structure
+     */
+    public static ArrayNode getSubtasks(
+            final String jsonString) {
+        JsonNode root = jsonStringToTree(jsonString);
+        if (root == null) {
+            logger.error("getSubtasks got a bad params string: "
+                    + jsonString);
+            return null;
+        }
+        if (!(root instanceof ArrayNode)) {
+            logger.error("getSubtasks didn't get an array:"
+                    + jsonString);
+            return null;
+        }
+        return (ArrayNode) root;
     }
 
     /** Get the full path of the directory used to store the

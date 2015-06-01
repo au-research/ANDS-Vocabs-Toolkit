@@ -39,6 +39,8 @@ import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /** Abstract class representing harvester providers. */
 public abstract class HarvestProvider {
 
@@ -61,10 +63,12 @@ public abstract class HarvestProvider {
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
      * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
     public abstract boolean harvest(final TaskInfo taskInfo,
+            JsonNode subtask,
             final HashMap<String, String> results);
 
     /** Get the contents of an InputStream as a String.

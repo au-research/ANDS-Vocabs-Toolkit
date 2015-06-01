@@ -2,7 +2,6 @@ package au.org.ands.vocabs.toolkit.tasks;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,10 @@ import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /** Top level runner for tasks. */
 public class TaskRunner {
@@ -56,33 +59,44 @@ public class TaskRunner {
         task = taskInfo.getTask();
         vocab = taskInfo.getVocabulary();
         results.put("task_id", task.getId().toString());
-        if (task.getType() == null
-                || task.getType().isEmpty()) {
+        ArrayNode subtasks = TasksUtils.getSubtasks(task.getParams());
+        if (subtasks == null || subtasks.size() == 0) {
             status = TaskStatus.ERROR;
             TasksUtils.updateMessageAndTaskStatus(logger, task, results,
-                    status, "No task type specified. Nothing to do.");
+                    status, "No subtasks specified. Nothing to do.");
             return;
         }
-        results.put("task_type", task.getType());
-        StringTokenizer tTasks = new StringTokenizer(task.getType(), ",");
         boolean success = false;
-        while (tTasks.hasMoreTokens()) {
-            String thisTask = tTasks.nextToken();
+        for (JsonNode subtask : subtasks) {
+            logger.debug("Got subtask: " + subtask.toString());
+            if (!(subtask instanceof ObjectNode)) {
+                logger.error("runTask() didn't get an object:"
+                        + subtask.toString());
+                status = TaskStatus.ERROR;
+                TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                        status, "Bad subtask specification.");
+                return;
+            }
+            logger.debug("subtask type: " + subtask.get("type"));
+            String thisTask = subtask.get("type").textValue();
             switch (thisTask) {
                 case "HARVEST":
-                    success = runHarvest();
+                    success = runHarvest(subtask);
                     break;
                 case "TRANSFORM":
-                    success = runTransform();
+                    success = runTransform(subtask);
                     break;
                 case "IMPORT":
-                    success = runImport();
+                    success = runImport(subtask);
                     break;
                 case "DELETE":
-                    success = runDelete();
+                    success = runDelete(subtask);
                     break;
                 default:
+                    status = TaskStatus.ERROR;
                     results.put("invalid_sub_task", thisTask);
+                    TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                            status, "Invalid subtask specification.");
                 break;
             }
             if (!success) {
@@ -98,11 +112,12 @@ public class TaskRunner {
     }
 
     /** Run a harvest.
+     * @param subtask Details of the subtask
      * @return True, iff the harvest was successful.
      */
-    public final boolean runHarvest() {
+    public final boolean runHarvest(final JsonNode subtask) {
         HarvestProvider provider;
-        String providerName = "PoolParty";
+        String providerName = subtask.get("provider_type").textValue();
         logger.debug("runHarvest");
         status = "HARVESTING";
         results.put("repository_id", TasksUtils.getTaskRepositoryId(taskInfo));
@@ -132,29 +147,32 @@ public class TaskRunner {
                     status, "Could not find Provider: " + providerName);
             return false;
         }
-        return provider.harvest(taskInfo, results);
+        return provider.harvest(taskInfo, subtask, results);
     }
 
     /** Run a transform.
+     * @param subtask Details of the subtask
      * @return True, iff the transform was successful.
      */
-    public final boolean runTransform() {
+    public final boolean runTransform(final JsonNode subtask) {
         logger.debug("runTransform");
         return true;
     }
 
     /** Run an import.
+     * @param subtask Details of the subtask
      * @return True, iff the import was successful.
      */
-    public final boolean runImport() {
+    public final boolean runImport(final JsonNode subtask) {
         logger.debug("runImport");
         return true;
     }
 
     /** Run an Delete.
+     * @param subtask Details of the subtask
      * @return True, iff the deleting was successful.
      */
-    public final boolean runDelete() {
+    public final boolean runDelete(final JsonNode subtask) {
         logger.debug("runDelete");
         return true;
     }

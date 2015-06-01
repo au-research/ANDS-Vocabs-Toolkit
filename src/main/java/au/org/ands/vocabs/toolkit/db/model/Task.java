@@ -27,12 +27,8 @@ public class Task {
     private Integer id;
     /** status. */
     private String status;
-    /** type. */
-    private String type;
     /** params. */
     private String params;
-    /** data. */
-    private String data;
     /** response. */
     private String response;
     /** vocabularyId. */
@@ -72,25 +68,10 @@ public class Task {
         status = aStatus;
     }
 
-    /** Get the type.
-     * @return The type
-     */
-    @Column(name = "type", length = 45)
-    public String getType() {
-        return type;
-    }
-
-    /** Set the type.
-     * @param aType the type
-     */
-    public void setType(final String aType) {
-        type = aType;
-    }
-
     /** Get the params.
      * @return The params
      */
-    @Column(name = "params", length = 255)
+    @Column(name = "params")
     public String getParams() {
         return params;
     }
@@ -100,21 +81,6 @@ public class Task {
      */
     public void setParams(final String aParams) {
         params = aParams;
-    }
-
-    /** Get the data.
-     * @return The data
-     */
-    @Column(name = "data", length = 65535)
-    public String getData() {
-        return data;
-    }
-
-    /** Set the data.
-     * @param aData the data
-     */
-    public void setData(final String aData) {
-        data = aData;
     }
 
     /** Get the response.

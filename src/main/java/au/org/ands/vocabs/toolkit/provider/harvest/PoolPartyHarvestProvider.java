@@ -20,6 +20,8 @@ import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /** Provider for PoolParty. */
 public class PoolPartyHarvestProvider extends HarvestProvider {
 
@@ -58,16 +60,18 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
      * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
     @Override
     public final boolean harvest(final TaskInfo taskInfo,
+            final JsonNode subtask,
             final HashMap<String, String> results) {
         String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
         String username = PROPS.getProperty("PoolPartyHarvester.username");
         String password = PROPS.getProperty("PoolPartyHarvester.password");
-        String projectId = taskInfo.getVocabulary().getPoolPartyId();
+        String projectId = subtask.get("project_id").textValue();
 
         String format = PROPS.getProperty("PoolPartyHarvester.defaultFormat");
 
