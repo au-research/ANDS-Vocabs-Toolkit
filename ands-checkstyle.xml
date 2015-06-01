@@ -11,6 +11,7 @@
 <module name="Checker">
   <property name="severity" value="warning"/>
   <module name="TreeWalker">
+    <module name="FileContentsHolder"/>
     <module name="JavadocMethod">
       <property name="suppressLoadErrors" value="true"/>
     </module>
@@ -82,4 +83,5 @@
   <module name="SuppressionFilter">
     <property name="file" value="${samedir}/ands-checkstyle-suppress.xml"/>
   </module>
+  <module name="SuppressionCommentFilter"/>
 </module>
