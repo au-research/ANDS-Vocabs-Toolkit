@@ -18,17 +18,17 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-/** Provider for PoolParty. */
+/** Harvest provider for PoolParty. */
 public class PoolPartyHarvestProvider extends HarvestProvider {
 
     /** The logger for this class. */
     private final Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
-//    private UriInfo info;
 
     @Override
     public final String getInfo() {
@@ -71,6 +71,15 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
         String username = PROPS.getProperty("PoolPartyHarvester.username");
         String password = PROPS.getProperty("PoolPartyHarvester.password");
+
+        if (subtask.get("project_id") == null
+                || subtask.get("project_id").textValue().isEmpty()) {
+            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+                    results, TaskStatus.ERROR,
+                    "No PoolParty id specified. Nothing to do.");
+            return false;
+        }
+
         String projectId = subtask.get("project_id").textValue();
 
         String format = PROPS.getProperty("PoolPartyHarvester.defaultFormat");
