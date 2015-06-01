@@ -87,9 +87,6 @@ public class SesameImporterProvider extends ImporterProvider {
         HTTPCLIENTUTILS_CLASS =
             org.apache.http.client.utils.HttpClientUtils.class;
 
-    /** Return information about the provider.
-     * @return The information.
-     */
     @Override
     public final Collection<?> getInfo() {
         RepositoryManager manager = null;
@@ -104,13 +101,6 @@ public class SesameImporterProvider extends ImporterProvider {
         return null;
     }
 
-    /** Do an import. Update the message parameter with the result
-     * of the import.
-     * @param taskInfo The TaskInfo object describing the entire task.
-     * @param subtask The details of the subtask
-     * @param results HashMap representing the result of the task.
-     * @return True, iff the import succeeded.
-     */
     @Override
     public final boolean doImport(final TaskInfo taskInfo,
             final JsonNode subtask,

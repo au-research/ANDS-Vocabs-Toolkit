@@ -13,6 +13,8 @@ import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProvider;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.publish.PublishProvider;
+import au.org.ands.vocabs.toolkit.provider.publish.PublishProviderUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -92,6 +94,9 @@ public class TaskRunner {
                 case "IMPORT":
                     success = runImport(subtask);
                     break;
+                case "PUBLISH":
+                    success = runPublish(subtask);
+                    break;
                 case "DELETE":
                     success = runDelete(subtask);
                     break;
@@ -134,7 +139,7 @@ public class TaskRunner {
         } catch (ClassNotFoundException
                 | InstantiationException
                 | IllegalAccessException e) {
-            logger.error("runTask exception: ", e);
+            logger.error("runHarvest exception: ", e);
             results.put(TaskStatus.EXCEPTION, e.toString());
             return false;
         }
@@ -173,7 +178,7 @@ public class TaskRunner {
         } catch (ClassNotFoundException
                 | InstantiationException
                 | IllegalAccessException e) {
-            logger.error("runTask exception: ", e);
+            logger.error("runImport exception: ", e);
             results.put(TaskStatus.EXCEPTION, e.toString());
             return false;
         }
@@ -187,7 +192,37 @@ public class TaskRunner {
         return provider.doImport(taskInfo, subtask, results);
     }
 
-    /** Run an Delete.
+    /** Run a publish.
+     * @param subtask Details of the subtask
+     * @return True, iff the publish was successful.
+     */
+    public final boolean runPublish(final JsonNode subtask) {
+        PublishProvider provider;
+        String providerName = subtask.get("provider_type").textValue();
+        logger.debug("runPublish");
+        status = "PUBLISHING";
+        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                status, "Import in progress");
+         try {
+            provider = PublishProviderUtils.getProvider(providerName);
+        } catch (ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException e) {
+            logger.error("runPublish exception: ", e);
+            results.put(TaskStatus.EXCEPTION, e.toString());
+            return false;
+        }
+
+        if (provider == null) {
+            status = TaskStatus.ERROR;
+            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                    status, "Could not find Provider: " + providerName);
+            return false;
+        }
+        return provider.publish(taskInfo, results);
+    }
+
+    /** Run a Delete.
      * @param subtask Details of the subtask
      * @return True, iff the deleting was successful.
      */

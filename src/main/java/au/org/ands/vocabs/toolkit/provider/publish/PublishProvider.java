@@ -1,4 +1,4 @@
-package au.org.ands.vocabs.toolkit.provider.importer;
+package au.org.ands.vocabs.toolkit.provider.publish;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
@@ -6,28 +6,24 @@ import java.util.Properties;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-/** Abstract class representing importer providers. */
-public abstract class ImporterProvider {
+/** Abstract class representing publish providers. */
+public abstract class PublishProvider {
 
     /** Access to the Toolkit properties. */
     protected static final Properties PROPS = ToolkitProperties.getProperties();
 
-      /** Return information about the provider.
+    /** Return information about the provider.
      * @return The information.
      */
     public abstract Collection<?> getInfo();
 
-    /** Do an import. Update the message parameter with the result
-     * of the import.
+    /** Do a publish. Update the message parameter with the result
+     * of the publish.
      * @param taskInfo The TaskInfo object describing the entire task.
-     * @param subtask The details of the subtask
-     * @param results HashMap representing the result of the import.
+     * @param results HashMap representing the result of the publish.
      * @return True, iff the import succeeded.
      */
-    public abstract boolean doImport(final TaskInfo taskInfo,
-            final JsonNode subtask,
+    public abstract boolean publish(final TaskInfo taskInfo,
             final HashMap<String, String> results);
 
 }
