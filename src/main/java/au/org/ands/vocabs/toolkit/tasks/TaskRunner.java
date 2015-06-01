@@ -11,6 +11,8 @@ import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.importer.ImporterProvider;
+import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -56,6 +58,7 @@ public class TaskRunner {
     /** Run the task.
      */
     public final void runTask() {
+        status = TaskStatus.SUCCESS;
         task = taskInfo.getTask();
         vocab = taskInfo.getVocabulary();
         results.put("task_id", task.getId().toString());
@@ -103,7 +106,9 @@ public class TaskRunner {
                 logger.error("ERROR while running task: " + thisTask);
                 results.put("error_subtask", thisTask);
                 status = TaskStatus.ERROR;
-                break;
+                TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                        status, "Error in subtask.");
+                return;
             }
         }
         status = TaskStatus.SUCCESS;
@@ -124,13 +129,6 @@ public class TaskRunner {
         status = "HARVESTING";
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Harvest in progress");
-        if (vocab.getPoolPartyId() == null
-                || vocab.getPoolPartyId().isEmpty()) {
-            status = TaskStatus.ERROR;
-            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
-                    status, "No PoolParty id specified. Nothing to do.");
-            return false;
-        }
         try {
             provider = HarvestProviderUtils.getProvider(providerName);
         } catch (ClassNotFoundException
@@ -164,8 +162,29 @@ public class TaskRunner {
      * @return True, iff the import was successful.
      */
     public final boolean runImport(final JsonNode subtask) {
+        ImporterProvider provider;
+        String providerName = subtask.get("provider_type").textValue();
         logger.debug("runImport");
-        return true;
+        status = "IMPORTING";
+        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                status, "Import in progress");
+         try {
+            provider = ImporterProviderUtils.getProvider(providerName);
+        } catch (ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException e) {
+            logger.error("runTask exception: ", e);
+            results.put(TaskStatus.EXCEPTION, e.toString());
+            return false;
+        }
+
+        if (provider == null) {
+            status = TaskStatus.ERROR;
+            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                    status, "Could not find Provider: " + providerName);
+            return false;
+        }
+        return provider.doImport(taskInfo, subtask, results);
     }
 
     /** Run an Delete.
