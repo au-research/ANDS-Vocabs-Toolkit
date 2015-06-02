@@ -134,8 +134,7 @@ public final class TasksUtils {
             logger.info(details);
         }
         results.put("status", status);
-        TasksUtils.setTaskStatusAndData(task, status,
-                hashMapToJSONString(results));
+        setTaskStatusAndData(task, status, hashMapToJSONString(results));
     }
 
     /** Convert a HashMap to a string containing JSON.
@@ -171,7 +170,7 @@ public final class TasksUtils {
         }
     }
 
-    /** Parse a string containing JSON into a list of subtasks.
+    /** Parse a task params value containing JSON into a list of subtasks.
      * @param jsonString The String in JSON format to be converted
      * @return The resulting JSON structure
      */
