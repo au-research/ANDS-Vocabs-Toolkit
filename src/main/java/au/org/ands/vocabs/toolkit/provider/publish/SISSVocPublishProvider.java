@@ -85,7 +85,8 @@ public class SISSVocPublishProvider extends PublishProvider {
         specProperties.put("SERVICE_HOMEPAGE", "http://www.ands.org.au/");
         // Vocabulary title
         specProperties.put("SERVICE_LABEL",
-                taskInfo.getVocabulary().getTitle());
+                StringEscapeUtils.escapeJava(
+                        taskInfo.getVocabulary().getTitle()));
         String repositoryId = TasksUtils.getTaskRepositoryId(taskInfo);
         // SPARQL endpoint to use for doing queries
         specProperties.put("SPARQL_ENDPOINT",
@@ -101,12 +102,15 @@ public class SISSVocPublishProvider extends PublishProvider {
                 "resources/default/transform/ands-ashtml-sissvoc.xsl");
         // Empty string for now
         specProperties.put("NAMESPACES", "");
+        // Title of the vocab displayed at the top of HTML pages
+        specProperties.put("ANDS_VOCABNAME",
+                StringEscapeUtils.escapeJava(
+                        taskInfo.getVocabulary().getTitle()));
         // Add more properties here, if/when needed.
 //        specProperties.put("", "");
         // The above properties are all more-or-less required.
         // Below are properties that are optional, and
         // may be overridden by the subtask settings.
-        specProperties.put("ANDS_VOCABNAME", "");
         specProperties.put("ANDS_VOCABMORE", "");
         specProperties.put("ANDS_VOCABAPIDOCO", "");
     }
