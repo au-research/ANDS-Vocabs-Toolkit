@@ -77,7 +77,8 @@ public class SolrIndexTransformProvider extends TransformProvider {
                 | RDFHandlerException ex) {
             // I/O error encountered during the iteration,
             // the cause is an IOException
-            logger.error("Exception in SolrIndexTransform while Parsing RDF:", ex);
+            logger.error("Exception in SolrIndexTransform while Parsing RDF:",
+                    ex);
             return false;
         }
 
@@ -97,7 +98,8 @@ public class SolrIndexTransformProvider extends TransformProvider {
             jsonWriter.writeObject(job.build());
             jsonWriter.close();
         } catch (FileNotFoundException ex) {
-            logger.error("Exception in SolrIndexTransform generating result:", ex);
+            logger.error("Exception in SolrIndexTransform generating result:",
+                    ex);
             return false;
         }
 //        RDFWriter writer = Rio.createWriter(RDFFormat.RDFJSON, out);

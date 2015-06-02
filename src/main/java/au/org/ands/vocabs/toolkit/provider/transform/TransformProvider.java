@@ -22,6 +22,7 @@ public abstract class TransformProvider {
     /** Do a transform. Update the message parameter with the result
      * of the transform.
      * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The specification of this transform subtask
      * @param results HashMap representing the result of the transform.
      * @return True, iff the transform succeeded.
      */
