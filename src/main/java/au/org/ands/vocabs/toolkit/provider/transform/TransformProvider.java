@@ -6,6 +6,8 @@ import java.util.Properties;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /** Abstract class representing transform providers. */
 public abstract class TransformProvider {
 
@@ -24,6 +26,7 @@ public abstract class TransformProvider {
      * @return True, iff the transform succeeded.
      */
     public abstract boolean transform(final TaskInfo taskInfo,
+            JsonNode subtask,
             final HashMap<String, String> results);
 
 }

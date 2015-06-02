@@ -15,6 +15,8 @@ import au.org.ands.vocabs.toolkit.provider.importer.ImporterProvider;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.publish.PublishProvider;
 import au.org.ands.vocabs.toolkit.provider.publish.PublishProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.transform.TransformProvider;
+import au.org.ands.vocabs.toolkit.provider.transform.TransformProviderUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -159,7 +161,28 @@ public class TaskRunner {
      */
     public final boolean runTransform(final JsonNode subtask) {
         logger.debug("runTransform");
-        return true;
+        TransformProvider provider;
+        String providerName = subtask.get("provider_type").textValue();
+        status = "IMPORTING";
+        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                status, "Import in progress");
+         try {
+            provider = TransformProviderUtils.getProvider(providerName);
+        } catch (ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException e) {
+            logger.error("runTransform exception: ", e);
+            results.put(TaskStatus.EXCEPTION, e.toString());
+            return false;
+        }
+
+        if (provider == null) {
+            status = TaskStatus.ERROR;
+            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                    status, "Could not find Provider: " + providerName);
+            return false;
+        }
+        return provider.transform(taskInfo, subtask, results);
     }
 
     /** Run an import.
