@@ -142,7 +142,7 @@ public final class TasksUtils {
      * @return The resulting string
      */
     public static String hashMapToJSONString(
-            final HashMap<String, String> map) {
+            final HashMap<String, ?> map) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(map);
