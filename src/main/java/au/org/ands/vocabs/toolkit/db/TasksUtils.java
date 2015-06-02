@@ -228,7 +228,8 @@ public final class TasksUtils {
     }
 
     /**
-     * Get the repository ID for a vocabulary's version referred to by the task.
+     * Get the Sesame repository ID for a vocabulary's version
+     * referred to by the task.
      *
      * @param taskInfo
      *            The TaskInfo object representing the task.
@@ -241,6 +242,25 @@ public final class TasksUtils {
                 + UriComponent.encode(taskInfo.getVocabulary().getSlug(),
                         UriComponent.Type.PATH_SEGMENT)
                 + "_"
+                + UriComponent.encode(taskInfo.getVersion().getTitle(),
+                        UriComponent.Type.PATH_SEGMENT)).toLowerCase();
+    }
+
+    /**
+     * Get the SISSVoc repository ID for a vocabulary's version
+     * referred to by the task.
+     *
+     * @param taskInfo
+     *            The TaskInfo object representing the task.
+     * @return The repository id for the vocabulary with this version.
+     */
+    public static String getSISSVocRepositoryPath(final TaskInfo taskInfo) {
+        return (UriComponent.encode(taskInfo.getVocabulary().getOwner(),
+                UriComponent.Type.PATH_SEGMENT)
+                + "/"
+                + UriComponent.encode(taskInfo.getVocabulary().getSlug(),
+                        UriComponent.Type.PATH_SEGMENT)
+                + "/"
                 + UriComponent.encode(taskInfo.getVersion().getTitle(),
                         UriComponent.Type.PATH_SEGMENT)).toLowerCase();
     }

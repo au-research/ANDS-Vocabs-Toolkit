@@ -242,7 +242,7 @@ public class TaskRunner {
                     status, "Could not find Provider: " + providerName);
             return false;
         }
-        return provider.publish(taskInfo, results);
+        return provider.publish(taskInfo, subtask, results);
     }
 
     /** Run a Delete.

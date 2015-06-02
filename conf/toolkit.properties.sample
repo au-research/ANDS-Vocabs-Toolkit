@@ -20,3 +20,6 @@ PoolPartyHarvester.defaultExportModule = concepts
 
 # local OpenRDF Sesame server
 SesameImporter.serverUrl = [Sesame API URL]
+
+# SISSVoc spec file template
+SISSVoc.spec_template = [filename to spec file template]
