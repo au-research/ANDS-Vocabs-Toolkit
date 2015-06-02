@@ -40,7 +40,7 @@ import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-/** Abstract class representing importer providers. */
+/** Sesame importer provider. */
 public class SesameImporterProvider extends ImporterProvider {
 
      /** Logger for this class. */
