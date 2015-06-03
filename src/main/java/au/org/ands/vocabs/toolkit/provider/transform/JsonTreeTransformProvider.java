@@ -12,11 +12,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Properties;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 import org.apache.commons.io.FileUtils;
 import org.openrdf.model.Statement;
@@ -36,7 +33,8 @@ import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-/** Transform provider for generating Solr Index files as JSON from RDF. */
+/** Transform provider for generating a tree-like representation of the
+ * concepts as JSON. This assumes a vocabulary encoded using SKOS. */
 public class JsonTreeTransformProvider extends TransformProvider {
 
     /** Logger for this class. */
@@ -67,10 +65,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
                 rdfParser.setRDFHandler(conceptHandler);
                 FileInputStream is = new FileInputStream(entry.toString());
                 rdfParser.parse(is, entry.toString());
-
-                logger.info("Reading RDF:"
-                        + entry.toString());
-
+                logger.debug("Reading RDF: " + entry.toString());
             }
         } catch (DirectoryIteratorException
                 | IOException
@@ -78,93 +73,167 @@ public class JsonTreeTransformProvider extends TransformProvider {
                 | RDFHandlerException ex) {
             // I/O error encountered during the iteration,
             // the cause is an IOException
-            logger.error("Exception in JsonTreeTransform while Parsing RDF:"
-                    , ex);
+            logger.error("Exception in JsonTreeTransform while Parsing RDF:",
+                    ex);
             return false;
         }
 
-        String resultFileName = TasksUtils.getTaskOutputPath(taskInfo,
+        String resultFileNameTree = TasksUtils.getTaskOutputPath(taskInfo,
                 "concepts_tree.json");
         try {
-            File out = new File(resultFileName);
-            results.put("concepts_tree", resultFileName);
-//            JsonObject jTree = conceptHandler.getJsonTree();
-            HashMap<String, HashMap<String, Object>> conceptMap =
-                    conceptHandler.getCmap();
-//            JsonWriter jsonWriter = Json.createWriter(out);
-//            jsonWriter.writeObject(jTree);
-//            jsonWriter.writeObject(conceptMap);
-//            jsonWriter.close();
+            File out = new File(resultFileNameTree);
+            results.put("concepts_tree", resultFileNameTree);
+            HashMap<String, HashMap<String, Object>> conceptTree =
+                    conceptHandler.buildTree();
+
             FileUtils.writeStringToFile(out,
-                    TasksUtils.hashMapToJSONString(conceptMap));
+                    TasksUtils.hashMapToJSONString(conceptTree));
         } catch (IOException ex) {
-            logger.error("Exception in JsonTreeTransform generating result:"
-                    , ex);
+            logger.error("Exception in JsonTreeTransform generating result:",
+                    ex);
             return false;
         }
-//        RDFWriter writer = Rio.createWriter(RDFFormat.RDFJSON, out);
 
         return true;
     }
-/** RDF Hadler to extract prefLabels and concept count. */
+
+    /** RDF Handler to extract prefLabels, notation, and use broader
+     * and narrow properties to construct a tree-like structure. */
     class ConceptHandler extends RDFHandlerBase {
 
-        /** a Json Builder to build the Tree. */
-        private JsonObjectBuilder job = Json.createObjectBuilder();
-        /** space separated String of all labels. */
-        private HashMap<String, HashMap<String, Object>> cMap =
+        /** Map from concept IRI to a map that maps
+         * property name to the property value(s). */
+        private HashMap<String, HashMap<String, Object>> conceptMap =
+                new HashMap<String, HashMap<String, Object>>();
+
+        /** The top-most concepts of the vocabulary. This is based on
+         * finding all concepts that do not have a broader concept. */
+        private HashMap<String, HashMap<String, Object>> topmostConcepts =
                 new HashMap<String, HashMap<String, Object>>();
 
         @Override
         public void handleStatement(final Statement st) {
-            if (cMap.get(st.getSubject().stringValue()) == null) {
-                cMap.put(st.getSubject().stringValue(),
+            if (conceptMap.get(st.getSubject().stringValue()) == null) {
+                conceptMap.put(st.getSubject().stringValue(),
                         new HashMap<String, Object>());
             }
-//            JsonObjectBuilder item = Json.createObjectBuilder();
-            HashMap<String, Object> item =
-                    cMap.get(st.getSubject().stringValue());
+            HashMap<String, Object> concept =
+                    conceptMap.get(st.getSubject().stringValue());
             if (st.getPredicate().equals(SKOS.PREF_LABEL)) {
-                item.put("prefLabel", st.getObject().stringValue());
+                concept.put("prefLabel", st.getObject().stringValue());
             }
             if (st.getPredicate().equals(SKOS.NOTATION)) {
-                item.put("notation", st.getObject().stringValue());
+                concept.put("notation", st.getObject().stringValue());
             }
             if (st.getPredicate().equals(SKOS.BROADER)) {
-                if (item.get("broader") == null) {
-                    item.put("broader",
+                if (concept.get("broader") == null) {
+                    concept.put("broader",
                             new ArrayList<String>());
                 }
                 @SuppressWarnings("unchecked")
-                ArrayList<String> aList =
-                        (ArrayList<String>) item.get("broader");
-                aList.add(st.getObject().stringValue());
+                ArrayList<String> broaderList =
+                        (ArrayList<String>) concept.get("broader");
+                broaderList.add(st.getObject().stringValue());
             }
             if (st.getPredicate().equals(SKOS.NARROWER)) {
-                if (item.get("narrower") == null) {
-                    item.put("narrower",
+                if (concept.get("narrower") == null) {
+                    concept.put("narrower",
                             new ArrayList<String>());
                 }
                 @SuppressWarnings("unchecked")
-                ArrayList<String> aList =
-                        (ArrayList<String>) item.get("narrower");
-                aList.add(st.getObject().stringValue());
+                ArrayList<String> narrowerList =
+                        (ArrayList<String>) concept.get("narrower");
+                narrowerList.add(st.getObject().stringValue());
             }
         }
 
-/** getter for concepts text. */
-/** @return JsonObject */
-        public JsonObject getJsonTree() {
-            return job.build();
+        /** Getter for concepts text. */
+        /** @return The tree of concepts */
+        @SuppressWarnings("unchecked")
+        public HashMap<String, HashMap<String, Object>> buildTree() {
+            // This is a rearranged version of conceptMap, with
+            // the concepts arranged in a tree structure based on
+            // the broader/narrower relations.
+            HashMap<String, HashMap<String, Object>> conceptTreeMap =
+                    new HashMap<String, HashMap<String, Object>>();
+            populateTopConcepts();
+            for (Entry<String, HashMap<String, Object>> topmostConcept
+                    : topmostConcepts.entrySet()) {
+                if (topmostConcept.getValue().containsKey("narrower")) {
+                    ArrayList<String> narrowerList =
+                            (ArrayList<String>)
+                            topmostConcept.getValue().get("narrower");
+                    // Remove the narrower map; it will be replaced
+                    // by the tree structure of narrower concepts.
+                    topmostConcept.getValue().remove("narrower");
+                    for (String narrowerKey : narrowerList) {
+                        HashMap<String, Object> narrower =
+                                buildNarrower(narrowerKey);
+                        if (narrower != null) {
+                            topmostConcept.getValue().put(narrowerKey,
+                                    narrower);
+                        }
+                    }
+
+                }
+                conceptTreeMap.put(topmostConcept.getKey(),
+                        (HashMap<String, Object>)
+                        (topmostConcept.getValue().clone()));
+            }
+            return conceptTreeMap;
         }
 
-        /** getter for concepts text. */
-        /** @return JsonObject */
-                public HashMap<String, HashMap<String, Object>> getCmap() {
-                    return cMap;
+        /** Resolve all narrower concepts of a concept.
+         * NB: This method is recursive.
+         * @param key The key of the narrower concept.
+         * @return The tree of concept text */
+        private HashMap<String, Object> buildNarrower(final String key) {
+            if (conceptMap.get(key) == null) {
+                logger.error("buildNarrower Orphan key: " + key);
+                return null;
+            }
+            HashMap<String, Object> narrowerConcepts = conceptMap.get(key);
+            if (narrowerConcepts.containsKey("broader")) {
+                // Remove all broader maps; they don't get returned in
+                // the resulting tree structure. The tree structure
+                // is based on narrower relations.
+                narrowerConcepts.remove("broader");
+            }
+            if (narrowerConcepts.containsKey("narrower")) {
+                @SuppressWarnings("unchecked")
+                ArrayList<String> narrowerList =
+                        (ArrayList<String>)
+                        narrowerConcepts.get("narrower");
+                narrowerConcepts.remove("narrower");
+                for (String narrowerKey : narrowerList) {
+                    HashMap<String, Object> narrowerChildAndDescendantsMap =
+                            buildNarrower(narrowerKey);
+                    if (narrowerChildAndDescendantsMap != null) {
+                        narrowerConcepts.put(narrowerKey,
+                                narrowerChildAndDescendantsMap);
+                    }
                 }
+            }
+            return narrowerConcepts;
+        }
 
-
+        /** Populate the top-most concepts.
+         * A concept is considered to be "top-most" if it
+         * does not specify any broader concepts.
+         * This (probably) catches both concepts explicitly
+         * labelled as top concepts, and also any "dangling"
+         * concepts.
+         * FIXME: Cope with a vocabulary with a hierarchy specified only using
+         * the narrower property. */
+        private void populateTopConcepts() {
+            for (Entry<String, HashMap<String, Object>>
+            concept : conceptMap.entrySet()) {
+                HashMap<String, Object> propertyMap = concept.getValue();
+                if (propertyMap.get("broader") == null) {
+                    topmostConcepts.put(concept.getKey(), propertyMap);
+                }
+            }
+        }
     }
 
 }
