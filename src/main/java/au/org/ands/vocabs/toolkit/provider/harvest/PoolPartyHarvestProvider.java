@@ -95,6 +95,8 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         if (exportModules.isEmpty()) {
             exportModules.add(PROPS.getProperty(
                     "PoolPartyHarvester.defaultExportModule"));
+            exportModules.add("adms");
+            exportModules.add("void");
         }
         // In future, get extra stuff. It does work!
 //        exportModules.add("adms");
