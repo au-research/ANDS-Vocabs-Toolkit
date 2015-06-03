@@ -93,7 +93,6 @@ public class JsonTreeTransformProvider extends TransformProvider {
                     ex);
             return false;
         }
-
         return true;
     }
 
@@ -147,7 +146,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
             }
         }
 
-        /** Getter for concepts text. */
+        /** Build the concepts tree. */
         /** @return The tree of concepts */
         @SuppressWarnings("unchecked")
         public HashMap<String, HashMap<String, Object>> buildTree() {
