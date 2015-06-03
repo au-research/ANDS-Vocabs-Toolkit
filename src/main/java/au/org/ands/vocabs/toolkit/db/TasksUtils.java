@@ -91,7 +91,7 @@ public final class TasksUtils {
     public static TaskInfo getTaskInfo(final int taskId) {
         Task task = getTaskById(taskId);
         if (task == null) {
-            logger.info("getTaskInfo: getTaskById returned null; task id:"
+            logger.debug("getTaskInfo: getTaskById returned null; task id:"
                     + taskId);
             return null;
         }
@@ -131,7 +131,7 @@ public final class TasksUtils {
                 || TaskStatus.EXCEPTION.equals(status)) {
             logger.error(details);
         } else {
-            logger.info(details);
+            logger.debug(details);
         }
         results.put("status", status);
         setTaskStatusAndData(task, status, hashMapToJSONString(results));
@@ -147,8 +147,7 @@ public final class TasksUtils {
         try {
             return mapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Exception in hashMapToJSONString", e);
             return "{\"exception\":\"Exception while "
                     + "converting map to JSON\"}";
         }
@@ -164,8 +163,7 @@ public final class TasksUtils {
         try {
             return mapper.readTree(jsonString);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Exception in jsonStringToTree", e);
             return null;
         }
     }

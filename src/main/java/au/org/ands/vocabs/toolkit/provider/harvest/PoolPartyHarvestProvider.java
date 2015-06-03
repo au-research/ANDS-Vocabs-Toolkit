@@ -119,7 +119,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             WebTarget thisTarget = plainTarget.queryParam("exportModules",
                     exportModule);
 
-            logger.info("Harvesting from " + thisTarget.toString());
+            logger.debug("Harvesting from " + thisTarget.toString());
 
             Invocation.Builder invocationBuilder =
                     thisTarget.request(MediaType.APPLICATION_XML);

@@ -260,7 +260,7 @@ public class TaskRunner {
      * @return The HashMap for the results. */
     public final HashMap<String, String> getResults() {
         results.put("status", status);
-        logger.info("getResults results:" + results.toString());
+        logger.debug("getResults results:" + results.toString());
         return results;
     }
 

@@ -210,7 +210,7 @@ public class SesameImporterProvider extends ImporterProvider {
                         Files.newDirectoryStream(dir)) {
                     for (Path entry: stream) {
                         File file = new File(entry.toString());
-                        logger.info("Full path:"
+                        logger.debug("Full path:"
                                 + entry.toAbsolutePath().toString());
                         con.add(file, "",
                                 Rio.getParserFormatForFileName(

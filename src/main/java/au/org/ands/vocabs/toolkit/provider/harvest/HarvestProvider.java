@@ -143,7 +143,7 @@ public abstract class HarvestProvider {
             final String repositoryID, final String contextUri,
             String outputFile2) throws Exception {
         JsonObjectBuilder message = Json.createObjectBuilder();
-        logger.info("exportSesame From Server:" + sesameServer
+        logger.debug("exportSesame From Server:" + sesameServer
                 + " repositoryID: " + repositoryID
                 + " contextUri: " + contextUri);
         RepositoryManager manager;
@@ -180,7 +180,7 @@ public abstract class HarvestProvider {
 
             // execute the query and write the result directly to file
             query.evaluate(writer);
-            logger.info("exportSesame Saved RDF as :" + outputFile2);
+            logger.debug("exportSesame Saved RDF as :" + outputFile2);
             message.add("outputFile", outputFile2);
 
         } catch (Exception e) {

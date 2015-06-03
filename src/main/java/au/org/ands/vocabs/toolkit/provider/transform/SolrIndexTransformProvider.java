@@ -67,7 +67,7 @@ public class SolrIndexTransformProvider extends TransformProvider {
                 FileInputStream is = new FileInputStream(entry.toString());
                 rdfParser.parse(is, entry.toString());
 
-                logger.info("Reading RDF:"
+                logger.debug("Reading RDF:"
                         + entry.toString());
 
             }
