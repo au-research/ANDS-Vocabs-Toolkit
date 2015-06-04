@@ -200,13 +200,13 @@ public final class TasksUtils {
             final String extraPath) {
         Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH)
                 .resolve(UriComponent.encode(
-                        taskInfo.getVocabulary().getOwner(),
+                        makeSlug(taskInfo.getVocabulary().getOwner()),
                         UriComponent.Type.PATH_SEGMENT))
                 .resolve(UriComponent.encode(
-                        taskInfo.getVocabulary().getSlug(),
+                        makeSlug(taskInfo.getVocabulary().getSlug()),
                         UriComponent.Type.PATH_SEGMENT))
                 .resolve(UriComponent.encode(
-                        taskInfo.getVersion().getTitle(),
+                        makeSlug(taskInfo.getVersion().getTitle()),
                         UriComponent.Type.PATH_SEGMENT));
         if (extraPath != null && (!extraPath.isEmpty())) {
             path = path.resolve(extraPath);
