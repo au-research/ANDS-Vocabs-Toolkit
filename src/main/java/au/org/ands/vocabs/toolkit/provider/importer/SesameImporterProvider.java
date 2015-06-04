@@ -105,10 +105,17 @@ public class SesameImporterProvider extends ImporterProvider {
     public final boolean doImport(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
+        boolean success;
         // Create repository
-        createRepository(taskInfo, results);
+        success = createRepository(taskInfo, results);
+        if (!success) {
+            return false;
+        }
         // Upload the RDF
-        uploadRDF(taskInfo, subtask, results);
+        success = uploadRDF(taskInfo, subtask, results);
+        if (!success) {
+            return false;
+        }
         results.put("repository_id", TasksUtils.getTaskRepositoryId(taskInfo));
         return true;
     }
