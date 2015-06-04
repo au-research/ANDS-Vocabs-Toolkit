@@ -22,10 +22,10 @@ hibernate.connection.isolation=2
 Toolkit.storagePath = [path where data is stored]
 
 # The directory in which all vocabulary data will be stored
-Toolkit.vocabsPath = {Toolkit.storagePath}/vocabs
+Toolkit.vocabsPath = [path where data is stored]/vocabs
 
 # The directory in which all SISSVoc spec files will be stored
-SISSVoc.specsPath = {Toolkit.storagePath}/specs
+SISSVoc.specsPath = [path where data is stored]/specs
 
 ## POOLPARTY 
 
