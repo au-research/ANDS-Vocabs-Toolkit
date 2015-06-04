@@ -225,6 +225,15 @@ public final class TasksUtils {
         return getTaskOutputPath(taskInfo, ToolkitConfig.HARVEST_DATA_PATH);
     }
 
+    /** Apply slug conventions. In practice, this means replacing
+     * whitespace with hyphen.
+     * @param aString The string that is to be converted.
+     * @return The value of aString with slug conventions applied.
+     */
+    public static String makeSlug(final String aString) {
+        return aString.replaceAll("\\s", "-");
+    }
+
     /**
      * Get the Sesame repository ID for a vocabulary's version
      * referred to by the task.
@@ -234,13 +243,16 @@ public final class TasksUtils {
      * @return The repository id for the vocabulary with this version.
      */
     public static String getTaskRepositoryId(final TaskInfo taskInfo) {
-        return (UriComponent.encode(taskInfo.getVocabulary().getOwner(),
-                UriComponent.Type.PATH_SEGMENT)
-                + "_"
-                + UriComponent.encode(taskInfo.getVocabulary().getSlug(),
+        return (UriComponent.encode(
+                        makeSlug(taskInfo.getVocabulary().getOwner()),
                         UriComponent.Type.PATH_SEGMENT)
                 + "_"
-                + UriComponent.encode(taskInfo.getVersion().getTitle(),
+                + UriComponent.encode(
+                        makeSlug(taskInfo.getVocabulary().getSlug()),
+                        UriComponent.Type.PATH_SEGMENT)
+                + "_"
+                + UriComponent.encode(
+                        makeSlug(taskInfo.getVersion().getTitle()),
                         UriComponent.Type.PATH_SEGMENT)).toLowerCase();
     }
 
@@ -253,13 +265,16 @@ public final class TasksUtils {
      * @return The repository id for the vocabulary with this version.
      */
     public static String getSISSVocRepositoryPath(final TaskInfo taskInfo) {
-        return (UriComponent.encode(taskInfo.getVocabulary().getOwner(),
-                UriComponent.Type.PATH_SEGMENT)
-                + "/"
-                + UriComponent.encode(taskInfo.getVocabulary().getSlug(),
+        return (UriComponent.encode(
+                        makeSlug(taskInfo.getVocabulary().getOwner()),
                         UriComponent.Type.PATH_SEGMENT)
                 + "/"
-                + UriComponent.encode(taskInfo.getVersion().getTitle(),
+                + UriComponent.encode(
+                        makeSlug(taskInfo.getVocabulary().getSlug()),
+                        UriComponent.Type.PATH_SEGMENT)
+                + "/"
+                + UriComponent.encode(
+                        makeSlug(taskInfo.getVersion().getTitle()),
                         UriComponent.Type.PATH_SEGMENT)).toLowerCase();
     }
 
