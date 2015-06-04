@@ -3,6 +3,8 @@ package au.org.ands.vocabs.toolkit.provider.publish;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,6 +46,10 @@ public class SISSVocPublishProvider extends PublishProvider {
     private String sissvocSpecTemplatePath =
             PROPS.getProperty("SISSVoc.specTemplate");
 
+    /** The directory in which to write generated spec files. */
+    private String sissvocSpecOutputPath =
+            PROPS.getProperty("SISSVoc.specsPath");
+
 
     /** Values to be substituted in the spec file template. */
     private final HashMap<String, String> specProperties =
@@ -60,6 +67,17 @@ public class SISSVocPublishProvider extends PublishProvider {
         addBasicSpecProperties(taskInfo);
         addAdditionalSpecProperties(subtask);
         writeSpecFile(taskInfo, subtask, results);
+
+        // results.put("sissvoc_path",
+        //   TasksUtils.getTaskRepositoryId(taskInfo));
+        return true;
+    }
+
+    @Override
+    public final boolean unpublish(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        removeSpecFile(taskInfo, subtask, results);
 
         // results.put("sissvoc_path",
         //   TasksUtils.getTaskRepositoryId(taskInfo));
@@ -171,8 +189,11 @@ public class SISSVocPublishProvider extends PublishProvider {
         }
         StrSubstitutor sub = new StrSubstitutor(specProperties);
         String customSpec = sub.replace(specTemplate);
-        File specFile = new File(TasksUtils.getTaskOutputPath(taskInfo,
-                "sissvoc_spec.ttl"));
+        ToolkitFileUtils.requireDirectory(sissvocSpecOutputPath);
+        File specFile = new File(
+                Paths.get(sissvocSpecOutputPath).
+                resolve(TasksUtils.getTaskRepositoryId(taskInfo)
+                        + ".ttl").toString());
         try {
             FileUtils.writeStringToFile(specFile, customSpec);
         } catch (IOException e) {
@@ -183,5 +204,22 @@ public class SISSVocPublishProvider extends PublishProvider {
 
     }
 
+    /** Remove any existing spec file for SISSVoc.
+     * @param taskInfo The TaskInfo object for this task.
+     * @param subtask The specification of this publish subtask
+     * @param results HashMap representing the result of the publish.
+     */
+    private void removeSpecFile(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        try {
+            Files.deleteIfExists(Paths.get(sissvocSpecOutputPath).
+                    resolve(TasksUtils.getTaskRepositoryId(taskInfo)
+                            + ".ttl"));
+        } catch (IOException e) {
+            // This may mean a file permissions problem, so do log it.
+            logger.error("removeSpecFile failed", e);
+        }
+    }
 
 }

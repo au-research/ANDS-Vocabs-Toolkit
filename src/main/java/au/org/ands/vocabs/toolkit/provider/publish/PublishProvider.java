@@ -29,4 +29,14 @@ public abstract class PublishProvider {
             final JsonNode subtask,
             final HashMap<String, String> results);
 
+    /** Do an unpublish. Update the message parameter with the result
+     * of the unpublish.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
+     * @param results HashMap representing the result of the unpublish.
+     * @return True, iff the unpublish succeeded.
+     */
+    public abstract boolean unpublish(TaskInfo taskInfo, JsonNode subtask,
+            HashMap<String, String> results);
+
 }
