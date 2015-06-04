@@ -1,6 +1,8 @@
 ## build and runtime specific system variables for ANDS Vocab Toolkit App
 ## DATABASE
 
+# Database properties can be specified here instead of/as well as
+# in persistence.xml.
 javax.persistence.jdbc.url=jdbc:mysql://[path to DB]
 javax.persistence.jdbc.user=[db_username]
 javax.persistence.jdbc.driver=com.mysql.jdbc.Driver
@@ -9,6 +11,10 @@ javax.persistence.jdbc.password=[db_password]
 # This is the most basic setting; customize as per instructions at:
 #   http://www.mchange.com/projects/c3p0/
 hibernate.c3p0.testConnectionOnCheckout=true
+# This is needed (at least with MySQL) to ensure that changes made
+# to the database externally (i.e., by the portal) are immediately
+# visible to JPA queries.
+hibernate.connection.isolation=2
 
 ## FILE STORAGE
 
