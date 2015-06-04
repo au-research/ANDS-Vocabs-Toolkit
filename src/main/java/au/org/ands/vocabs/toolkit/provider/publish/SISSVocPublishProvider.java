@@ -41,7 +41,7 @@ public class SISSVocPublishProvider extends PublishProvider {
 
     /** The location of the spec file template. */
     private String sissvocSpecTemplatePath =
-            PROPS.getProperty("SISSVoc.spec_template");
+            PROPS.getProperty("SISSVoc.specTemplate");
 
 
     /** Values to be substituted in the spec file template. */

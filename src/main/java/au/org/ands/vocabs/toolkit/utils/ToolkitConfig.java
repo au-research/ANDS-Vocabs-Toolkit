@@ -23,8 +23,8 @@ public final class ToolkitConfig {
 
     /** Path to the directory used to store vocabulary files. */
     public static final String DATA_FILES_PATH =
-            ToolkitProperties.getProperty("HarvesterHandler.dataPath",
-                    "/temp");
+            ToolkitProperties.getProperty("Toolkit.vocabsPath",
+                    "/tmp");
 
     /** Mapping of (PoolParty) formats to filename extensions . */
     public static final Hashtable<String, String>
