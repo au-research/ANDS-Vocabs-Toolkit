@@ -72,17 +72,27 @@ public class SISSVocPublishProvider extends PublishProvider {
      */
     private void addBasicSpecProperties(final TaskInfo taskInfo) {
         // Top-level of deployment path
-        specProperties.put("DEPLOYPATH", "/repository/api/lda");
+        specProperties.put("DEPLOYPATH",
+                PROPS.getProperty("SISSVoc.variable.DEPLOYPATH",
+                        "/repository/api/lda"));
         // The name of the ANDS Vocabulary service
-        specProperties.put("SERVICE_TITLE", "ANDS Vocabularies LDA service");
+        specProperties.put("SERVICE_TITLE",
+                PROPS.getProperty("SISSVoc.variable.SERVICE_TITLE",
+                        "ANDS Vocabularies LDA service"));
         // The name of the ANDS Vocabulary service owner
-        specProperties.put("SERVICE_AUTHOR", "ANDS Services");
+        specProperties.put("SERVICE_AUTHOR",
+                PROPS.getProperty("SISSVoc.variable.SERVICE_AUTHOR",
+                        "ANDS Services"));
         // Contact email address for the ANDS Vocabulary service owner
-        specProperties.put("SERVICE_AUTHOR_EMAIL", "services@ands.org.au");
+        specProperties.put("SERVICE_AUTHOR_EMAIL",
+                PROPS.getProperty("SISSVoc.variable.SERVICE_AUTHOR_EMAIL",
+                        "services@ands.org.au"));
         // Homepage of the ANDS Vocabulary service
         // ANDS home page for now; in future, could be
         // vocabs.ands.org.au itself.
-        specProperties.put("SERVICE_HOMEPAGE", "http://www.ands.org.au/");
+        specProperties.put("SERVICE_HOMEPAGE",
+                PROPS.getProperty("SISSVoc.variable.SERVICE_HOMEPAGE",
+                        "http://www.ands.org.au/"));
         // Vocabulary title
         specProperties.put("SERVICE_LABEL",
                 StringEscapeUtils.escapeJava(
@@ -90,16 +100,20 @@ public class SISSVocPublishProvider extends PublishProvider {
         String repositoryId = TasksUtils.getTaskRepositoryId(taskInfo);
         // SPARQL endpoint to use for doing queries
         specProperties.put("SPARQL_ENDPOINT",
-                "http://localhost:8080/repository/"
-                + "openrdf-sesame/repositories/"
-                        + repositoryId);
+                PROPS.getProperty("SISSVoc.variable.SPARQL_ENDPOINT_PREFIX",
+                        "http://localhost:8080/repository/"
+                                + "openrdf-sesame/repositories/")
+                                + repositoryId);
         specProperties.put("SVC_ID", repositoryId);
+        // Additional path to all the endpoints for this repository.
+        // The template assumes the variable begins with a slash.
         specProperties.put("SVC_PREFIX",
-                TasksUtils.getSISSVocRepositoryPath(taskInfo));
+                "/" + TasksUtils.getSISSVocRepositoryPath(taskInfo));
         // Path to the XSL stylesheet that generates the HTML pages.
         // Path is relative to the SISSVoc webapp.
         specProperties.put("HTML_STYLESHEET",
-                "resources/default/transform/ands-ashtml-sissvoc.xsl");
+                PROPS.getProperty("SISSVoc.variable.HTML_STYLESHEET",
+                        "resources/default/transform/ands-ashtml-sissvoc.xsl"));
         // Empty string for now
         specProperties.put("NAMESPACES", "");
         // Title of the vocab displayed at the top of HTML pages

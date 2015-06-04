@@ -246,7 +246,7 @@ public final class TasksUtils {
 
     /**
      * Get the SISSVoc repository ID for a vocabulary's version
-     * referred to by the task.
+     * referred to by the task. It neither begins nor ends with a slash.
      *
      * @param taskInfo
      *            The TaskInfo object representing the task.

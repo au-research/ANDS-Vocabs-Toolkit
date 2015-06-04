@@ -23,3 +23,21 @@ SesameImporter.serverUrl = [Sesame API URL]
 
 # SISSVoc spec file template
 SISSVoc.spec_template = [filename to spec file template]
+# SISSVoc spec file template variables
+# Top-level of deployment path. Should begin with a slash, but not end with one.
+SISSVoc.variable.DEPLOYPATH = [/path...]
+# The name of the Vocabulary service
+SISSVoc.variable.SERVICE_TITLE = [title]
+# The name of the Vocabulary service owner
+SISSVoc.variable.SERVICE_AUTHOR = [author]
+# Contact email address for the Vocabulary service owner
+SISSVoc.variable.SERVICE_AUTHOR_EMAIL = [email]
+# URL of the homepage of the Vocabulary service
+# ANDS home page for now; in future, could be
+# vocabs.ands.org.au itself.
+SISSVoc.variable.SERVICE_HOMEPAGE = [URL]
+# URL prefix of SPARQL endpoint to use for doing queries. Should end with a slash.
+SISSVoc.variable.SPARQL_ENDPOINT_PREFIX = [URL]
+# Path to the XSL stylesheet that generates the HTML pages.
+# Path is relative to the SISSVoc webapp.
+SISSVoc.variable.HTML_STYLESHEET = [path.xsl]
