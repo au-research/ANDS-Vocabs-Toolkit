@@ -16,6 +16,8 @@ import java.util.Properties;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.vocabulary.DCTERMS;
+import org.openrdf.model.vocabulary.RDF;
+import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
@@ -108,12 +110,17 @@ public class GetMetadataTransformProvider extends TransformProvider {
                     ex);
             return results;
         }
-            results.putAll(conceptHandler.getMetadata());
+        results.putAll(conceptHandler.getMetadata());
+        results.put("concept_count", Integer.toString(
+                conceptHandler.getCountedConcepts()));
         return results;
     }
     /** RDF Handler to extract prefLabels, notation, and use broader
      * and narrow properties to construct a list-like structure. */
     class ConceptHandler extends RDFHandlerBase {
+
+        /** Number of concept resources. */
+        private int countedConcepts = 0;
 
         /** Map for metadata contained in the graph
          * property name to the property value(s). */
@@ -129,7 +136,18 @@ public class GetMetadataTransformProvider extends TransformProvider {
                             st.getObject().stringValue());
                 }
             }
+            if (st.getPredicate().equals(RDF.TYPE)
+                    && (st.getObject().equals(SKOS.CONCEPT))) {
+                countedConcepts++;
+            }
         }
+
+        /** Getter for concept count. */
+        /** @return The number of concept resources. */
+        public int getCountedConcepts() {
+            return countedConcepts;
+        }
+
 
         /** Getter for concepts list. */
         /** @return The completed concept map. */

@@ -88,9 +88,8 @@ public class SolrIndexTransformProvider extends TransformProvider {
             FileOutputStream out = new FileOutputStream(resultFileName);
             JsonObjectBuilder job = Json.createObjectBuilder();
             job.add("concepts_count", conceptHandler.getCountedPrefLabels());
-            results.put("concepts_count",
-                    new Integer(
-                            conceptHandler.getCountedPrefLabels()).toString());
+            results.put("concepts_count", Integer.toString(
+                            conceptHandler.getCountedPrefLabels()));
             job.add("concepts_text", conceptHandler.getConceptText());
             results.put("concepts_solr", resultFileName);
 
