@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProvider;
@@ -34,9 +33,6 @@ public class TaskRunner {
 
     /** The Task object for this task. */
     private Task task;
-
-    /** The Vocabularies object for this task. */
-    private Vocabularies vocab;
 
     /** Status of the task. */
     private String status;
@@ -64,7 +60,6 @@ public class TaskRunner {
     public final void runTask() {
         status = TaskStatus.SUCCESS;
         task = taskInfo.getTask();
-        vocab = taskInfo.getVocabulary();
         results.put("task_id", task.getId().toString());
         ArrayNode subtasks = TasksUtils.getSubtasks(task.getParams());
         if (subtasks == null || subtasks.size() == 0) {
