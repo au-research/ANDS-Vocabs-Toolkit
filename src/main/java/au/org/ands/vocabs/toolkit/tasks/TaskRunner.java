@@ -64,6 +64,8 @@ public class TaskRunner {
         ArrayNode subtasks = TasksUtils.getSubtasks(task.getParams());
         if (subtasks == null || subtasks.size() == 0) {
             status = TaskStatus.ERROR;
+            results.put("runTask", "No subtasks specified, or invalid"
+                    + " format.");
             TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "No subtasks specified. Nothing to do.");
             return;

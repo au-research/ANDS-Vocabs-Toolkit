@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 
 /** Restlets for running a Toolkit supported tasks. */
 @Path("runTask")
@@ -41,9 +42,18 @@ public class RunTask {
             @PathParam("taskId") final int taskId) {
         logger.debug("called runTask, taskid = " + taskId);
         TaskInfo taskInfo = TasksUtils.getTaskInfo(taskId);
-        TaskRunner runner = new TaskRunner(taskInfo);
-        runner.runTask();
-        return runner.getResults();
+        if (taskInfo == null) {
+            HashMap<String, String> response =
+                    new HashMap<String, String>();
+            response.put("status", TaskStatus.ERROR);
+            response.put("runTask", "Unable to get all task details for"
+                    + " task with id " + taskId);
+            return response;
+        } else {
+            TaskRunner runner = new TaskRunner(taskInfo);
+            runner.runTask();
+            return runner.getResults();
+        }
         // return "{\"hello\":\"Hello JSON!\"}";
     }
 

@@ -91,13 +91,51 @@ public final class TasksUtils {
     public static TaskInfo getTaskInfo(final int taskId) {
         Task task = getTaskById(taskId);
         if (task == null) {
-            logger.debug("getTaskInfo: getTaskById returned null; task id:"
+            logger.error("getTaskInfo: getTaskById returned null; task id:"
                     + taskId);
             return null;
         }
         Vocabularies vocab = getVocabularyById(task.getVocabularyId());
+        if (vocab == null) {
+            logger.error("getTaskInfo: getVocabularyById returned null; "
+                    + "task id:"
+                    + taskId + "; vocab id:" + task.getVocabularyId());
+            return null;
+        }
         Versions version = getVersionById(task.getVersionId());
+        if (version == null) {
+            logger.error("getTaskInfo: getVersionById returned null; "
+                    + "task id:"
+                    + taskId + "; version id:" + task.getVersionId());
+            return null;
+        }
         TaskInfo taskInfo = new TaskInfo(task, vocab, version);
+        if (version.getVocabId() != task.getVocabularyId()) {
+            logger.error("getTaskInfo: version's vocab id does not match"
+                    + " task's version id; "
+                    + "task id:"
+                    + taskId + "; version id:" + task.getVersionId());
+            return null;
+        }
+        if (vocab.getSlug() == null || vocab.getSlug().trim().isEmpty()) {
+            logger.error("getTaskInfo: vocab's slug is empty; "
+                    + "task id:"
+                    + taskId + "; vocab id:" + task.getVocabularyId());
+            return null;
+        }
+        if (vocab.getOwner() == null || vocab.getOwner().trim().isEmpty()) {
+            logger.error("getTaskInfo: vocab's owner is empty; "
+                    + "task id:"
+                    + taskId + "; vocab id:" + task.getVocabularyId());
+            return null;
+        }
+        if (version.getTitle() == null || version.getTitle().trim().isEmpty()) {
+            logger.error("getTaskInfo: version's title is empty; "
+                    + "task id:"
+                    + taskId + "; version id:" + task.getVersionId());
+            return null;
+        }
+
         return taskInfo;
     }
 
