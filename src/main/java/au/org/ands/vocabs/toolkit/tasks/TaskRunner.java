@@ -85,20 +85,24 @@ public class TaskRunner {
             String thisTask = subtask.get("type").textValue();
             switch (thisTask) {
                 case "HARVEST":
-                    success = runHarvest(subtask);
+                case "UNHARVEST":
+                    success = runHarvest(subtask, thisTask);
                     break;
                 case "TRANSFORM":
+//                  case "UNTRANSFORM":
                     success = runTransform(subtask);
                     break;
                 case "IMPORT":
-                    success = runImport(subtask);
+                case "UNIMPORT":
+                    success = runImport(subtask, thisTask);
                     break;
                 case "PUBLISH":
-                    success = runPublish(subtask);
+                case "UNPUBLISH":
+                    success = runPublish(subtask, thisTask);
                     break;
-                case "DELETE":
-                    success = runDelete(subtask);
-                    break;
+//                case "DELETE":
+//                    success = runDelete(subtask);
+//                    break;
                 default:
                     status = TaskStatus.ERROR;
                     results.put("invalid_sub_task", thisTask);
@@ -124,13 +128,15 @@ public class TaskRunner {
 
     /** Run a harvest.
      * @param subtask Details of the subtask
+     * @param taskType The type of harvest operation to be performed.
      * @return True, iff the harvest was successful.
      */
-    public final boolean runHarvest(final JsonNode subtask) {
+    public final boolean runHarvest(final JsonNode subtask,
+            final String taskType) {
         HarvestProvider provider;
         String providerName = subtask.get("provider_type").textValue();
-        logger.debug("runHarvest");
-        status = "HARVESTING";
+        logger.debug("runHarvest, task type: " + taskType);
+        status = taskType + "ING";
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Harvest in progress");
         try {
@@ -149,7 +155,14 @@ public class TaskRunner {
                     status, "Could not find Provider: " + providerName);
             return false;
         }
-        return provider.harvest(taskInfo, subtask, results);
+        switch (taskType) {
+        case "HARVEST":
+            return provider.harvest(taskInfo, subtask, results);
+        case "UNHARVEST":
+            return provider.unharvest(taskInfo, subtask, results);
+        default:
+            return false;
+        }
     }
 
     /** Run a transform.
@@ -182,15 +195,17 @@ public class TaskRunner {
         return provider.transform(taskInfo, subtask, results);
     }
 
-    /** Run an import.
+    /** Run an import operation.
      * @param subtask Details of the subtask
+     * @param taskType The type of import operation to be performed.
      * @return True, iff the import was successful.
      */
-    public final boolean runImport(final JsonNode subtask) {
+    public final boolean runImport(final JsonNode subtask,
+            final String taskType) {
         ImporterProvider provider;
         String providerName = subtask.get("provider_type").textValue();
-        logger.debug("runImport");
-        status = "IMPORTING";
+        logger.debug("runImport, task type: " + taskType);
+        status = taskType + "ING";
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Import in progress");
          try {
@@ -209,18 +224,27 @@ public class TaskRunner {
                     status, "Could not find Provider: " + providerName);
             return false;
         }
-        return provider.doImport(taskInfo, subtask, results);
+        switch (taskType) {
+        case "IMPORT":
+            return provider.doImport(taskInfo, subtask, results);
+        case "UNIMPORT":
+            return provider.unimport(taskInfo, subtask, results);
+        default:
+            return false;
+        }
     }
 
-    /** Run a publish.
+    /** Run a publish operation.
      * @param subtask Details of the subtask
+     * @param taskType The type of publish operation to be performed.
      * @return True, iff the publish was successful.
      */
-    public final boolean runPublish(final JsonNode subtask) {
+    public final boolean runPublish(final JsonNode subtask,
+            final String taskType) {
         PublishProvider provider;
         String providerName = subtask.get("provider_type").textValue();
-        logger.debug("runPublish");
-        status = "PUBLISHING";
+        logger.debug("runPublish, task type: " + taskType);
+        status = taskType + "ING";
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Import in progress");
          try {
@@ -239,17 +263,24 @@ public class TaskRunner {
                     status, "Could not find Provider: " + providerName);
             return false;
         }
-        return provider.publish(taskInfo, subtask, results);
+        switch (taskType) {
+        case "PUBLISH":
+            return provider.publish(taskInfo, subtask, results);
+        case "UNPUBLISH":
+            return provider.unpublish(taskInfo, subtask, results);
+        default:
+            return false;
+        }
     }
 
-    /** Run a Delete.
-     * @param subtask Details of the subtask
-     * @return True, iff the deleting was successful.
-     */
-    public final boolean runDelete(final JsonNode subtask) {
-        logger.debug("runDelete");
-        return true;
-    }
+//    /** Run a Delete.
+//     * @param subtask Details of the subtask
+//     * @return True, iff the deleting was successful.
+//     */
+//    public final boolean runDelete(final JsonNode subtask) {
+//        logger.debug("runDelete");
+//        return true;
+//    }
 
 
 

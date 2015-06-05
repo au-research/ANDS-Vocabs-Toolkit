@@ -30,4 +30,15 @@ public abstract class ImporterProvider {
             final JsonNode subtask,
             final HashMap<String, String> results);
 
+    /** Do an unimport. Update the message parameter with the result
+     * of the unimport.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
+     * @param results HashMap representing the result of the unimport.
+     * @return True, iff the unimport succeeded.
+     */
+    public abstract boolean unimport(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results);
+
 }

@@ -245,4 +245,28 @@ public class SesameImporterProvider extends ImporterProvider {
         return false;
     }
 
+    @Override
+    public final boolean unimport(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        // Remove the repository from the Sesame server.
+        RepositoryManager manager = null;
+        try {
+            manager = RepositoryProvider.getRepositoryManager(sesameServer);
+            String repositoryID = TasksUtils.getTaskRepositoryId(taskInfo);
+            Repository repository = manager.getRepository(repositoryID);
+            if (repository == null) {
+                // No such repository; nothing to do.
+                 logger.debug("Sesame unimport: nothing to do.");
+                return true;
+            }
+            manager.removeRepository(repositoryID);
+            // If we're still here, success, so return true.
+            return true;
+        } catch (RepositoryConfigException | RepositoryException e) {
+            logger.error("Exception in Sesame unimport", e);
+        }
+        return false;
+    }
+
 }

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -33,6 +35,7 @@ import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.org.ands.vocabs.toolkit.db.TasksUtils;
 //import au.org.ands.vocabs.toolkit.harvester.HttpsHack;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
@@ -78,6 +81,27 @@ public abstract class HarvestProvider {
     public abstract boolean harvest(final TaskInfo taskInfo,
             JsonNode subtask,
             final HashMap<String, String> results);
+
+    /** Do an unharvest. Update the message parameter with the result
+     * of the unharvest.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
+     * @param results HashMap representing the result of the unharvest.
+     * @return True, iff the unharvest succeeded.
+     */
+    public final boolean unharvest(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        try {
+            Files.deleteIfExists(
+                    Paths.get(TasksUtils.getTaskHarvestOutputPath(taskInfo)));
+            return true;
+        } catch (IOException e) {
+            // This may mean a file permissions problem, so do log it.
+            logger.error("unharvest failed", e);
+        }
+        return false;
+    }
 
     /** Get the contents of an InputStream as a String.
      * @param is The InputStream
