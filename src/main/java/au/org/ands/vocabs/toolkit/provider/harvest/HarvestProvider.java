@@ -60,6 +60,14 @@ public abstract class HarvestProvider {
      */
     public abstract String getInfo();
 
+
+    /** Get the metadata about a vocabulary.
+     * @return The information.
+     * @param repositoryId the repository_id of the given vocabulary
+     */
+    public abstract HashMap<String, String> getMetadata(
+            final String repositoryId);
+
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param taskInfo The TaskInfo object describing the entire task.

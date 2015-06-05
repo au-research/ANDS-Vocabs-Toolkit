@@ -59,48 +59,35 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
-     * @param taskInfo The TaskInfo object describing the entire task.
-     * @param subtask The details of the subtask
+     * @param ppProjectId The PoolParty project id.
+     * @param outputPath The directory in which to store output files.
+     * @param getMetadata Whether or not to get ADMS and VOID metadata
+     * @param returnOutputPaths Whether or not to store the full path
+     * of each harvested file in the results map.
      * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
-    @Override
-    public final boolean harvest(final TaskInfo taskInfo,
-            final JsonNode subtask,
+    public final boolean getHarvestFiles(final String ppProjectId,
+            final String outputPath,
+            final boolean getMetadata,
+            final boolean returnOutputPaths,
             final HashMap<String, String> results) {
         String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
         String username = PROPS.getProperty("PoolPartyHarvester.username");
         String password = PROPS.getProperty("PoolPartyHarvester.password");
-
-        if (subtask.get("project_id") == null
-                || subtask.get("project_id").textValue().isEmpty()) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
-                    results, TaskStatus.ERROR,
-                    "No PoolParty id specified. Nothing to do.");
-            return false;
-        }
-
-        String projectId = subtask.get("project_id").textValue();
 
         String format = PROPS.getProperty("PoolPartyHarvester.defaultFormat");
 
 // Possible future work: support specifying particular modules.
 //        List<String> exportModules =
 //                info.getQueryParameters().get("exportModules");
-        List<String> exportModules = null;
-
-        if (exportModules == null) {
-            exportModules = new ArrayList<String>();
-        }
-        if (exportModules.isEmpty()) {
-            exportModules.add(PROPS.getProperty(
-                    "PoolPartyHarvester.defaultExportModule"));
+        List<String> exportModules = new ArrayList<String>();
+        exportModules.add(PROPS.getProperty(
+                "PoolPartyHarvester.defaultExportModule"));
+        if (getMetadata) {
             exportModules.add("adms");
             exportModules.add("void");
         }
-        // In future, get extra stuff. It does work!
-//        exportModules.add("adms");
-//        exportModules.add("history");
 
         logger.debug("Getting project from " + remoteUrl);
 
@@ -109,13 +96,13 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
         WebTarget plainTarget = target.register(feature)
-                .path(projectId)
+                .path(ppProjectId)
                 .path("export")
                 .queryParam("format", format);
 
         for (String exportModule : exportModules) {
             results.put("poolparty_url", remoteUrl);
-            results.put("poolparty_project_id", projectId);
+            results.put("poolparty_project_id", ppProjectId);
             WebTarget thisTarget = plainTarget.queryParam("exportModules",
                     exportModule);
 
@@ -129,13 +116,55 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             String responseData = response.readEntity(String.class);
 
             String filePath = ToolkitFileUtils.saveFile(
-                    TasksUtils.getTaskHarvestOutputPath(taskInfo),
+                    outputPath,
                     exportModule,
                     format, responseData);
-
-            results.put(exportModule, filePath);
+            if (returnOutputPaths) {
+                results.put(exportModule, filePath);
+            }
         }
         return true;
+    }
+
+    /** Do a harvest. Update the result parameter with the result
+     * of the harvest.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
+     * @param results HashMap representing the result of the harvest.
+     * @return True, iff the harvest succeeded.
+     */
+    @Override
+    public final boolean harvest(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        if (subtask.get("project_id") == null
+                || subtask.get("project_id").textValue().isEmpty()) {
+            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+                    results, TaskStatus.ERROR,
+                    "No PoolParty id specified. Nothing to do.");
+            return false;
+        }
+
+        String projectId = subtask.get("project_id").textValue();
+        return getHarvestFiles(projectId,
+                TasksUtils.getTaskHarvestOutputPath(taskInfo),
+                false, true, results);
+    }
+
+    /** Get metadata for a PoolParty project.
+     * @param projectId The PoolParty Project Id.
+     * @return The metadata for the project.
+     */
+    @Override
+    public final HashMap<String, String> getMetadata(final String projectId) {
+
+        HashMap<String, String> result =
+                new HashMap<String, String>();
+
+        getHarvestFiles(projectId,
+                TasksUtils.getMetadataOutputPath(projectId),
+                true, false, result);
+        return result;
     }
 
 

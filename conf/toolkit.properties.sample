@@ -27,6 +27,9 @@ Toolkit.vocabsPath = [path where data is stored]/vocabs
 # The directory in which all SISSVoc spec files will be stored
 SISSVoc.specsPath = [path where data is stored]/specs
 
+# The directory in which temporary files will be stored
+Toolkit.tempPath = [path where data is stored]/temp
+
 ## POOLPARTY 
 
 PoolPartyHarvester.remoteUrl = [pool party api url]

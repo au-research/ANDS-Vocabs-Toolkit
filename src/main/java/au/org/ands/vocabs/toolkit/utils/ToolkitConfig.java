@@ -1,5 +1,6 @@
 package au.org.ands.vocabs.toolkit.utils;
 
+import java.nio.file.Paths;
 import java.util.Hashtable;
 
 
@@ -24,7 +25,17 @@ public final class ToolkitConfig {
     /** Path to the directory used to store vocabulary files. */
     public static final String DATA_FILES_PATH =
             ToolkitProperties.getProperty("Toolkit.vocabsPath",
-                    "/tmp");
+                    "/tmp/vocabs");
+
+    /** Path to the directory used to store temporary files. */
+    public static final String TEMP_FILES_PATH =
+            ToolkitProperties.getProperty("Toolkit.tempPath",
+                    "/tmp/vocabs/temp");
+
+    /** Path to the directory used to store temporary files. */
+    public static final String METADATA_TEMP_FILES_PATH =
+            Paths.get(TEMP_FILES_PATH).resolve("metadata").toString();
+
 
     /** Mapping of (PoolParty) formats to filename extensions . */
     public static final Hashtable<String, String>

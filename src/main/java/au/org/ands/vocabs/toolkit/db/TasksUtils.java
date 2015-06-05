@@ -225,6 +225,20 @@ public final class TasksUtils {
         return getTaskOutputPath(taskInfo, ToolkitConfig.HARVEST_DATA_PATH);
     }
 
+    /** Get the full path of the temporary directory used to store all
+     * harvested data for metadata extraction for a PoolParty vocabulary.
+     * @param projectId The PoolParty projectId.
+     * @return The full path of the directory used to store the
+     * vocabulary data.
+     */
+    public static String getMetadataOutputPath(final String projectId) {
+        Path path = Paths.get(ToolkitConfig.METADATA_TEMP_FILES_PATH)
+                .resolve(UriComponent.encode(
+                        makeSlug(projectId),
+                        UriComponent.Type.PATH_SEGMENT));
+        return path.toString().toLowerCase();
+    }
+
     /** Apply slug conventions. In practice, this means replacing
      * whitespace with hyphen.
      * @param aString The string that is to be converted.

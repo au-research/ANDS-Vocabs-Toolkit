@@ -142,5 +142,17 @@ public class SesameHarvestProvider extends HarvestProvider {
         return true;
     }
 
+    /** Extract the metadata for a given repository from a Sesame server.
+     * @param repositoryId.
+     * @return The metadata for the repository.
+     */
+    @Override
+    public final HashMap<String, String> getMetadata(
+            final String repositoryId) {
+        HashMap<String, String> result =
+                new HashMap<String, String>();
+        result.put("error", "Not Implemented yet");
+        return result;
+    }
 
 }
