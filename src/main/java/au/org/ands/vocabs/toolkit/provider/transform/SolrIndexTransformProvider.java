@@ -102,11 +102,10 @@ public class SolrIndexTransformProvider extends TransformProvider {
                     ex);
             return false;
         }
-//        RDFWriter writer = Rio.createWriter(RDFFormat.RDFJSON, out);
-
         return true;
     }
-/** RDF Hadler to extract prefLabels and concept count. */
+
+    /** RDF Handler to extract prefLabels and concept count. */
     class ConceptHandler extends RDFHandlerBase {
         /** Number of statements. */
         private int countedStatements = 0;
@@ -120,13 +119,15 @@ public class SolrIndexTransformProvider extends TransformProvider {
                 conceptText += st.getObject().stringValue() + " ";
             }
         }
-/** getter for statement counts. */
-/** @return int */
+
+        /** Getter for statement counts. */
+        /** @return The number of statements. */
         public int getCountedStatements() {
             return countedStatements;
         }
-/** getter for concepts text. */
-/** @return String */
+
+        /** Getter for concepts text. */
+        /** @return The concatenation of the prefLabels. */
         public String getConceptText() {
             return conceptText;
         }
