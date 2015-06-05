@@ -5,8 +5,29 @@
       <Pattern>%d [%thread] %level %logger - %m%n</Pattern>
     </encoder>
   </appender>
+
+  <appender name="FILE"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${catalina.base}/logs/ands-vocabs-toolkit.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>${catalina.base}/logs/ands-vocabs-toolkit.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <!-- Optional: uncomment the following setting to limit the number 
+        of log files kept. -->
+      <!-- Keep 31 days' worth of history -->
+      <!-- <maxHistory>31</maxHistory> -->
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d [%thread] %level %logger - %m%n</pattern>
+    </encoder>
+  </appender>
+
   <root level="${root-level:-INFO}">
-    <appender-ref ref="CONSOLE"/>
+    <!-- Comment out CONSOLE line for production. -->
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
   </root>
+  <!-- Set to INFO for production. -->
   <logger name="au.org.ands.vocabs" level="DEBUG" />
+  <!-- <logger name="au.org.ands.vocabs" level="INFO" /> -->
 </configuration>
