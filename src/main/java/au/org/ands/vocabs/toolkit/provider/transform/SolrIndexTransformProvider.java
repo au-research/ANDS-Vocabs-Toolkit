@@ -87,10 +87,10 @@ public class SolrIndexTransformProvider extends TransformProvider {
         try {
             FileOutputStream out = new FileOutputStream(resultFileName);
             JsonObjectBuilder job = Json.createObjectBuilder();
-            job.add("concepts_count", conceptHandler.getCountedStatements());
+            job.add("concepts_count", conceptHandler.getCountedPrefLabels());
             results.put("concepts_count",
                     new Integer(
-                            conceptHandler.getCountedStatements()).toString());
+                            conceptHandler.getCountedPrefLabels()).toString());
             job.add("concepts_text", conceptHandler.getConceptText());
             results.put("concepts_solr", resultFileName);
 
@@ -107,23 +107,23 @@ public class SolrIndexTransformProvider extends TransformProvider {
 
     /** RDF Handler to extract prefLabels and concept count. */
     class ConceptHandler extends RDFHandlerBase {
-        /** Number of statements. */
-        private int countedStatements = 0;
+        /** Number of prefLabel properties. */
+        private int countedPrefLabels = 0;
         /** space separated String of all labels. */
         private String conceptText = "";
 
         @Override
         public void handleStatement(final Statement st) {
             if (st.getPredicate().equals(SKOS.PREF_LABEL)) {
-                countedStatements++;
+                countedPrefLabels++;
                 conceptText += st.getObject().stringValue() + " ";
             }
         }
 
-        /** Getter for statement counts. */
-        /** @return The number of statements. */
-        public int getCountedStatements() {
-            return countedStatements;
+        /** Getter for prefLabel count. */
+        /** @return The number of prefLabel properties. */
+        public int getCountedPrefLabels() {
+            return countedPrefLabels;
         }
 
         /** Getter for concepts text. */
