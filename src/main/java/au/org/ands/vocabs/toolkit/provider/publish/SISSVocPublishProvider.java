@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,7 +78,11 @@ public class SISSVocPublishProvider extends PublishProvider {
     public final boolean unpublish(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
-        removeSpecFile(taskInfo, subtask, results);
+        // Use the following version when the elda library
+        // supports it.
+        //        removeSpecFile(taskInfo, subtask, results);
+        // For now, use the truncation method.
+        truncateSpecFileIfExists(taskInfo, subtask, results);
 
         // results.put("sissvoc_path",
         //   TasksUtils.getTaskRepositoryId(taskInfo));
@@ -204,11 +209,37 @@ public class SISSVocPublishProvider extends PublishProvider {
 
     }
 
+    /** If there is an existing spec file for SISSVoc, overwrite
+     * it and truncate it to zero size. This is the workaround
+     * for unpublication until the elda library supports detection
+     * of deleted files.
+     * @param taskInfo The TaskInfo object for this task.
+     * @param subtask The specification of this publish subtask
+     * @param results HashMap representing the result of the unpublish.
+     */
+    private void truncateSpecFileIfExists(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        try {
+            Path specFilePath = Paths.get(sissvocSpecOutputPath).
+                    resolve(TasksUtils.getTaskRepositoryId(taskInfo)
+                            + ".ttl");
+            if (Files.exists(specFilePath)) {
+                Files.write(specFilePath, new byte[0]);
+            }
+
+        } catch (IOException e) {
+            // This may mean a file permissions problem, so do log it.
+            logger.error("removeSpecFile failed", e);
+        }
+    }
+
     /** Remove any existing spec file for SISSVoc.
      * @param taskInfo The TaskInfo object for this task.
      * @param subtask The specification of this publish subtask
-     * @param results HashMap representing the result of the publish.
+     * @param results HashMap representing the result of the unpublish.
      */
+    @SuppressWarnings("unused")
     private void removeSpecFile(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
