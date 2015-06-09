@@ -41,6 +41,12 @@ PoolPartyHarvester.defaultExportModule = concepts
 # local OpenRDF Sesame server
 SesameImporter.serverUrl = [Sesame API URL]
 
+# Prefix to all SPARQL endpoints provided by OpenRDF Sesame
+SesameImporter.sparqlPrefix = [SPARQL prefix URL]
+
+# Prefix to all SISSVoc endpoints
+SISSVoc.endpointsPrefix = [LDA prefix URL]
+
 # SISSVoc spec file template
 SISSVoc.specTemplate = [filename to spec file template]
 # SISSVoc spec file template variables

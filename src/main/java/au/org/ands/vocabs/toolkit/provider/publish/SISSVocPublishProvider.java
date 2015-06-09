@@ -11,6 +11,10 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -51,6 +55,9 @@ public class SISSVocPublishProvider extends PublishProvider {
     private String sissvocSpecOutputPath =
             PROPS.getProperty("SISSVoc.specsPath");
 
+    /** URL that is a prefix to all SISSVoc endpoints. */
+    private String sissvocEndpointsPrefix =
+            PROPS.getProperty("SISSVoc.endpointsPrefix");
 
     /** Values to be substituted in the spec file template. */
     private final HashMap<String, String> specProperties =
@@ -69,8 +76,14 @@ public class SISSVocPublishProvider extends PublishProvider {
         addAdditionalSpecProperties(subtask);
         writeSpecFile(taskInfo, subtask, results);
 
-        // results.put("sissvoc_path",
-        //   TasksUtils.getTaskRepositoryId(taskInfo));
+        // Use the nice JAX-RS libraries to construct the path to
+        // the SPARQL endpoint.
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(sissvocEndpointsPrefix);
+        WebTarget sparqlTarget = target
+                .path(TasksUtils.getSISSVocRepositoryPath(taskInfo));
+        results.put("sissvoc_endpoints",
+                sparqlTarget.getUri().toString());
         return true;
     }
 

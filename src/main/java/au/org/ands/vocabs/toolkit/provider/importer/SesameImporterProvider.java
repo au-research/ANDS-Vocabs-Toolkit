@@ -14,6 +14,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -53,6 +57,10 @@ public class SesameImporterProvider extends ImporterProvider {
     /** URL to access the Sesame server. */
     private String sesameServer =
             PROPS.getProperty("SesameImporter.serverUrl");
+
+    /** URL that is a prefix to all SPARQL endpoints. */
+    private String sparqlPrefix =
+            PROPS.getProperty("SesameImporter.sparqlPrefix");
 
     /** Force loading of HttpClientUtils, so that shutdown works
      * properly. Revisit this when using a later version of Tomcat,
@@ -117,6 +125,14 @@ public class SesameImporterProvider extends ImporterProvider {
             return false;
         }
         results.put("repository_id", TasksUtils.getTaskRepositoryId(taskInfo));
+        // Use the nice JAX-RS libraries to construct the path to
+        // the SPARQL endpoint.
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(sparqlPrefix);
+        WebTarget sparqlTarget = target
+                .path(TasksUtils.getTaskRepositoryId(taskInfo));
+        results.put("sparql_endpoint",
+                sparqlTarget.getUri().toString());
         return true;
     }
 
