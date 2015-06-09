@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -104,8 +105,8 @@ public class GetMetadataTransformProvider extends TransformProvider {
                 | IOException
                 | RDFParseException
                 | RDFHandlerException ex) {
-            results.put("exception",
-                    "Exception in JsonListTransform while Parsing RDF:");
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in JsonListTransform while Parsing RDF");
             logger.error("Exception in JsonListTransform while Parsing RDF:",
                     ex);
             return results;

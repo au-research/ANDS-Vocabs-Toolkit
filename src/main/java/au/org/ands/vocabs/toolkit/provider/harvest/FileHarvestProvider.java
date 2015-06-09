@@ -64,7 +64,7 @@ public class FileHarvestProvider extends HarvestProvider {
                 }
             } catch (DirectoryIteratorException
                     | IOException ex) {
-                results.put("exception",
+                results.put(TaskStatus.EXCEPTION,
                         "Exception in getHarvestFiles while copying file");
                 logger.error("Exception in getHarvestFiles while copying file:",
                         ex);
@@ -77,7 +77,7 @@ public class FileHarvestProvider extends HarvestProvider {
                         outputPathPath.resolve(filePathPath.getFileName()),
                         StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                results.put("exception",
+                results.put(TaskStatus.EXCEPTION,
                         "Exception in getHarvestFiles while copying file");
                 logger.error("Exception in getHarvestFiles while copying file:",
                         e);
