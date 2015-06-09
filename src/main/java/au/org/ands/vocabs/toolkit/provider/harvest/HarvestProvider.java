@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -16,6 +14,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.apache.commons.io.FileUtils;
 import org.openrdf.model.Model;
 import org.openrdf.model.URI;
 import org.openrdf.query.QueryLanguage;
@@ -93,12 +92,12 @@ public abstract class HarvestProvider {
             final JsonNode subtask,
             final HashMap<String, String> results) {
         try {
-            Files.deleteIfExists(
-                    Paths.get(TasksUtils.getTaskHarvestOutputPath(taskInfo)));
+            FileUtils.deleteDirectory(new File(
+                    TasksUtils.getTaskHarvestOutputPath(taskInfo)));
             return true;
         } catch (IOException e) {
             // This may mean a file permissions problem, so do log it.
-            logger.error("unharvest failed", e);
+            logger.error("Unharvest failed", e);
         }
         return false;
     }
