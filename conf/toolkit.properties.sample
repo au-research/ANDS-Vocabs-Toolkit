@@ -35,7 +35,7 @@ Toolkit.tempPath = [path where data is stored]/temp
 PoolPartyHarvester.remoteUrl = [pool party api url]
 PoolPartyHarvester.username = [pool party username]
 PoolPartyHarvester.password = [pool party user password]
-PoolPartyHarvester.defaultFormat = RDF/XML
+PoolPartyHarvester.defaultFormat = TriG
 PoolPartyHarvester.defaultExportModule = concepts
 
 # local OpenRDF Sesame server
