@@ -67,8 +67,8 @@ public class SPARQLHarvestProvider extends HarvestProvider {
 
         logger.debug("Doing harvest from SPARQL endpoint:" + sparqlEndpoint);
 
-        Repository remoteRepository = null;
-        RepositoryConnection conn = null;
+        Repository remoteRepository;
+        RepositoryConnection conn;
 
         try {
             remoteRepository = new SPARQLRepository(sparqlEndpoint);
@@ -101,7 +101,7 @@ public class SPARQLHarvestProvider extends HarvestProvider {
 
             output.write('\n');
             output.close();
-            logger.debug("SPARQL harvest aved RDF as: " + outputFileRDF);
+            logger.debug("SPARQL harvest saved RDF as: " + outputFileRDF);
             conn.close();
             remoteRepository.shutDown();
         } catch (RepositoryException | IOException
