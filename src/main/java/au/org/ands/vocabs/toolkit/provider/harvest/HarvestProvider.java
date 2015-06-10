@@ -5,32 +5,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Properties;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
 import org.apache.commons.io.FileUtils;
 import org.openrdf.model.Model;
-import org.openrdf.model.URI;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResultHandler;
-import org.openrdf.query.resultio.sparqljson.SPARQLResultsJSONWriter;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.manager.RepositoryManager;
-import org.openrdf.repository.manager.RepositoryProvider;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.UnsupportedRDFormatException;
-import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,65 +145,5 @@ public abstract class HarvestProvider {
 
         return filePath;
     }
-    /** Write RDF or NTriples to a file
-     *  To debug SSL, add -Djavax.net.debug=ssl,handshake to the Tomcat JVM
-     *  command line.
-     *  @param sesameServer The URL of the Sesame server.
-     *  @param repositoryID The repository ID
-     *  @param contextUri The context URI
-     *  @param outputFile2 The name of the output file
-     *  @return Metadata representing the result of the export
-     *  @throws Exception An exception
-     */
-    public final JsonObject exportSesame(final String sesameServer,
-            final String repositoryID, final String contextUri,
-            String outputFile2) throws Exception {
-        JsonObjectBuilder message = Json.createObjectBuilder();
-        logger.debug("exportSesame From Server:" + sesameServer
-                + " repositoryID: " + repositoryID
-                + " contextUri: " + contextUri);
-        RepositoryManager manager;
 
-        try {
-            manager = RepositoryProvider.getRepositoryManager(sesameServer);
-            message.add("sesameServer", sesameServer);
-            Repository repository = manager.getRepository(repositoryID);
-            message.add("repositoryID", repositoryID);
-            RepositoryConnection conn = repository.getConnection();
-            Repository myRepository = conn.getRepository();
-            URI context = null;
-            if (contextUri != null &&  !(contextUri.isEmpty())) {
-                context = myRepository.getValueFactory().createURI(contextUri);
-                message.add("contextUri", contextUri);
-            }
-            if (outputFile2 == null) {
-                outputFile2 = ToolkitConfig.DATA_FILES_PATH
-                        + repositoryID + ".rdf";
-            }
-            OutputStream output = new FileOutputStream(outputFile2);
-            RDFXMLWriter rdfxmlfWriter = new RDFXMLWriter(output);
-            conn.export(rdfxmlfWriter);
-            output.write('\n');
-
-            String queryString = "SELECT * WHERE {?s ?p ?o . }";
-            TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
-                    queryString);
-
-            // open a file to write the result to it in JSON format
-            OutputStream out = new FileOutputStream(
-                    ToolkitConfig.DATA_FILES_PATH + repositoryID + ".json");
-            TupleQueryResultHandler writer = new SPARQLResultsJSONWriter(out);
-
-            // execute the query and write the result directly to file
-            query.evaluate(writer);
-            logger.debug("exportSesame Saved RDF as :" + outputFile2);
-            message.add("outputFile", outputFile2);
-
-        } catch (Exception e) {
-            logger.error("\nException while Writing RDF: " + e.toString());
-            JsonObjectBuilder job = Json.createObjectBuilder();
-            return job.add("exception", e.toString()).build();
-        }
-        return message.build();
-    }
 }
