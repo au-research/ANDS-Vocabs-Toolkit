@@ -73,7 +73,7 @@ public class SPARQLHarvestProvider extends HarvestProvider {
         try {
             remoteRepository = new SPARQLRepository(sparqlEndpoint);
             conn = remoteRepository.getConnection();
-            String queryString = "CONSTRUCT * WHERE {?s ?p ?o}";
+            String queryString = "CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}";
             GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SPARQL,
                     queryString);
 
