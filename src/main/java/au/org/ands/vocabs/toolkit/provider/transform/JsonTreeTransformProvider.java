@@ -228,7 +228,8 @@ public class JsonTreeTransformProvider extends TransformProvider {
             for (Entry<String, HashMap<String, Object>>
             concept : conceptMap.entrySet()) {
                 HashMap<String, Object> propertyMap = concept.getValue();
-                if (propertyMap.get("broader") == null) {
+                if (!propertyMap.isEmpty()
+                        && propertyMap.get("broader") == null) {
                     topmostConcepts.put(concept.getKey(), propertyMap);
                 }
             }
