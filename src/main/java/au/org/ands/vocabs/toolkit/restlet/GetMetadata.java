@@ -39,11 +39,11 @@ public class GetMetadata {
     @Path("poolParty/{project_id}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
-    public final HashMap<String, String> getInfoPoolParty(
+    public final HashMap<String, Object> getInfoPoolParty(
             @PathParam("project_id")
             final String pPProjectId) {
-        HashMap<String, String> result =
-                new HashMap<String, String>();
+        HashMap<String, Object> result =
+                new HashMap<String, Object>();
         logger.info("called getMetadata/poolParty " + pPProjectId);
         result.putAll(new PoolPartyHarvestProvider().getMetadata(pPProjectId));
         result.putAll(new GetMetadataTransformProvider().

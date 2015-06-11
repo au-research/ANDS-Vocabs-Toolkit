@@ -8,13 +8,16 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.vocabulary.DCTERMS;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.SKOS;
@@ -59,10 +62,6 @@ public class GetMetadataTransformProvider extends TransformProvider {
        metadataToLookFor.put(DCTERMS.PUBLISHER, "dcterms:publisher");
        metadataToLookFor.put(DCTERMS.CREATOR, "dcterms:creator");
        metadataToLookFor.put(DCTERMS.CONTRIBUTOR, "dcterms:contributor");
-//       metadataToLookFor.put(DCTERMS., "dcterms:");
-//       metadataToLookFor.put(DCTERMS., "dcterms:");
-//       metadataToLookFor.put(DCTERMS., "dcterms:");
-
    }
 
     @Override
@@ -84,14 +83,15 @@ public class GetMetadataTransformProvider extends TransformProvider {
      * @param pPprojectId The PoolParty project id.
      * @return The results of the metadata extraction.
      */
-    public final HashMap<String, String> extractMetadata(
+    public final HashMap<String, Object> extractMetadata(
             final String pPprojectId) {
         Path dir = Paths.get(TasksUtils.getMetadataOutputPath(pPprojectId));
-        HashMap<String, String> results = new HashMap<String, String>();
+        HashMap<String, Object> results = new HashMap<String, Object>();
         ConceptHandler conceptHandler = new ConceptHandler();
         try (DirectoryStream<Path> stream =
                 Files.newDirectoryStream(dir)) {
             for (Path entry: stream) {
+                conceptHandler.setSource(entry.getFileName().toString());
                 RDFFormat format = Rio.getParserFormatForFileName(
                         entry.toString());
                 RDFParser rdfParser = Rio.createParser(format);
@@ -125,17 +125,20 @@ public class GetMetadataTransformProvider extends TransformProvider {
 
         /** Map for metadata contained in the graph
          * property name to the property value(s). */
-        private HashMap<String, String> metadataMap =
-                new HashMap<String, String>();
+        private HashMap<String, Object> metadataMap =
+                new HashMap<String, Object>();
 
+        /** metadata Suffix to identify origin. */
+        private String source = "";
 
         @Override
         public void handleStatement(final Statement st) {
+
             for (Entry<URI, String> term : metadataToLookFor.entrySet()) {
                 if (st.getPredicate().equals(term.getKey())) {
-                    metadataMap.put(term.getValue(),
-                            st.getObject().stringValue());
+                   addToMap(term.getValue(), st);
                 }
+
             }
             if (st.getPredicate().equals(RDF.TYPE)
                     && (st.getObject().equals(SKOS.CONCEPT))) {
@@ -150,10 +153,71 @@ public class GetMetadataTransformProvider extends TransformProvider {
         }
 
 
+        /** add statements to the metadata Map .
+        * @param key used for this type of statement.
+        * @param st is the statement to be added. **/
+        @SuppressWarnings("unchecked")
+        private void addToMap(final String key, final Statement st) {
+
+            String value = st.getObject().stringValue();
+            String lang = "";
+            HashMap<String, Object> mMap = new HashMap<String, Object>();
+            HashMap<String, Object> aMap = new HashMap<String, Object>();
+            if (st.getObject().getClass().equals(LiteralImpl.class)) {
+                if (((Literal) st.getObject()).getLanguage() != null) {
+                    lang = "_" + ((Literal)
+                            st.getObject()).getLanguage().toString();
+                }
+            }
+
+            if (metadataMap.containsKey(key)) {
+                 mMap = (HashMap<String, Object>) metadataMap.get(key);
+            }
+
+            if (mMap.containsKey(source)) {
+                aMap =  (HashMap<String, Object>) mMap.get(source);
+            }
+
+            if (aMap.containsKey("value" + lang)) {
+                // exist already
+                if (aMap.get("value" + lang).getClass().equals(String.class)) {
+                // create a list and
+                // add both the previous and the new one to it
+                    if (!aMap.get("value" + lang).equals(value)) {
+                    ArrayList<String> aList = new ArrayList<String>();
+                    aList.add((String) aMap.get("value" + lang));
+                    aList.add(value);
+                    aMap.put("value" + lang, aList);
+                    }
+                } else {
+                    // already a list
+                    ArrayList<String> aList =
+                    (ArrayList<String>) aMap.get("value" + lang);
+                    if (!aList.contains(value)) {
+                        aList.add(value);
+                        aMap.put("value" + lang, aList);
+                    }
+                }
+            } else {
+                aMap.put("value" + lang, value);
+            }
+
+            mMap.put(source, aMap);
+            metadataMap.put(key, mMap);
+
+        }
+
+
         /** Getter for concepts list. */
         /** @return The completed concept map. */
-        public HashMap<String, String> getMetadata() {
+        public HashMap<String, Object> getMetadata() {
             return metadataMap;
+        }
+
+        /** setter for source. */
+        /** @param sSource file name. */
+        public void setSource(final String sSource) {
+            source = sSource;
         }
     }
 

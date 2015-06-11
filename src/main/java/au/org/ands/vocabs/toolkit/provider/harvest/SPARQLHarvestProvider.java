@@ -67,6 +67,10 @@ public class SPARQLHarvestProvider extends HarvestProvider {
 
         logger.debug("Doing harvest from SPARQL endpoint:" + sparqlEndpoint);
 
+        String outputFileRDF = Paths.get(
+                TasksUtils.getTaskHarvestOutputPath(taskInfo)).
+                resolve("sparql_harvest.rdf").toString();
+
         Repository remoteRepository;
         RepositoryConnection conn;
 
@@ -77,10 +81,7 @@ public class SPARQLHarvestProvider extends HarvestProvider {
             GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SPARQL,
                     queryString);
 
-            String outputFileRDF = Paths.get(
-                    TasksUtils.getTaskHarvestOutputPath(taskInfo)).
-                    resolve("sparql_harvest.rdf").toString();
-            OutputStream output = new FileOutputStream(outputFileRDF);
+             OutputStream output = new FileOutputStream(outputFileRDF);
 //            RDFXMLWriter rdfxmlWriter = new RDFXMLWriter(output);
             RDFWriter rdfxmlWriter = Rio.createWriter(RDFFormat.RDFXML, output);
 
@@ -111,6 +112,7 @@ public class SPARQLHarvestProvider extends HarvestProvider {
             logger.error("Exception in SPARQL harvest", e);
             return false;
         }
+        results.put("sparql_harvest", outputFileRDF);
         return true;
     }
 
