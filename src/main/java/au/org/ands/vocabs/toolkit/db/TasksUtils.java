@@ -277,6 +277,20 @@ public final class TasksUtils {
         return path.toString().toLowerCase();
     }
 
+    /** Get the full path of the backup directory used to store all
+     * backup data for metadata extraction for a PoolParty project.
+     * @param projectId The PoolParty projectId.
+     * @return The full path of the directory used to store the
+     * vocabulary data.
+     */
+    public static String getMetadataBackupPath(final String projectId) {
+        Path path = Paths.get(ToolkitConfig.METADATA_BACKUP_FILES_PATH)
+                .resolve(UriComponent.encode(
+                        makeSlug(projectId),
+                        UriComponent.Type.PATH_SEGMENT));
+        return path.toString().toLowerCase();
+    }
+
     /** Apply slug conventions. In practice, this means replacing
      * whitespace with hyphen.
      * @param aString The string that is to be converted.

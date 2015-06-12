@@ -22,6 +22,12 @@ public final class ToolkitConfig {
     //                MethodHandles.lookup().lookupClass());
     //    }
 
+    /** Path to the default output directory used to store files. */
+    public static final String ROOT_FILES_PATH =
+            ToolkitProperties.getProperty("Toolkit.storagePath",
+                    "/tmp/vocabs/temp");
+
+
     /** Path to the directory used to store vocabulary files. */
     public static final String DATA_FILES_PATH =
             ToolkitProperties.getProperty("Toolkit.vocabsPath",
@@ -35,6 +41,12 @@ public final class ToolkitConfig {
     /** Path to the directory used to store temporary files. */
     public static final String METADATA_TEMP_FILES_PATH =
             Paths.get(TEMP_FILES_PATH).resolve("metadata").toString();
+
+
+    /** Path to the directory used to store backup files. */
+    public static final String METADATA_BACKUP_FILES_PATH =
+            Paths.get(ROOT_FILES_PATH).resolve("backup").toString();
+
 
 
     /** Mapping of (PoolParty) formats to filename extensions . */
