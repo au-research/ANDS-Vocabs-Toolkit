@@ -61,12 +61,10 @@ public class PoolPartyBackupProvider extends BackupProvider {
         InputStream is = response.readEntity(InputStream.class);
         JsonReader jsonReader = Json.createReader(is);
         JsonArray jsonStructure = jsonReader.readArray();
-        logger.debug("jsonStructure size  " + jsonStructure.size());
         ArrayList<String> pList = new ArrayList<String>();
         Iterator<JsonValue> iter = jsonStructure.iterator();
         while (iter.hasNext()) {
             JsonObject entry = (JsonObject) iter.next();
-            logger.debug("jsonStructure size  " + entry.toString());
             pList.add(entry.getString("id"));
         }
         return pList;
