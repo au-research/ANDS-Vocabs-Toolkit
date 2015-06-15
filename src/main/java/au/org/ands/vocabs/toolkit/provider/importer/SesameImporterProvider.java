@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 //CHECKSTYLE:ON: LineLength
@@ -245,10 +246,14 @@ public class SesameImporterProvider extends ImporterProvider {
                 } catch (DirectoryIteratorException | IOException ex) {
                     // I/O error encountered during the iteration,
                     // the cause is an IOException
+                    results.put(TaskStatus.EXCEPTION,
+                            "Exception in Sesame uploadRDF");
                     logger.error("Exception in Sesame uploadRDF:", ex);
                     return false;
                 }
             } catch (RDFParseException e) {
+                results.put(TaskStatus.EXCEPTION,
+                        "Exception in Sesame uploadRDF");
                 logger.error("Sesame uploadRDF, error parsing RDF: ", e);
                 return false;
             } finally {
@@ -259,6 +264,8 @@ public class SesameImporterProvider extends ImporterProvider {
 
             return true;
         } catch (RepositoryConfigException | RepositoryException e) {
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in Sesame uploadRDF");
             logger.error("Exception in Sesame uploadRDF()", e);
         }
         return false;
@@ -284,6 +291,8 @@ public class SesameImporterProvider extends ImporterProvider {
             // If we're still here, success, so return true.
             return true;
         } catch (RepositoryConfigException | RepositoryException e) {
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in Sesame unimport");
             logger.error("Exception in Sesame unimport", e);
         }
         return false;

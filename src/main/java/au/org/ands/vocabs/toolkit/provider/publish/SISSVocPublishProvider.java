@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
@@ -200,7 +201,9 @@ public class SISSVocPublishProvider extends PublishProvider {
         try {
             specTemplate = FileUtils.readFileToString(templateFile);
         } catch (IOException e) {
-            logger.error("SISSVoc writeSpecFile: can't open template file.",
+            results.put(TaskStatus.EXCEPTION,
+                    "SISSVoc writeSpecFile: can't open template file");
+            logger.error("SISSVoc writeSpecFile: can't open template file",
                     e);
             return;
         }
@@ -214,6 +217,8 @@ public class SISSVocPublishProvider extends PublishProvider {
         try {
             FileUtils.writeStringToFile(specFile, customSpec);
         } catch (IOException e) {
+            results.put(TaskStatus.EXCEPTION,
+                    "SISSVoc writeSpecFile: can't write spec file");
             logger.error("SISSVoc writeSpecFile: can't write spec file.",
                     e);
             return;
@@ -242,7 +247,9 @@ public class SISSVocPublishProvider extends PublishProvider {
 
         } catch (IOException e) {
             // This may mean a file permissions problem, so do log it.
-            logger.error("removeSpecFile failed", e);
+            results.put(TaskStatus.EXCEPTION,
+                    "SISSVoc truncateSpecFileIfExists: failed");
+            logger.error("truncateSpecFileIfExists failed", e);
         }
     }
 
@@ -261,6 +268,8 @@ public class SISSVocPublishProvider extends PublishProvider {
                             + ".ttl"));
         } catch (IOException e) {
             // This may mean a file permissions problem, so do log it.
+            results.put(TaskStatus.EXCEPTION,
+                    "SISSVoc removeSpecFile: failed");
             logger.error("removeSpecFile failed", e);
         }
     }

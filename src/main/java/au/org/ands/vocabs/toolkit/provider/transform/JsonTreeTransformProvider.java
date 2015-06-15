@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
@@ -74,6 +75,8 @@ public class JsonTreeTransformProvider extends TransformProvider {
                 | RDFHandlerException ex) {
             // I/O error encountered during the iteration,
             // the cause is an IOException
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in JsonTreeTransform while Parsing RDF");
             logger.error("Exception in JsonTreeTransform while Parsing RDF:",
                     ex);
             return false;
@@ -90,6 +93,8 @@ public class JsonTreeTransformProvider extends TransformProvider {
             FileUtils.writeStringToFile(out,
                     TasksUtils.hashMapToJSONString(conceptTree));
         } catch (IOException ex) {
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in JsonTreeTransform while generating result");
             logger.error("Exception in JsonTreeTransform generating result:",
                     ex);
             return false;

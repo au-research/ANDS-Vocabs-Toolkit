@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
@@ -77,6 +78,8 @@ public class SolrIndexTransformProvider extends TransformProvider {
                 | RDFHandlerException ex) {
             // I/O error encountered during the iteration,
             // the cause is an IOException
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in SolrIndexTransform while Parsing RDF");
             logger.error("Exception in SolrIndexTransform while Parsing RDF:",
                     ex);
             return false;
@@ -97,6 +100,8 @@ public class SolrIndexTransformProvider extends TransformProvider {
             jsonWriter.writeObject(job.build());
             jsonWriter.close();
         } catch (FileNotFoundException ex) {
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in SolrIndexTransform while generating result");
             logger.error("Exception in SolrIndexTransform generating result:",
                     ex);
             return false;

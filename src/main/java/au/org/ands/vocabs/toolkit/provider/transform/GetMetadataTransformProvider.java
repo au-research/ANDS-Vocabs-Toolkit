@@ -107,8 +107,8 @@ public class GetMetadataTransformProvider extends TransformProvider {
                 | RDFParseException
                 | RDFHandlerException ex) {
             results.put(TaskStatus.EXCEPTION,
-                    "Exception in JsonListTransform while Parsing RDF");
-            logger.error("Exception in JsonListTransform while Parsing RDF:",
+                    "Exception in extractMetadata while Parsing RDF");
+            logger.error("Exception in extractMetadata while Parsing RDF:",
                     ex);
             return results;
         }

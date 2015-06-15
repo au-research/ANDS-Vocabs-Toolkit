@@ -125,10 +125,14 @@ public class SesameHarvestProvider extends HarvestProvider {
 //                output.write('\n');
 
             } catch (FileNotFoundException e) {
+                results.put(TaskStatus.EXCEPTION,
+                        "Sesame harvest, can't create output file");
                 logger.error("Sesame harvest, can't create output file: ", e);
                 return false;
             } catch (RDFHandlerException e) {
-                logger.error("Sesame harvest, can't do export: ", e);
+                results.put(TaskStatus.EXCEPTION,
+                        "Sesame harvest, can't serialize");
+                logger.error("Sesame harvest, can't serialize: ", e);
                 return false;
             } finally {
                 if (con != null) {
@@ -136,6 +140,8 @@ public class SesameHarvestProvider extends HarvestProvider {
                 }
             }
         } catch (RepositoryConfigException | RepositoryException e) {
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in Sesame harvest");
             logger.error("Exception in Sesame harvest", e);
             return false;
         }
