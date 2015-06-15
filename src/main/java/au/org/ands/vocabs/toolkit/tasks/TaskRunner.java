@@ -16,6 +16,7 @@ import au.org.ands.vocabs.toolkit.provider.publish.PublishProvider;
 import au.org.ands.vocabs.toolkit.provider.publish.PublishProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.transform.TransformProvider;
 import au.org.ands.vocabs.toolkit.provider.transform.TransformProviderUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -120,7 +121,7 @@ public class TaskRunner {
             }
         }
         status = TaskStatus.SUCCESS;
-        results.put("output_path", TasksUtils.getTaskOutputPath(taskInfo,
+        results.put("output_path", ToolkitFileUtils.getTaskOutputPath(taskInfo,
                 null));
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "All tasks completed.");

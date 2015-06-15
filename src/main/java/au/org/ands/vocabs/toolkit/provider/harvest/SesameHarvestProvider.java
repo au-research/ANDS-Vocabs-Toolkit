@@ -104,7 +104,7 @@ public class SesameHarvestProvider extends HarvestProvider {
             try {
                 con = repository.getConnection();
 
-                Path dir = Paths.get(TasksUtils.getTaskHarvestOutputPath(
+                Path dir = Paths.get(ToolkitFileUtils.getTaskHarvestOutputPath(
                         taskInfo));
                 ToolkitFileUtils.requireDirectory(dir.toString());
 

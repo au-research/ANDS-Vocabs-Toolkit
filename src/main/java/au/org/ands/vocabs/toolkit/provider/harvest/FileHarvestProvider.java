@@ -102,7 +102,7 @@ public class FileHarvestProvider extends HarvestProvider {
 
         String filePath = subtask.get("file_path").textValue();
         return getHarvestFiles(filePath,
-                TasksUtils.getTaskHarvestOutputPath(taskInfo),
+                ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo),
                 results);
     }
 

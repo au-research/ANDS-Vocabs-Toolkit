@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,7 +54,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
     public final boolean transform(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
-        Path dir = Paths.get(TasksUtils.getTaskHarvestOutputPath(
+        Path dir = Paths.get(ToolkitFileUtils.getTaskHarvestOutputPath(
                 taskInfo));
         ConceptHandler conceptHandler = new ConceptHandler();
         try (DirectoryStream<Path> stream =
@@ -78,7 +79,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
             return false;
         }
 
-        String resultFileNameTree = TasksUtils.getTaskOutputPath(taskInfo,
+        String resultFileNameTree = ToolkitFileUtils.getTaskOutputPath(taskInfo,
                 "concepts_tree.json");
         try {
             File out = new File(resultFileNameTree);

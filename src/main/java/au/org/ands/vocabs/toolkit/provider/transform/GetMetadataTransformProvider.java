@@ -30,9 +30,9 @@ import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -85,7 +85,8 @@ public class GetMetadataTransformProvider extends TransformProvider {
      */
     public final HashMap<String, Object> extractMetadata(
             final String pPprojectId) {
-        Path dir = Paths.get(TasksUtils.getMetadataOutputPath(pPprojectId));
+        Path dir = Paths.get(ToolkitFileUtils.getMetadataOutputPath(
+                pPprojectId));
         HashMap<String, Object> results = new HashMap<String, Object>();
         ConceptHandler conceptHandler = new ConceptHandler();
         try (DirectoryStream<Path> stream =
@@ -116,29 +117,31 @@ public class GetMetadataTransformProvider extends TransformProvider {
                 conceptHandler.getCountedConcepts()));
         return results;
     }
-    /** RDF Handler to extract prefLabels, notation, and use broader
-     * and narrow properties to construct a list-like structure. */
+    /** RDF Handler to extract metadata and construct maps. */
     class ConceptHandler extends RDFHandlerBase {
 
         /** Number of concept resources. */
         private int countedConcepts = 0;
 
-        /** Map for metadata contained in the graph
-         * property name to the property value(s). */
+        /** Map for metadata contained in the graph.
+         * Keys are property strings ("dcterms:title", etc., as
+         * per the values of the metadataToLookFor map.
+         * Values are maps, with: keys: source file name,
+         * value: maps. These maps have: keys: "value" (+ optional
+         * "_" + language tag), value: either a String, or an ArrayList
+         * of Strings of corresponding values. */
         private HashMap<String, Object> metadataMap =
                 new HashMap<String, Object>();
 
-        /** metadata Suffix to identify origin. */
+        /** Source filename of the metadata. */
         private String source = "";
 
         @Override
         public void handleStatement(final Statement st) {
-
             for (Entry<URI, String> term : metadataToLookFor.entrySet()) {
                 if (st.getPredicate().equals(term.getKey())) {
                    addToMap(term.getValue(), st);
                 }
-
             }
             if (st.getPredicate().equals(RDF.TYPE)
                     && (st.getObject().equals(SKOS.CONCEPT))) {
@@ -146,23 +149,36 @@ public class GetMetadataTransformProvider extends TransformProvider {
             }
         }
 
-        /** Getter for concept count. */
-        /** @return The number of concept resources. */
+        /** Getter for concept count.
+         * @return The number of concept resources. */
         public int getCountedConcepts() {
             return countedConcepts;
         }
 
 
-        /** add statements to the metadata Map .
-        * @param key used for this type of statement.
-        * @param st is the statement to be added. **/
+        /** Add a statement to the metadata Map.
+         * See comment for metatdataMap for the structure.
+         * @param key Metadata key ("dcterms:title", etc.).
+         * @param st The statement to be added.
+         */
         @SuppressWarnings("unchecked")
         private void addToMap(final String key, final Statement st) {
 
             String value = st.getObject().stringValue();
             String lang = "";
-            HashMap<String, Object> mMap = new HashMap<String, Object>();
-            HashMap<String, Object> aMap = new HashMap<String, Object>();
+            // mMap: keys: source file name, values: maps, with
+            // keys: "value" (+ optional "_" + language tag),
+            // value: either a String, or an ArrayList
+            // of Strings of corresponding values. (The values are
+            // the same type as aMap.)
+            HashMap<String, Object> mMap;
+            // aMap: keys: "value" (+ optional "_" + language tag),
+            // value: either a String, or an ArrayList
+            // of Strings of corresponding values. (The values are
+            // the same type as aMap.)
+            HashMap<String, Object> aMap;
+            // If st's object is a literal and has a language tag,
+            // set lang to be "_" plus the tag.
             if (st.getObject().getClass().equals(LiteralImpl.class)) {
                 if (((Literal) st.getObject()).getLanguage() != null) {
                     lang = "_" + ((Literal)
@@ -171,18 +187,24 @@ public class GetMetadataTransformProvider extends TransformProvider {
             }
 
             if (metadataMap.containsKey(key)) {
-                 mMap = (HashMap<String, Object>) metadataMap.get(key);
+                mMap = (HashMap<String, Object>) metadataMap.get(key);
+            } else {
+                mMap = new HashMap<String, Object>();
+                metadataMap.put(key, mMap);
             }
 
             if (mMap.containsKey(source)) {
                 aMap =  (HashMap<String, Object>) mMap.get(source);
+            } else {
+                aMap = new HashMap<String, Object>();
+                mMap.put(source, aMap);
             }
 
             if (aMap.containsKey("value" + lang)) {
-                // exist already
-                if (aMap.get("value" + lang).getClass().equals(String.class)) {
-                // create a list and
-                // add both the previous and the new one to it
+                // Already in the map
+                if (aMap.get("value" + lang) instanceof String) {
+                    // Create a list and add both the previous and the
+                    // new one to it.
                     if (!aMap.get("value" + lang).equals(value)) {
                     ArrayList<String> aList = new ArrayList<String>();
                     aList.add((String) aMap.get("value" + lang));
@@ -190,23 +212,17 @@ public class GetMetadataTransformProvider extends TransformProvider {
                     aMap.put("value" + lang, aList);
                     }
                 } else {
-                    // already a list
+                    // Already a list
                     ArrayList<String> aList =
                     (ArrayList<String>) aMap.get("value" + lang);
                     if (!aList.contains(value)) {
                         aList.add(value);
-                        aMap.put("value" + lang, aList);
                     }
                 }
             } else {
                 aMap.put("value" + lang, value);
             }
-
-            mMap.put(source, aMap);
-            metadataMap.put(key, mMap);
-
         }
-
 
         /** Getter for concepts list. */
         /** @return The completed concept map. */
@@ -214,10 +230,10 @@ public class GetMetadataTransformProvider extends TransformProvider {
             return metadataMap;
         }
 
-        /** setter for source. */
-        /** @param sSource file name. */
-        public void setSource(final String sSource) {
-            source = sSource;
+        /** Setter for source. */
+        /** @param aSource Source filename. */
+        public void setSource(final String aSource) {
+            source = aSource;
         }
     }
 

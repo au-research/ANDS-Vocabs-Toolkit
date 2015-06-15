@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -68,7 +69,7 @@ public class SPARQLHarvestProvider extends HarvestProvider {
         logger.debug("Doing harvest from SPARQL endpoint:" + sparqlEndpoint);
 
         String outputFileRDF = Paths.get(
-                TasksUtils.getTaskHarvestOutputPath(taskInfo)).
+                ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo)).
                 resolve("sparql_harvest.rdf").toString();
 
         Repository remoteRepository;
@@ -81,7 +82,7 @@ public class SPARQLHarvestProvider extends HarvestProvider {
             GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SPARQL,
                     queryString);
 
-             OutputStream output = new FileOutputStream(outputFileRDF);
+            OutputStream output = new FileOutputStream(outputFileRDF);
 //            RDFXMLWriter rdfxmlWriter = new RDFXMLWriter(output);
             RDFWriter rdfxmlWriter = Rio.createWriter(RDFFormat.RDFXML, output);
 

@@ -147,7 +147,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
         String projectId = subtask.get("project_id").textValue();
         return getHarvestFiles(projectId,
-                TasksUtils.getTaskHarvestOutputPath(taskInfo),
+                ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo),
                 false, true, results);
     }
 
@@ -162,7 +162,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
                 new HashMap<String, String>();
 
         getHarvestFiles(projectId,
-                TasksUtils.getMetadataOutputPath(projectId),
+                ToolkitFileUtils.getMetadataOutputPath(projectId),
                 true, false, result);
         return result;
     }

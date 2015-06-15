@@ -21,7 +21,6 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
@@ -81,7 +80,7 @@ public class SISSVocPublishProvider extends PublishProvider {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(sissvocEndpointsPrefix);
         WebTarget sparqlTarget = target
-                .path(TasksUtils.getSISSVocRepositoryPath(taskInfo));
+                .path(ToolkitFileUtils.getSISSVocRepositoryPath(taskInfo));
         results.put("sissvoc_endpoints",
                 sparqlTarget.getUri().toString());
         return true;
@@ -133,7 +132,7 @@ public class SISSVocPublishProvider extends PublishProvider {
         specProperties.put("SERVICE_LABEL",
                 StringEscapeUtils.escapeJava(
                         taskInfo.getVocabulary().getTitle()));
-        String repositoryId = TasksUtils.getTaskRepositoryId(taskInfo);
+        String repositoryId = ToolkitFileUtils.getTaskRepositoryId(taskInfo);
         // SPARQL endpoint to use for doing queries
         specProperties.put("SPARQL_ENDPOINT",
                 PROPS.getProperty("SISSVoc.variable.SPARQL_ENDPOINT_PREFIX",
@@ -144,7 +143,7 @@ public class SISSVocPublishProvider extends PublishProvider {
         // Additional path to all the endpoints for this repository.
         // The template assumes the variable begins with a slash.
         specProperties.put("SVC_PREFIX",
-                "/" + TasksUtils.getSISSVocRepositoryPath(taskInfo));
+                "/" + ToolkitFileUtils.getSISSVocRepositoryPath(taskInfo));
         // Path to the XSL stylesheet that generates the HTML pages.
         // Path is relative to the SISSVoc webapp.
         specProperties.put("HTML_STYLESHEET",
@@ -210,7 +209,7 @@ public class SISSVocPublishProvider extends PublishProvider {
         ToolkitFileUtils.requireDirectory(sissvocSpecOutputPath);
         File specFile = new File(
                 Paths.get(sissvocSpecOutputPath).
-                resolve(TasksUtils.getTaskRepositoryId(taskInfo)
+                resolve(ToolkitFileUtils.getTaskRepositoryId(taskInfo)
                         + ".ttl").toString());
         try {
             FileUtils.writeStringToFile(specFile, customSpec);
@@ -235,7 +234,7 @@ public class SISSVocPublishProvider extends PublishProvider {
             final HashMap<String, String> results) {
         try {
             Path specFilePath = Paths.get(sissvocSpecOutputPath).
-                    resolve(TasksUtils.getTaskRepositoryId(taskInfo)
+                    resolve(ToolkitFileUtils.getTaskRepositoryId(taskInfo)
                             + ".ttl");
             if (Files.exists(specFilePath)) {
                 Files.write(specFilePath, new byte[0]);
@@ -258,7 +257,7 @@ public class SISSVocPublishProvider extends PublishProvider {
             final HashMap<String, String> results) {
         try {
             Files.deleteIfExists(Paths.get(sissvocSpecOutputPath).
-                    resolve(TasksUtils.getTaskRepositoryId(taskInfo)
+                    resolve(ToolkitFileUtils.getTaskRepositoryId(taskInfo)
                             + ".ttl"));
         } catch (IOException e) {
             // This may mean a file permissions problem, so do log it.

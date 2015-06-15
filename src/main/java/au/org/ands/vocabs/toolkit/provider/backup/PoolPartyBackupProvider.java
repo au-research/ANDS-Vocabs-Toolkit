@@ -25,22 +25,19 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
-/** Harvest provider for PoolParty. */
+/** Backup provider for PoolParty. */
 public class PoolPartyBackupProvider extends BackupProvider {
 
     /** The logger for this class. */
     private final Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
-    @Override
-    /** get All PoolParty project IDs
-     * of the backup.
-     * @return a ArrayList of all IDs as String.
+    /** Get all PoolParty project IDs.
+     * @return An ArrayList of all IDs as Strings.
      */
-    public final ArrayList<String> getProjects() {
+    public final ArrayList<String> getProjectIDs() {
         String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
         String username = PROPS.getProperty("PoolPartyHarvester.username");
         String password = PROPS.getProperty("PoolPartyHarvester.password");
@@ -59,6 +56,9 @@ public class PoolPartyBackupProvider extends BackupProvider {
         Response response = invocationBuilder.get();
 
         InputStream is = response.readEntity(InputStream.class);
+
+        // Now extract the project IDs from the returned data and store
+        // in the ArrayList that will be returned.
         JsonReader jsonReader = Json.createReader(is);
         JsonArray jsonStructure = jsonReader.readArray();
         ArrayList<String> pList = new ArrayList<String>();
@@ -68,10 +68,9 @@ public class PoolPartyBackupProvider extends BackupProvider {
             pList.add(entry.getString("id"));
         }
         return pList;
-
     }
 
-    /** Do a backup. Return a list with the result
+    /** Do a backup of one PoolParty project. Return a list with the result
      * of the backup.
      * @param ppProjectId The PoolParty project id.
      * @param outputPath The directory in which to store output files.
@@ -108,52 +107,52 @@ public class PoolPartyBackupProvider extends BackupProvider {
                 .path(ppProjectId)
                 .path("export")
                 .queryParam("format", format);
-            for (String exportModule : exportModules) {
-               thisTarget = thisTarget.queryParam("exportModules",
-                        exportModule);
-            }
-            logger.debug("Harvesting from " + thisTarget.toString());
 
-            Invocation.Builder invocationBuilder =
-                    thisTarget.request(MediaType.APPLICATION_XML);
+        for (String exportModule : exportModules) {
+            thisTarget = thisTarget.queryParam("exportModules",
+                    exportModule);
+        }
 
-            Response response = invocationBuilder.get();
+        Invocation.Builder invocationBuilder =
+                thisTarget.request(MediaType.APPLICATION_XML);
 
-            String responseData = response.readEntity(String.class);
-            Date date = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String filaName = dateFormat.format(date) + "-backup";
-            String filePath = ToolkitFileUtils.saveFile(
-                    outputPath,
-                    filaName,
-                    format, responseData);
-           result.put(filaName, filePath);
+        Response response = invocationBuilder.get();
+
+        String responseData = response.readEntity(String.class);
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String fileName = dateFormat.format(date) + "-backup";
+        String filePath = ToolkitFileUtils.saveFile(
+                outputPath,
+                fileName,
+                format, responseData);
+        result.put(fileName, filePath);
 
         return result;
     }
 
     /** Do a backup. Update the result parameter with the result
-     * of the harvest.
-     * @param pPProjectId (optional) the poolParty project id or null for all
+     * of the backup.
+     * @param pPProjectId Either the PoolParty project ID, or null for all
      * projects.
      * @return the complete list of the backup files.
      */
     @Override
-    public final HashMap<String, Object> doBackup(final String pPProjectId) {
+    public final HashMap<String, Object> backup(final String pPProjectId) {
 
-        ArrayList<String> pList = new ArrayList<String>();
+        ArrayList<String> pList;
         HashMap<String, Object> results = new HashMap<String, Object>();
 
         if (pPProjectId == null || pPProjectId.isEmpty()) {
-            pList = getProjects();
+            pList = getProjectIDs();
         } else {
+            pList = new ArrayList<String>();
             pList.add(pPProjectId);
         }
 
-        for (int i = 0; i < pList.size(); i++) {
-            String projectId = pList.get(i);
+        for (String projectId : pList) {
             results.put(projectId, getBackupFiles(projectId,
-                    TasksUtils.getMetadataBackupPath(projectId)));
+                    ToolkitFileUtils.getBackupPath(projectId)));
         }
 
         return results;

@@ -2,24 +2,19 @@ package au.org.ands.vocabs.toolkit.db;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.glassfish.jersey.uri.UriComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
-import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
-import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -83,61 +78,6 @@ public final class TasksUtils {
         return v;
     }
 
-
-    /** Construct a TaskInfo object based on a task id.
-     * @param taskId The task's task id
-     * @return The TaskInfo object
-     */
-    public static TaskInfo getTaskInfo(final int taskId) {
-        Task task = getTaskById(taskId);
-        if (task == null) {
-            logger.error("getTaskInfo: getTaskById returned null; task id:"
-                    + taskId);
-            return null;
-        }
-        Vocabularies vocab = getVocabularyById(task.getVocabularyId());
-        if (vocab == null) {
-            logger.error("getTaskInfo: getVocabularyById returned null; "
-                    + "task id:"
-                    + taskId + "; vocab id:" + task.getVocabularyId());
-            return null;
-        }
-        Versions version = getVersionById(task.getVersionId());
-        if (version == null) {
-            logger.error("getTaskInfo: getVersionById returned null; "
-                    + "task id:"
-                    + taskId + "; version id:" + task.getVersionId());
-            return null;
-        }
-        TaskInfo taskInfo = new TaskInfo(task, vocab, version);
-        if (version.getVocabId() != task.getVocabularyId()) {
-            logger.error("getTaskInfo: version's vocab id does not match"
-                    + " task's version id; "
-                    + "task id:"
-                    + taskId + "; version id:" + task.getVersionId());
-            return null;
-        }
-        if (vocab.getSlug() == null || vocab.getSlug().trim().isEmpty()) {
-            logger.error("getTaskInfo: vocab's slug is empty; "
-                    + "task id:"
-                    + taskId + "; vocab id:" + task.getVocabularyId());
-            return null;
-        }
-        if (vocab.getOwner() == null || vocab.getOwner().trim().isEmpty()) {
-            logger.error("getTaskInfo: vocab's owner is empty; "
-                    + "task id:"
-                    + taskId + "; vocab id:" + task.getVocabularyId());
-            return null;
-        }
-        if (version.getTitle() == null || version.getTitle().trim().isEmpty()) {
-            logger.error("getTaskInfo: version's title is empty; "
-                    + "task id:"
-                    + taskId + "; version id:" + task.getVersionId());
-            return null;
-        }
-
-        return taskInfo;
-    }
 
     /** Set the status and data fields for a task.
      * @param task The task being updated
@@ -224,124 +164,6 @@ public final class TasksUtils {
             return null;
         }
         return (ArrayNode) root;
-    }
-
-    /** Get the full path of the directory used to store all
-     * the files referred to by the task.
-     * @param taskInfo The TaskInfo object representing the task.
-     * @param extraPath An optional additional path component to be added
-     * at the end. If not required, pass in null or an empty string.
-     * @return The full path of the directory used to store the
-     * vocabulary data.
-     */
-    public static String getTaskOutputPath(final TaskInfo taskInfo,
-            final String extraPath) {
-        Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH)
-                .resolve(UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getOwner()),
-                        UriComponent.Type.PATH_SEGMENT))
-                .resolve(UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getSlug()),
-                        UriComponent.Type.PATH_SEGMENT))
-                .resolve(UriComponent.encode(
-                        makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT));
-        if (extraPath != null && (!extraPath.isEmpty())) {
-            path = path.resolve(extraPath);
-        }
-        return path.toString().toLowerCase();
-    }
-
-    /** Get the full path of the directory used to store all
-     * harvested data referred to by the task.
-     * @param taskInfo The TaskInfo object representing the task.
-     * at the end. If not required, pass in null or an empty string.
-     * @return The full path of the directory used to store the
-     * vocabulary data.
-     */
-    public static String getTaskHarvestOutputPath(final TaskInfo taskInfo) {
-        return getTaskOutputPath(taskInfo, ToolkitConfig.HARVEST_DATA_PATH);
-    }
-
-    /** Get the full path of the temporary directory used to store all
-     * harvested data for metadata extraction for a PoolParty vocabulary.
-     * @param projectId The PoolParty projectId.
-     * @return The full path of the directory used to store the
-     * vocabulary data.
-     */
-    public static String getMetadataOutputPath(final String projectId) {
-        Path path = Paths.get(ToolkitConfig.METADATA_TEMP_FILES_PATH)
-                .resolve(UriComponent.encode(
-                        makeSlug(projectId),
-                        UriComponent.Type.PATH_SEGMENT));
-        return path.toString().toLowerCase();
-    }
-
-    /** Get the full path of the backup directory used to store all
-     * backup data for metadata extraction for a PoolParty project.
-     * @param projectId The PoolParty projectId.
-     * @return The full path of the directory used to store the
-     * vocabulary data.
-     */
-    public static String getMetadataBackupPath(final String projectId) {
-        Path path = Paths.get(ToolkitConfig.METADATA_BACKUP_FILES_PATH)
-                .resolve(UriComponent.encode(
-                        makeSlug(projectId),
-                        UriComponent.Type.PATH_SEGMENT));
-        return path.toString().toLowerCase();
-    }
-
-    /** Apply slug conventions. In practice, this means replacing
-     * whitespace with hyphen.
-     * @param aString The string that is to be converted.
-     * @return The value of aString with slug conventions applied.
-     */
-    public static String makeSlug(final String aString) {
-        return aString.replaceAll("\\s", "-");
-    }
-
-    /**
-     * Get the Sesame repository ID for a vocabulary's version
-     * referred to by the task.
-     *
-     * @param taskInfo
-     *            The TaskInfo object representing the task.
-     * @return The repository id for the vocabulary with this version.
-     */
-    public static String getTaskRepositoryId(final TaskInfo taskInfo) {
-        return (UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getOwner()),
-                        UriComponent.Type.PATH_SEGMENT)
-                + "_"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getSlug()),
-                        UriComponent.Type.PATH_SEGMENT)
-                + "_"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT)).toLowerCase();
-    }
-
-    /**
-     * Get the SISSVoc repository ID for a vocabulary's version
-     * referred to by the task. It neither begins nor ends with a slash.
-     *
-     * @param taskInfo
-     *            The TaskInfo object representing the task.
-     * @return The repository id for the vocabulary with this version.
-     */
-    public static String getSISSVocRepositoryPath(final TaskInfo taskInfo) {
-        return (UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getOwner()),
-                        UriComponent.Type.PATH_SEGMENT)
-                + "/"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getSlug()),
-                        UriComponent.Type.PATH_SEGMENT)
-                + "/"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT)).toLowerCase();
     }
 
 }

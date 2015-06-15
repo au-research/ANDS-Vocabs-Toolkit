@@ -37,8 +37,8 @@ import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 //CHECKSTYLE:ON: LineLength
 
@@ -124,13 +124,14 @@ public class SesameImporterProvider extends ImporterProvider {
         if (!success) {
             return false;
         }
-        results.put("repository_id", TasksUtils.getTaskRepositoryId(taskInfo));
+        results.put("repository_id", ToolkitFileUtils.getTaskRepositoryId(
+                taskInfo));
         // Use the nice JAX-RS libraries to construct the path to
         // the SPARQL endpoint.
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(sparqlPrefix);
         WebTarget sparqlTarget = target
-                .path(TasksUtils.getTaskRepositoryId(taskInfo));
+                .path(ToolkitFileUtils.getTaskRepositoryId(taskInfo));
         results.put("sparql_endpoint",
                 sparqlTarget.getUri().toString());
         return true;
@@ -147,7 +148,8 @@ public class SesameImporterProvider extends ImporterProvider {
         try {
             manager = RepositoryProvider.getRepositoryManager(sesameServer);
 
-            String repositoryID = TasksUtils.getTaskRepositoryId(taskInfo);
+            String repositoryID = ToolkitFileUtils.getTaskRepositoryId(
+                    taskInfo);
             String versionID = taskInfo.getVersion().getTitle();
             String repositoryTitle = taskInfo.getVocabulary().getTitle()
                     + " (Version: " + versionID + ")";
@@ -210,7 +212,8 @@ public class SesameImporterProvider extends ImporterProvider {
         try {
             manager = RepositoryProvider.getRepositoryManager(sesameServer);
 
-            String repositoryID = TasksUtils.getTaskRepositoryId(taskInfo);
+            String repositoryID = ToolkitFileUtils.getTaskRepositoryId(
+                    taskInfo);
 
             Repository repository = manager.getRepository(repositoryID);
             if (repository == null) {
@@ -227,7 +230,7 @@ public class SesameImporterProvider extends ImporterProvider {
                         && subtask.get("clear").booleanValue()) {
                     con.clear();
                 }
-                Path dir = Paths.get(TasksUtils.getTaskHarvestOutputPath(
+                Path dir = Paths.get(ToolkitFileUtils.getTaskHarvestOutputPath(
                         taskInfo));
                 try (DirectoryStream<Path> stream =
                         Files.newDirectoryStream(dir)) {
@@ -269,7 +272,8 @@ public class SesameImporterProvider extends ImporterProvider {
         RepositoryManager manager = null;
         try {
             manager = RepositoryProvider.getRepositoryManager(sesameServer);
-            String repositoryID = TasksUtils.getTaskRepositoryId(taskInfo);
+            String repositoryID = ToolkitFileUtils.getTaskRepositoryId(
+                    taskInfo);
             Repository repository = manager.getRepository(repositoryID);
             if (repository == null) {
                 // No such repository; nothing to do.

@@ -14,10 +14,10 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 /** Restlets for running a Toolkit supported tasks. */
 @Path("runTask")
@@ -41,7 +41,7 @@ public class RunTask {
     public final HashMap<String, String> runTask(
             @PathParam("taskId") final int taskId) {
         logger.debug("called runTask, taskid = " + taskId);
-        TaskInfo taskInfo = TasksUtils.getTaskInfo(taskId);
+        TaskInfo taskInfo = ToolkitFileUtils.getTaskInfo(taskId);
         if (taskInfo == null) {
             HashMap<String, String> response =
                     new HashMap<String, String>();

@@ -19,7 +19,6 @@ import org.openrdf.rio.UnsupportedRDFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
 //import au.org.ands.vocabs.toolkit.harvester.HttpsHack;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
@@ -78,7 +77,7 @@ public abstract class HarvestProvider {
             final HashMap<String, String> results) {
         try {
             FileUtils.deleteDirectory(new File(
-                    TasksUtils.getTaskHarvestOutputPath(taskInfo)));
+                    ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo)));
             return true;
         } catch (IOException e) {
             // This may mean a file permissions problem, so do log it.
