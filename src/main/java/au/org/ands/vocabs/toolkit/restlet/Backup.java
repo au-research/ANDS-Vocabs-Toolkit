@@ -34,7 +34,7 @@ public class Backup {
             final String pPProjectId) {
         HashMap<String, Object> result =
                 new HashMap<String, Object>();
-        logger.debug("Called doBackup/poolParty/ " + pPProjectId);
+        logger.debug("Called doBackup/PoolParty/ " + pPProjectId);
         result.putAll(new PoolPartyBackupProvider().backup(pPProjectId));
         return result;
     }
@@ -48,7 +48,7 @@ public class Backup {
     public final HashMap<String, Object> backupAllPoolPartyProjects() {
         HashMap<String, Object> result =
                 new HashMap<String, Object>();
-        logger.debug("Called doBackup/poolParty/all");
+        logger.debug("Called doBackup/PoolParty/all");
         result.putAll(new PoolPartyBackupProvider().backup(null));
         return result;
     }
