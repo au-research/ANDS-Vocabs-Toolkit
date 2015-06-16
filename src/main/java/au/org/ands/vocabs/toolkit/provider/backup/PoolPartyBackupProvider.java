@@ -1,5 +1,6 @@
 package au.org.ands.vocabs.toolkit.provider.backup;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
@@ -25,6 +26,7 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 /** Backup provider for PoolParty. */
@@ -118,16 +120,27 @@ public class PoolPartyBackupProvider extends BackupProvider {
 
         Response response = invocationBuilder.get();
 
-        String responseData = response.readEntity(String.class);
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String fileName = dateFormat.format(date) + "-backup";
-        String filePath = ToolkitFileUtils.saveFile(
-                outputPath,
-                fileName,
-                format, responseData);
-        result.put(fileName, filePath);
-
+        if (response.getStatus()
+                < Response.Status.BAD_REQUEST.getStatusCode()) {
+            String responseData = response.readEntity(String.class);
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(
+                    "yyyy-MM-dd'T'HH:mm:ss");
+            String fileName = dateFormat.format(date) + "-backup";
+            String filePath = ToolkitFileUtils.saveFile(
+                    outputPath,
+                    fileName,
+                    format, responseData);
+            result.put(fileName, filePath);
+        } else {
+            logger.error("getBackupFiles got an error from PoolParty; "
+                    + "response code = " + response.getStatus());
+            // This is an abuse of the task status codes, because
+            // it is not a task.
+            result.put(TaskStatus.ERROR, "getBackupFiles got an error "
+                    + "from PoolParty; "
+                    + "response code = " + response.getStatus());
+        }
         return result;
     }
 
@@ -151,6 +164,13 @@ public class PoolPartyBackupProvider extends BackupProvider {
         }
 
         for (String projectId : pList) {
+            try {
+                ToolkitFileUtils.compressBackupFolder(projectId);
+            } catch (IOException ex) {
+                results.put(TaskStatus.EXCEPTION, "Unable to compress folder"
+                        + " for projectId:" + projectId);
+                logger.error("Unable to compress folder", ex);
+            }
             results.put(projectId, getBackupFiles(projectId,
                     ToolkitFileUtils.getBackupPath(projectId)));
         }

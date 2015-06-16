@@ -1,11 +1,20 @@
 package au.org.ands.vocabs.toolkit.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import org.glassfish.jersey.uri.UriComponent;
 import org.slf4j.Logger;
@@ -157,7 +166,7 @@ public final class ToolkitFileUtils {
         if (extraPath != null && (!extraPath.isEmpty())) {
             path = path.resolve(extraPath);
         }
-        return path.toString().toLowerCase();
+        return path.toString();
     }
 
     /** Get the full path of the directory used to store all
@@ -182,7 +191,7 @@ public final class ToolkitFileUtils {
                 .resolve(UriComponent.encode(
                         ToolkitFileUtils.makeSlug(projectId),
                         UriComponent.Type.PATH_SEGMENT));
-        return path.toString().toLowerCase();
+        return path.toString();
     }
 
     /** Get the full path of the backup directory used to store all
@@ -197,16 +206,16 @@ public final class ToolkitFileUtils {
                 .resolve(UriComponent.encode(
                         ToolkitFileUtils.makeSlug(projectId),
                         UriComponent.Type.PATH_SEGMENT));
-        return path.toString().toLowerCase();
+        return path.toString();
     }
 
-    /** Apply slug conventions. In practice, this means replacing
-     * whitespace with hyphen.
+    /** Apply slug conventions. In practice, this means (a) replacing
+     * whitespace with hyphen, (b) converting to lowercase.
      * @param aString The string that is to be converted.
      * @return The value of aString with slug conventions applied.
      */
     public static String makeSlug(final String aString) {
-        return aString.replaceAll("\\s", "-");
+        return aString.replaceAll("\\s", "-").toLowerCase();
     }
 
     /**
@@ -218,7 +227,7 @@ public final class ToolkitFileUtils {
      * @return The repository id for the vocabulary with this version.
      */
     public static String getTaskRepositoryId(final TaskInfo taskInfo) {
-        return (UriComponent.encode(
+        return UriComponent.encode(
                         makeSlug(taskInfo.getVocabulary().getOwner()),
                         UriComponent.Type.PATH_SEGMENT)
                 + "_"
@@ -228,7 +237,7 @@ public final class ToolkitFileUtils {
                 + "_"
                 + UriComponent.encode(
                         makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT)).toLowerCase();
+                        UriComponent.Type.PATH_SEGMENT);
     }
 
     /**
@@ -240,7 +249,7 @@ public final class ToolkitFileUtils {
      * @return The repository id for the vocabulary with this version.
      */
     public static String getSISSVocRepositoryPath(final TaskInfo taskInfo) {
-        return (UriComponent.encode(
+        return UriComponent.encode(
                         makeSlug(taskInfo.getVocabulary().getOwner()),
                         UriComponent.Type.PATH_SEGMENT)
                 + "/"
@@ -250,7 +259,118 @@ public final class ToolkitFileUtils {
                 + "/"
                 + UriComponent.encode(
                         makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT)).toLowerCase();
+                        UriComponent.Type.PATH_SEGMENT);
+    }
+
+    /** Size of buffer to use when writing to a ZIP archive. */
+    private static final int BUFFER_SIZE = 4096;
+
+    /** Add a file to a ZIP archive.
+     * @param zos The ZipOutputStream representing the ZIP archive.
+     * @param file The File which is to be added to the ZIP archive.
+     * @return True if adding succeeded.
+     * @throws IOException Any exception when reading/writing data.
+     */
+    private static boolean zipFile(final ZipOutputStream zos, final File file)
+            throws IOException {
+        if (!file.canRead()) {
+            logger.error("zipFile can not read " + file.getCanonicalPath());
+            return false;
+        }
+        zos.putNextEntry(new ZipEntry(file.getName()));
+        FileInputStream fis = new FileInputStream(file);
+
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int byteCount = 0;
+        while ((byteCount = fis.read(buffer)) != -1) {
+            zos.write(buffer, 0, byteCount);
+        }
+        fis.close();
+        zos.closeEntry();
+        return true;
+    }
+
+    /** Compress the files in the backup folder for a project.
+     * @param projectId The project ID
+     * @throws IOException Any exception when reading/writing data.
+     */
+    public static void compressBackupFolder(final String projectId)
+            throws IOException {
+        String backupPath = getBackupPath(projectId);
+        if (!Files.isDirectory(Paths.get(backupPath))) {
+            // No such directory, so nothing to do.
+            return;
+        }
+        String projectSlug = UriComponent.encode(
+                ToolkitFileUtils.makeSlug(projectId),
+                UriComponent.Type.PATH_SEGMENT);
+        // The name of the ZIP file that does/will contain all
+        // backups for this project.
+        Path zipFilePath = Paths.get(backupPath).resolve(projectSlug + ".zip");
+        // A temporary ZIP file. Any existing content in the zipFilePath
+        // will be copied into this, followed by any other files in
+        // the directory that have not yet been added.
+        Path tempZipFilePath = Paths.get(backupPath).resolve("temp" + ".zip");
+
+        File tempZipFile = tempZipFilePath.toFile();
+        if (!tempZipFile.exists()) {
+            tempZipFile.createNewFile();
+        }
+
+        ZipOutputStream tempZipOut = new ZipOutputStream(
+                new FileOutputStream(tempZipFile));
+
+        File existingZipFile = zipFilePath.toFile();
+        if (existingZipFile.exists()) {
+            ZipFile zipIn = new ZipFile(existingZipFile);
+
+            Enumeration<? extends ZipEntry> entries = zipIn.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry e = entries.nextElement();
+                System.out.println("copy: " + e.getName());
+                tempZipOut.putNextEntry(e);
+                if (!e.isDirectory()) {
+                    copy(zipIn.getInputStream(e), tempZipOut);
+                }
+                tempZipOut.closeEntry();
+            }
+            zipIn.close();
+        }
+
+        File dir = new File(backupPath);
+        File[] files = dir.listFiles();
+
+        for (File source : files) {
+            if (!source.getName().toLowerCase().endsWith(".zip")) {
+                logger.debug("Compressing and deleting file "
+                        + source.toString());
+                if (zipFile(tempZipOut, source)) {
+                    source.delete();
+                }
+            }
+        }
+
+        tempZipOut.flush();
+        tempZipOut.close();
+        tempZipFile.renameTo(existingZipFile);
+    }
+
+    /** Size of buffer to use for copying files. */
+    private static final int COPY_BUFFER_SIZE = 4096 * 1024;
+
+    /** Copy the contents of an InputStream into an OutputStream.
+     * @param input The content to be copied.
+     * @param output The destination of the content being copied.
+     * @throws IOException Any IOException during read/write.
+     */
+    public static void copy(final InputStream input,
+            final OutputStream output) throws IOException {
+        int bytesRead;
+        byte[] buffer = new byte[COPY_BUFFER_SIZE];
+
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
     }
 
 
