@@ -26,7 +26,7 @@ public class Backup {
      * @param pPProjectId A PoolParty project ID.
      * @return The result info, in JSON format,
      * containing all files and some metadata. */
-    @Path("poolParty/{project_id}")
+    @Path("PoolParty/{project_id}")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public final HashMap<String, Object> backupPoolPartyProject(
@@ -42,7 +42,7 @@ public class Backup {
     /** Backup all PoolParty projects.
      * @return The result info, in JSON format,
      * containing all files and some metadata. */
-    @Path("poolParty")
+    @Path("PoolParty")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     public final HashMap<String, Object> backupAllPoolPartyProjects() {
