@@ -195,6 +195,8 @@ public class SesameImporterProvider extends ImporterProvider {
 
             return true;
         } catch (RepositoryConfigException | RepositoryException e) {
+            results.put(TaskStatus.EXCEPTION,
+                    "Exception in Sesame createRepository()");
             logger.error("Exception in Sesame createRepository()", e);
         }
         return false;
