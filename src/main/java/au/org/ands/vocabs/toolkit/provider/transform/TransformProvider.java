@@ -1,5 +1,4 @@
 package au.org.ands.vocabs.toolkit.provider.transform;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -15,9 +14,13 @@ public abstract class TransformProvider {
     protected static final Properties PROPS = ToolkitProperties.getProperties();
 
     /** Return information about the provider.
+     * Currently the return type is String.
+     * Currently, no subclass implements this method!
+     * So, once we work out what we are going to do with this method,
+     * the return type can be changed.
      * @return The information.
      */
-    public abstract Collection<?> getInfo();
+    public abstract String getInfo();
 
     /** Do a transform. Update the message parameter with the result
      * of the transform.

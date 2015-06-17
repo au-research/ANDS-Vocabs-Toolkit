@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -65,7 +64,7 @@ public class GetMetadataTransformProvider extends TransformProvider {
    }
 
     @Override
-    public final Collection<?> getInfo() {
+    public final String getInfo() {
         // TODO Auto-generated method stub
         return null;
     }

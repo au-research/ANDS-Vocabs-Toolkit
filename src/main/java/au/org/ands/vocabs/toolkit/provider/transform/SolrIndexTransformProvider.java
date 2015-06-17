@@ -10,7 +10,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -40,13 +39,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class SolrIndexTransformProvider extends TransformProvider {
 
     /** Logger for this class. */
-   private final Logger logger = LoggerFactory.getLogger(
-           MethodHandles.lookup().lookupClass());
+    private final Logger logger = LoggerFactory.getLogger(
+            MethodHandles.lookup().lookupClass());
 
-   /** Access to the Toolkit properties. */
-   protected static final Properties PROPS = ToolkitProperties.getProperties();
+    /** Access to the Toolkit properties. */
+    protected static final Properties PROPS = ToolkitProperties.getProperties();
+
     @Override
-    public final Collection<?> getInfo() {
+    public final String getInfo() {
         // TODO Auto-generated method stub
         return null;
     }
