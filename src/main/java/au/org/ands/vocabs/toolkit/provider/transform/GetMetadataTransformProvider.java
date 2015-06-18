@@ -199,28 +199,21 @@ public class GetMetadataTransformProvider extends TransformProvider {
                 mMap.put(source, aMap);
             }
 
-            if (aMap.containsKey("value" + lang)) {
-                // Already in the map
-                if (aMap.get("value" + lang) instanceof String) {
-                    // Create a list and add both the previous and the
-                    // new one to it.
-                    if (!aMap.get("value" + lang).equals(value)) {
-                    ArrayList<String> aList = new ArrayList<String>();
-                    aList.add((String) aMap.get("value" + lang));
-                    aList.add(value);
-                    aMap.put("value" + lang, aList);
-                    }
-                } else {
-                    // Already a list
-                    ArrayList<String> aList =
-                    (ArrayList<String>) aMap.get("value" + lang);
-                    if (!aList.contains(value)) {
-                        aList.add(value);
-                    }
-                }
+            ArrayList<String> aList;
+            if (!aMap.containsKey("value" + lang)) {
+                // Not already there, so create a new ArrayList
+                // and insert it into aMap.
+                aList = new ArrayList<String>();
+                aMap.put("value" + lang, aList);
             } else {
-                aMap.put("value" + lang, value);
+                aList = (ArrayList<String>) aMap.get("value" + lang);
             }
+            // Either way, add the value to the ArrayList iff
+            // it is not already there.
+            if (!aList.contains(value)) {
+                aList.add(value);
+            }
+
         }
 
         /** Getter for concepts list. */
