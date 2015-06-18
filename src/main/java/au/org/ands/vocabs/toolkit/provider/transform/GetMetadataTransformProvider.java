@@ -127,10 +127,12 @@ public class GetMetadataTransformProvider extends TransformProvider {
          * per the values of the metadataToLookFor map.
          * Values are maps, with: keys: source file name,
          * value: maps. These maps have: keys: "value" (+ optional
-         * "_" + language tag), value: either a String, or an ArrayList
+         * "_" + language tag), value: an ArrayList
          * of Strings of corresponding values. */
-        private HashMap<String, Object> metadataMap =
-                new HashMap<String, Object>();
+        private HashMap<String, HashMap<String, HashMap<String,
+            ArrayList<String>>>> metadataMap =
+                new HashMap<String, HashMap<String, HashMap<String,
+                ArrayList<String>>>>();
 
         /** Source filename of the metadata. */
         private String source = "";
@@ -160,22 +162,18 @@ public class GetMetadataTransformProvider extends TransformProvider {
          * @param key Metadata key ("dcterms:title", etc.).
          * @param st The statement to be added.
          */
-        @SuppressWarnings("unchecked")
         private void addToMap(final String key, final Statement st) {
 
             String value = st.getObject().stringValue();
             String lang = "";
             // mMap: keys: source file name, values: maps, with
             // keys: "value" (+ optional "_" + language tag),
-            // value: either a String, or an ArrayList
-            // of Strings of corresponding values. (The values are
-            // the same type as aMap.)
-            HashMap<String, Object> mMap;
+            // value: an ArrayList of Strings of corresponding values.
+            // (The values are the same type as aMap.)
+            HashMap<String, HashMap<String, ArrayList<String>>> mMap;
             // aMap: keys: "value" (+ optional "_" + language tag),
-            // value: either a String, or an ArrayList
-            // of Strings of corresponding values. (The values are
-            // the same type as aMap.)
-            HashMap<String, Object> aMap;
+            // value: an ArrayList of Strings of corresponding values.
+            HashMap<String, ArrayList<String>> aMap;
             // If st's object is a literal and has a language tag,
             // set lang to be "_" plus the tag.
             if (st.getObject().getClass().equals(LiteralImpl.class)) {
@@ -186,16 +184,17 @@ public class GetMetadataTransformProvider extends TransformProvider {
             }
 
             if (metadataMap.containsKey(key)) {
-                mMap = (HashMap<String, Object>) metadataMap.get(key);
+                mMap = metadataMap.get(key);
             } else {
-                mMap = new HashMap<String, Object>();
+                mMap = new HashMap<String, HashMap<String,
+                        ArrayList<String>>>();
                 metadataMap.put(key, mMap);
             }
 
             if (mMap.containsKey(source)) {
-                aMap =  (HashMap<String, Object>) mMap.get(source);
+                aMap =  mMap.get(source);
             } else {
-                aMap = new HashMap<String, Object>();
+                aMap = new HashMap<String, ArrayList<String>>();
                 mMap.put(source, aMap);
             }
 
@@ -206,7 +205,7 @@ public class GetMetadataTransformProvider extends TransformProvider {
                 aList = new ArrayList<String>();
                 aMap.put("value" + lang, aList);
             } else {
-                aList = (ArrayList<String>) aMap.get("value" + lang);
+                aList = aMap.get("value" + lang);
             }
             // Either way, add the value to the ArrayList iff
             // it is not already there.
@@ -218,7 +217,8 @@ public class GetMetadataTransformProvider extends TransformProvider {
 
         /** Getter for concepts list. */
         /** @return The completed concept map. */
-        public HashMap<String, Object> getMetadata() {
+        public HashMap<String, HashMap<String, HashMap<String,
+            ArrayList<String>>>> getMetadata() {
             return metadataMap;
         }
 
