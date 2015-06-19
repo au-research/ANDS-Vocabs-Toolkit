@@ -30,6 +30,9 @@ SISSVoc.specsPath = [path where data is stored]/specs
 # The directory in which temporary files will be stored
 Toolkit.tempPath = [path where data is stored]/temp
 
+# The directory in which temporary files will be stored
+Toolkit.metadataRewriteMapPath = [path where data is stored]/conf/metadatarewritemap.conf
+
 ## POOLPARTY 
 
 PoolPartyHarvester.remoteUrl = [pool party api url]

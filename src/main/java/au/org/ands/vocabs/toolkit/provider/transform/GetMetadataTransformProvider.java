@@ -1,5 +1,6 @@
 package au.org.ands.vocabs.toolkit.provider.transform;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.commons.configuration.HierarchicalINIConfiguration;
+import org.apache.commons.configuration.SubnodeConfiguration;
 import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -119,6 +122,9 @@ public class GetMetadataTransformProvider extends TransformProvider {
     /** RDF Handler to extract metadata and construct maps. */
     class ConceptHandler extends RDFHandlerBase {
 
+        /** the configuration map to store text replacement information.*/
+        private HierarchicalINIConfiguration metadataRewriteConf;
+
         /** Number of concept resources. */
         private int countedConcepts = 0;
 
@@ -136,6 +142,11 @@ public class GetMetadataTransformProvider extends TransformProvider {
 
         /** Source filename of the metadata. */
         private String source = "";
+
+        /** constructor and initialiser. */
+        public ConceptHandler() {
+            loadRewriteMap();
+        }
 
         @Override
         public void handleStatement(final Statement st) {
@@ -209,8 +220,9 @@ public class GetMetadataTransformProvider extends TransformProvider {
             }
             // Either way, add the value to the ArrayList iff
             // it is not already there.
-            if (!aList.contains(value)) {
-                aList.add(value);
+            String rValue = getMatchedContent(key, value);
+            if (!(rValue.isEmpty() || aList.contains(rValue))) {
+                aList.add(rValue);
             }
 
         }
@@ -227,6 +239,37 @@ public class GetMetadataTransformProvider extends TransformProvider {
         public void setSource(final String aSource) {
             source = aSource;
         }
+
+
+        /** gets the replacement string for a key in a section. */
+        /** @param section is the section we looking
+        /** @param key we are replacing
+        /** @return the replacement value of the original Sting if no match */
+        public String getMatchedContent(final String section, final String key)
+        {
+
+            SubnodeConfiguration sObj = metadataRewriteConf.getSection(section);
+            String replaceMent = sObj.getString(key);
+            if (replaceMent != null) {
+                return replaceMent;
+            }
+            return key;
+        }
+        /** Loads the rewrite map into an Object.*/
+        private void loadRewriteMap() {
+            String metadataRewriteMapPath = PROPS.
+                    getProperty("Toolkit.metadataRewriteMapPath");
+            File metadataRewriteMap = new File(metadataRewriteMapPath);
+            try {
+                metadataRewriteConf = new HierarchicalINIConfiguration(
+                        metadataRewriteMap);
+            } catch (Exception e) {
+                logger.info("metadataRewriteMapPath is empty of file"
+                        + " can not be loaded",
+                        e);
+            }
+        }
+
     }
 
 }
