@@ -1,0 +1,12 @@
+# Each section is an RDF property.
+
+[dcterms:creator]
+    brokenCreatorUsername = "Nice Creator Name"
+    # Setting the replacement text to the empty string removes
+    # triples with the source string. 
+    # superadmin = ""
+    
+# Add as many sections as you need
+
+# [dcterms:contributor]
+#    Test Contributor = "Test Contributor replacement"
