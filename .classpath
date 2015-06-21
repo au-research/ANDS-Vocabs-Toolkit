@@ -394,17 +394,17 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/leomonus/Documents/workspace/ANDS-Vocabs-Toolkit/lib/commons-lang-2.6/commons-lang-2.6.jar">
+	<classpathentry kind="lib" path="lib/commons-lang-2.6/commons-lang-2.6.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/leomonus/Documents/workspace/ANDS-Vocabs-Toolkit/lib/commons-configuration-1.10/commons-configuration-1.10.jar">
+	<classpathentry kind="lib" path="lib/commons-lang3-3.4/commons-lang3-3.4.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/leomonus/Documents/workspace/ANDS-Vocabs-Toolkit/lib/commons-lang3-3.4/commons-lang3-3.4.jar">
+	<classpathentry kind="lib" path="lib/commons-configuration-1.10/commons-configuration-1.10.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>

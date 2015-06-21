@@ -255,6 +255,7 @@ public class GetMetadataTransformProvider extends TransformProvider {
             }
             return key;
         }
+
         /** Loads the rewrite map into an Object.*/
         private void loadRewriteMap() {
             String metadataRewriteMapPath = PROPS.
