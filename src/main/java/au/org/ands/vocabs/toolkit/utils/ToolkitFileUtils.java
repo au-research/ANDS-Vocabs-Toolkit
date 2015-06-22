@@ -154,15 +154,9 @@ public final class ToolkitFileUtils {
     public static String getTaskOutputPath(final TaskInfo taskInfo,
             final String extraPath) {
         Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH)
-                .resolve(UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getOwner()),
-                        UriComponent.Type.PATH_SEGMENT))
-                .resolve(UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getSlug()),
-                        UriComponent.Type.PATH_SEGMENT))
-                .resolve(UriComponent.encode(
-                        makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT));
+                .resolve(makeSlug(taskInfo.getVocabulary().getOwner()))
+                .resolve(makeSlug(taskInfo.getVocabulary().getSlug()))
+                .resolve(makeSlug(taskInfo.getVersion().getTitle()));
         if (extraPath != null && (!extraPath.isEmpty())) {
             path = path.resolve(extraPath);
         }
@@ -188,9 +182,7 @@ public final class ToolkitFileUtils {
      */
     public static String getMetadataOutputPath(final String projectId) {
         Path path = Paths.get(ToolkitConfig.METADATA_TEMP_FILES_PATH)
-                .resolve(UriComponent.encode(
-                        ToolkitFileUtils.makeSlug(projectId),
-                        UriComponent.Type.PATH_SEGMENT));
+                .resolve(makeSlug(projectId));
         return path.toString();
     }
 
@@ -203,19 +195,22 @@ public final class ToolkitFileUtils {
      */
     public static String getBackupPath(final String projectId) {
         Path path = Paths.get(ToolkitConfig.BACKUP_FILES_PATH)
-                .resolve(UriComponent.encode(
-                        ToolkitFileUtils.makeSlug(projectId),
-                        UriComponent.Type.PATH_SEGMENT));
+                .resolve(makeSlug(projectId));
         return path.toString();
     }
 
     /** Apply slug conventions. In practice, this means (a) replacing
-     * whitespace with hyphen, (b) converting to lowercase.
+     * whitespace with hyphen, (b) replacing slashes with hyphens,
+     * (c) converting to lowercase, (d) encoding as a URL.
      * @param aString The string that is to be converted.
      * @return The value of aString with slug conventions applied.
      */
     public static String makeSlug(final String aString) {
-        return aString.replaceAll("\\s", "-").toLowerCase();
+        return UriComponent.encode(aString.
+                replaceAll("\\s", "-").
+                replaceAll("/", "-").
+                toLowerCase(),
+                UriComponent.Type.PATH_SEGMENT);
     }
 
     /**
@@ -227,17 +222,11 @@ public final class ToolkitFileUtils {
      * @return The repository id for the vocabulary with this version.
      */
     public static String getTaskRepositoryId(final TaskInfo taskInfo) {
-        return UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getOwner()),
-                        UriComponent.Type.PATH_SEGMENT)
+        return makeSlug(taskInfo.getVocabulary().getOwner())
                 + "_"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getSlug()),
-                        UriComponent.Type.PATH_SEGMENT)
+                + makeSlug(taskInfo.getVocabulary().getSlug())
                 + "_"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT);
+                + makeSlug(taskInfo.getVersion().getTitle());
     }
 
     /**
@@ -249,17 +238,11 @@ public final class ToolkitFileUtils {
      * @return The repository id for the vocabulary with this version.
      */
     public static String getSISSVocRepositoryPath(final TaskInfo taskInfo) {
-        return UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getOwner()),
-                        UriComponent.Type.PATH_SEGMENT)
+        return makeSlug(taskInfo.getVocabulary().getOwner())
                 + "/"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVocabulary().getSlug()),
-                        UriComponent.Type.PATH_SEGMENT)
+                + makeSlug(taskInfo.getVocabulary().getSlug())
                 + "/"
-                + UriComponent.encode(
-                        makeSlug(taskInfo.getVersion().getTitle()),
-                        UriComponent.Type.PATH_SEGMENT);
+                + makeSlug(taskInfo.getVersion().getTitle());
     }
 
     /** Size of buffer to use when writing to a ZIP archive. */
@@ -301,9 +284,7 @@ public final class ToolkitFileUtils {
             // No such directory, so nothing to do.
             return;
         }
-        String projectSlug = UriComponent.encode(
-                ToolkitFileUtils.makeSlug(projectId),
-                UriComponent.Type.PATH_SEGMENT);
+        String projectSlug = makeSlug(projectId);
         // The name of the ZIP file that does/will contain all
         // backups for this project.
         Path zipFilePath = Paths.get(backupPath).resolve(projectSlug + ".zip");
