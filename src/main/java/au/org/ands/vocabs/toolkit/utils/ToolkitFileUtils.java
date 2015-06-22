@@ -204,20 +204,24 @@ public final class ToolkitFileUtils {
         return path.toString();
     }
 
-    /** Apply slug conventions. In practice, this means (a) replacing
-     * whitespace with hyphen, (b) replacing punctuation with hyphens,
-     * (c) converting to lowercase, (d) encoding as a URL,
-     * (e) replacing percents with hyphens.
+    /** Apply slug conventions. In practice, this means
+     * (a) replacing punctuation with hyphens,
+     * (b) replacing whitespace with hyphen,
+     * (c) converting to lowercase,
+     * (d) encoding as a URL,
+     * (e) replacing percents with hyphens,
+     * (f) coalescing multiple consecutive hyphens into one.
      * @param aString The string that is to be converted.
      * @return The value of aString with slug conventions applied.
      */
     public static String makeSlug(final String aString) {
         String slug = UriComponent.encode(aString.
-                replaceAll("\\s", "-").
                 replaceAll("\\p{Punct}", "-").
+                replaceAll("\\s", "-").
                 toLowerCase(),
                 UriComponent.Type.PATH_SEGMENT).
-                replaceAll("%", "-");
+                replaceAll("%", "-").
+                replaceAll("-+", "-");
 
         return slug.substring(0, Math.min(MAX_SLUG_COMPONENT_LENGTH,
                 slug.length()));
