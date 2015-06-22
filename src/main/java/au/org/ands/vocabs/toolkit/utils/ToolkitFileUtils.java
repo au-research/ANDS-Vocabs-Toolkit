@@ -210,7 +210,8 @@ public final class ToolkitFileUtils {
                 replaceAll("\\s", "-").
                 replaceAll("/", "-").
                 toLowerCase(),
-                UriComponent.Type.PATH_SEGMENT);
+                UriComponent.Type.PATH_SEGMENT).
+                replaceAll("%", "-");
     }
 
     /**
