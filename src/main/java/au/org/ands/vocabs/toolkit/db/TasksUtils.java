@@ -107,9 +107,9 @@ public final class TasksUtils {
             final String status, final String details) {
         if (TaskStatus.ERROR.equals(status)
                 || TaskStatus.EXCEPTION.equals(status)) {
-            logger.error(details);
+            callerLogger.error(details);
         } else {
-            logger.debug(details);
+            callerLogger.debug(details);
         }
         results.put("status", status);
         setTaskStatusAndData(task, status, hashMapToJSONString(results));
