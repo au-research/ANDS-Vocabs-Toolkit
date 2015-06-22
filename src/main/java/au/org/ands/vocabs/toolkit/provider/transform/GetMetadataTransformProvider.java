@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.openrdf.model.Literal;
@@ -49,6 +50,10 @@ public class GetMetadataTransformProvider extends TransformProvider {
 
    /** Access to the Toolkit properties. */
    protected static final Properties PROPS = ToolkitProperties.getProperties();
+
+   /** The path to the metadata rewrite configuration file. */
+   protected static final String METADATA_REWRITE_MAP_PATH =
+           PROPS.getProperty("Toolkit.metadataRewriteMapPath");
 
    /** A map of metadata properties to look for and extract. */
    private static HashMap<URI, String> metadataToLookFor =
@@ -122,7 +127,7 @@ public class GetMetadataTransformProvider extends TransformProvider {
     /** RDF Handler to extract metadata and construct maps. */
     class ConceptHandler extends RDFHandlerBase {
 
-        /** the configuration map to store text replacement information.*/
+        /** The configuration for metadata replacement. */
         private HierarchicalINIConfiguration metadataRewriteConf;
 
         /** Number of concept resources. */
@@ -143,7 +148,7 @@ public class GetMetadataTransformProvider extends TransformProvider {
         /** Source filename of the metadata. */
         private String source = "";
 
-        /** constructor and initialiser. */
+        /** Constructor. Initializes the metadata rewrite map. */
         public ConceptHandler() {
             loadRewriteMap();
         }
@@ -176,55 +181,56 @@ public class GetMetadataTransformProvider extends TransformProvider {
         private void addToMap(final String key, final Statement st) {
 
             String value = st.getObject().stringValue();
-            String lang = "";
-            // mMap: keys: source file name, values: maps, with
-            // keys: "value" (+ optional "_" + language tag),
-            // value: an ArrayList of Strings of corresponding values.
-            // (The values are the same type as aMap.)
-            HashMap<String, HashMap<String, ArrayList<String>>> mMap;
-            // aMap: keys: "value" (+ optional "_" + language tag),
-            // value: an ArrayList of Strings of corresponding values.
-            HashMap<String, ArrayList<String>> aMap;
-            // If st's object is a literal and has a language tag,
-            // set lang to be "_" plus the tag.
-            if (st.getObject().getClass().equals(LiteralImpl.class)) {
-                if (((Literal) st.getObject()).getLanguage() != null) {
-                    lang = "_" + ((Literal)
-                            st.getObject()).getLanguage().toString();
+            String valueToBeReturned = getMatchedContent(key, value);
+            if (!(valueToBeReturned.isEmpty())) {
+                String lang = "";
+                // mMap: keys: source file name, values: maps, with
+                // keys: "value" (+ optional "_" + language tag),
+                // value: an ArrayList of Strings of corresponding values.
+                // (The values are the same type as aMap.)
+                HashMap<String, HashMap<String, ArrayList<String>>> mMap;
+                // aMap: keys: "value" (+ optional "_" + language tag),
+                // value: an ArrayList of Strings of corresponding values.
+                HashMap<String, ArrayList<String>> aMap;
+                // If st's object is a literal and has a language tag,
+                // set lang to be "_" plus the tag.
+                if (st.getObject().getClass().equals(LiteralImpl.class)) {
+                    if (((Literal) st.getObject()).getLanguage() != null) {
+                        lang = "_" + ((Literal)
+                                st.getObject()).getLanguage().toString();
+                    }
+                }
+
+                if (metadataMap.containsKey(key)) {
+                    mMap = metadataMap.get(key);
+                } else {
+                    mMap = new HashMap<String, HashMap<String,
+                            ArrayList<String>>>();
+                    metadataMap.put(key, mMap);
+                }
+
+                if (mMap.containsKey(source)) {
+                    aMap =  mMap.get(source);
+                } else {
+                    aMap = new HashMap<String, ArrayList<String>>();
+                    mMap.put(source, aMap);
+                }
+
+                ArrayList<String> aList;
+                if (!aMap.containsKey("value" + lang)) {
+                    // Not already there, so create a new ArrayList
+                    // and insert it into aMap.
+                    aList = new ArrayList<String>();
+                    aMap.put("value" + lang, aList);
+                } else {
+                    aList = aMap.get("value" + lang);
+                }
+                // Either way, add the value to the ArrayList iff
+                // it is not already there.
+                if (!aList.contains(valueToBeReturned)) {
+                    aList.add(valueToBeReturned);
                 }
             }
-
-            if (metadataMap.containsKey(key)) {
-                mMap = metadataMap.get(key);
-            } else {
-                mMap = new HashMap<String, HashMap<String,
-                        ArrayList<String>>>();
-                metadataMap.put(key, mMap);
-            }
-
-            if (mMap.containsKey(source)) {
-                aMap =  mMap.get(source);
-            } else {
-                aMap = new HashMap<String, ArrayList<String>>();
-                mMap.put(source, aMap);
-            }
-
-            ArrayList<String> aList;
-            if (!aMap.containsKey("value" + lang)) {
-                // Not already there, so create a new ArrayList
-                // and insert it into aMap.
-                aList = new ArrayList<String>();
-                aMap.put("value" + lang, aList);
-            } else {
-                aList = aMap.get("value" + lang);
-            }
-            // Either way, add the value to the ArrayList iff
-            // it is not already there.
-            String rValue = getMatchedContent(key, value);
-            if (!(rValue.isEmpty() || aList.contains(rValue))) {
-                aList.add(rValue);
-            }
-
         }
 
         /** Getter for concepts list. */
@@ -240,34 +246,30 @@ public class GetMetadataTransformProvider extends TransformProvider {
             source = aSource;
         }
 
-
-        /** gets the replacement string for a key in a section. */
-        /** @param section is the section we looking
-        /** @param key we are replacing
-        /** @return the replacement value of the original Sting if no match */
+        /** Get the replacement string for a key in a section. */
+        /** @param section The section to look for.
+        /** @param key The key to be replaced
+        /** @return The replacement value, or the original value
+         *  if there is no match. */
         public String getMatchedContent(final String section, final String key)
         {
-
             SubnodeConfiguration sObj = metadataRewriteConf.getSection(section);
-            String replaceMent = sObj.getString(key);
-            if (replaceMent != null) {
-                return replaceMent;
+            String replacement = sObj.getString(key);
+            if (replacement != null) {
+                return replacement;
             }
             return key;
         }
 
-        /** Loads the rewrite map into an Object.*/
+        /** Loads the rewrite map into metadataRewriteConf. */
         private void loadRewriteMap() {
-            String metadataRewriteMapPath = PROPS.
-                    getProperty("Toolkit.metadataRewriteMapPath");
-            File metadataRewriteMap = new File(metadataRewriteMapPath);
+            File metadataRewriteMap = new File(METADATA_REWRITE_MAP_PATH);
             try {
                 metadataRewriteConf = new HierarchicalINIConfiguration(
                         metadataRewriteMap);
-            } catch (Exception e) {
-                logger.info("metadataRewriteMapPath is empty of file"
-                        + " can not be loaded",
-                        e);
+            } catch (ConfigurationException e) {
+                logger.error("Toolkit.metadataRewriteMapPath is empty, or file"
+                        + " can not be loaded", e);
             }
         }
 
