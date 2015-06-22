@@ -68,6 +68,9 @@ public class SPARQLHarvestProvider extends HarvestProvider {
 
         logger.debug("Doing harvest from SPARQL endpoint:" + sparqlEndpoint);
 
+        ToolkitFileUtils.requireDirectory(
+                ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo));
+
         String outputFileRDF = Paths.get(
                 ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo)).
                 resolve("sparql_harvest.rdf").toString();
