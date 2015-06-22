@@ -74,7 +74,9 @@ public class SISSVocPublishProvider extends PublishProvider {
             final HashMap<String, String> results) {
         addBasicSpecProperties(taskInfo);
         addAdditionalSpecProperties(subtask);
-        writeSpecFile(taskInfo, subtask, results);
+        if (!writeSpecFile(taskInfo, subtask, results)) {
+            return false;
+        }
 
         // Use the nice JAX-RS libraries to construct the path to
         // the SPARQL endpoint.
@@ -95,7 +97,9 @@ public class SISSVocPublishProvider extends PublishProvider {
         // supports it.
         //        removeSpecFile(taskInfo, subtask, results);
         // For now, use the truncation method.
-        truncateSpecFileIfExists(taskInfo, subtask, results);
+        if (!truncateSpecFileIfExists(taskInfo, subtask, results)) {
+            return false;
+        }
 
         // results.put("sissvoc_path",
         //   TasksUtils.getTaskRepositoryId(taskInfo));
@@ -192,8 +196,9 @@ public class SISSVocPublishProvider extends PublishProvider {
      * @param taskInfo The TaskInfo object for this task.
      * @param subtask The specification of this publish subtask
      * @param results HashMap representing the result of the publish.
+     * @return True iff success.
      */
-    private void writeSpecFile(final TaskInfo taskInfo,
+    private boolean writeSpecFile(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
         File templateFile = new File(sissvocSpecTemplatePath);
@@ -205,7 +210,7 @@ public class SISSVocPublishProvider extends PublishProvider {
                     "SISSVoc writeSpecFile: can't open template file");
             logger.error("SISSVoc writeSpecFile: can't open template file",
                     e);
-            return;
+            return false;
         }
         StrSubstitutor sub = new StrSubstitutor(specProperties);
         String customSpec = sub.replace(specTemplate);
@@ -221,9 +226,9 @@ public class SISSVocPublishProvider extends PublishProvider {
                     "SISSVoc writeSpecFile: can't write spec file");
             logger.error("SISSVoc writeSpecFile: can't write spec file.",
                     e);
-            return;
-         }
-
+            return false;
+        }
+        return true;
     }
 
     /** If there is an existing spec file for SISSVoc, overwrite
@@ -233,8 +238,9 @@ public class SISSVocPublishProvider extends PublishProvider {
      * @param taskInfo The TaskInfo object for this task.
      * @param subtask The specification of this publish subtask
      * @param results HashMap representing the result of the unpublish.
+     * @return True iff success.
      */
-    private void truncateSpecFileIfExists(final TaskInfo taskInfo,
+    private boolean truncateSpecFileIfExists(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
         try {
@@ -250,16 +256,19 @@ public class SISSVocPublishProvider extends PublishProvider {
             results.put(TaskStatus.EXCEPTION,
                     "SISSVoc truncateSpecFileIfExists: failed");
             logger.error("truncateSpecFileIfExists failed", e);
+            return false;
         }
+        return true;
     }
 
     /** Remove any existing spec file for SISSVoc.
      * @param taskInfo The TaskInfo object for this task.
      * @param subtask The specification of this publish subtask
      * @param results HashMap representing the result of the unpublish.
+     * @return True iff success.
      */
     @SuppressWarnings("unused")
-    private void removeSpecFile(final TaskInfo taskInfo,
+    private boolean removeSpecFile(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
         try {
@@ -271,7 +280,9 @@ public class SISSVocPublishProvider extends PublishProvider {
             results.put(TaskStatus.EXCEPTION,
                     "SISSVoc removeSpecFile: failed");
             logger.error("removeSpecFile failed", e);
+            return false;
         }
+        return true;
     }
 
 }
