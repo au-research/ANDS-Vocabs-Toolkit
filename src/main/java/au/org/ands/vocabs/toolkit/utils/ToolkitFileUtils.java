@@ -32,6 +32,11 @@ public final class ToolkitFileUtils {
     /** Logger for this class. */
     private static Logger logger;
 
+    /** Maximum length of a slug component. All generated slug
+     * components are truncated to this length.
+     */
+    private static final int MAX_SLUG_COMPONENT_LENGTH = 50;
+
     /** Private contructor for utility class. */
     private ToolkitFileUtils() {
     }
@@ -201,7 +206,8 @@ public final class ToolkitFileUtils {
 
     /** Apply slug conventions. In practice, this means (a) replacing
      * whitespace with hyphen, (b) replacing slashes with hyphens,
-     * (c) converting to lowercase, (d) encoding as a URL.
+     * (c) converting to lowercase, (d) encoding as a URL,
+     * (e) replacing percents with hyphens.
      * @param aString The string that is to be converted.
      * @return The value of aString with slug conventions applied.
      */
@@ -211,7 +217,8 @@ public final class ToolkitFileUtils {
                 replaceAll("/", "-").
                 toLowerCase(),
                 UriComponent.Type.PATH_SEGMENT).
-                replaceAll("%", "-");
+                replaceAll("%", "-").
+                substring(0, MAX_SLUG_COMPONENT_LENGTH);
     }
 
     /**
