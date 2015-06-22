@@ -212,13 +212,15 @@ public final class ToolkitFileUtils {
      * @return The value of aString with slug conventions applied.
      */
     public static String makeSlug(final String aString) {
-        return UriComponent.encode(aString.
+         String slug = UriComponent.encode(aString.
                 replaceAll("\\s", "-").
                 replaceAll("/", "-").
                 toLowerCase(),
                 UriComponent.Type.PATH_SEGMENT).
-                replaceAll("%", "-").
-                substring(0, MAX_SLUG_COMPONENT_LENGTH);
+                replaceAll("%", "-");
+
+         return slug.substring(0, Math.min(MAX_SLUG_COMPONENT_LENGTH,
+                 slug.length()));
     }
 
     /**
