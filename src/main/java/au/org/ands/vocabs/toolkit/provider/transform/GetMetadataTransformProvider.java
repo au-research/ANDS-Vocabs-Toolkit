@@ -40,8 +40,8 @@ import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-/** Transform provider for generating a list-like representation of the
- * concepts as JSON. This assumes a vocabulary encoded using SKOS. */
+/** Extract metadata from a PoolParty project, and apply rewritings
+ * as specified in the metadata rewrite configuration file. */
 public class GetMetadataTransformProvider extends TransformProvider {
 
     /** Logger for this class. */
@@ -105,9 +105,8 @@ public class GetMetadataTransformProvider extends TransformProvider {
                 RDFParser rdfParser = Rio.createParser(format);
                 rdfParser.setRDFHandler(conceptHandler);
                 FileInputStream is = new FileInputStream(entry.toString());
-                rdfParser.parse(is, entry.toString());
                 logger.debug("Reading RDF:" + entry.toString());
-
+                rdfParser.parse(is, entry.toString());
             }
         } catch (DirectoryIteratorException
                 | IOException
