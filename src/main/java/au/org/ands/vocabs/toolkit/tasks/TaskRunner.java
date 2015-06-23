@@ -174,7 +174,7 @@ public class TaskRunner {
         logger.debug("runTransform");
         TransformProvider provider;
         String providerName = subtask.get("provider_type").textValue();
-        status = "IMPORTING";
+        status = "TRANSFORMING";
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Import in progress");
          try {
