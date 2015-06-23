@@ -7,6 +7,8 @@
     <property name="source" value="1.7"/>
 
  	<property name="build" value="build" />
+	<!-- Configuration files: toolkit.properties, logback.xml -->
+	<property name="conf" value="conf" />
 	<property name="jar" value="vocabtoolkit.jar" />
 	<property name="war" value="vocabtoolkit.war" />
 	
@@ -62,9 +64,10 @@
     		<!-- Include raw classes instead. -->
     		<classes dir="${build}" />
        		<mappedresources>
-        	    <fileset dir="conf" />
+        	    <fileset dir="${conf}" />
         	    <globmapper from="*" to="WEB-INF/classes/*"/>
        	    </mappedresources>
     	</war>
     </target>
+
 </project>

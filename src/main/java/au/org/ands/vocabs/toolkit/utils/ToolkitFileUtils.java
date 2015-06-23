@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.uri.UriComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,27 @@ public final class ToolkitFileUtils {
         File oDir = new File(dir);
         if (!oDir.exists()) {
             oDir.mkdirs();
+        }
+    }
+
+    /** Require the existence of a directory, but clean it out if
+     * it already exists. Create it, if it does not already exist.
+     * @param dir The full pathname of the required directory.
+     * @throws IOException If the directory already exists but can
+     * not be cleaned.
+     */
+    public static void requireEmptyDirectory(final String dir)
+            throws IOException {
+        File oDir = new File(dir);
+        if (!oDir.exists()) {
+            oDir.mkdirs();
+        } else {
+            try {
+                FileUtils.cleanDirectory(new File(dir));
+            } catch (IOException e) {
+                logger.error("requireEmptyDirectory failed: ", e);
+                throw e;
+            }
         }
     }
 
@@ -171,12 +193,60 @@ public final class ToolkitFileUtils {
     /** Get the full path of the directory used to store all
      * harvested data referred to by the task.
      * @param taskInfo The TaskInfo object representing the task.
-     * at the end. If not required, pass in null or an empty string.
      * @return The full path of the directory used to store the
      * vocabulary data.
      */
     public static String getTaskHarvestOutputPath(final TaskInfo taskInfo) {
         return getTaskOutputPath(taskInfo, ToolkitConfig.HARVEST_DATA_PATH);
+    }
+
+    /** Get the full path of (what will be) a new directory used to store
+     * transformed data referred to by the task. This is intended
+     * to be used as a temporary directory during the transform.
+     * If the transform succeeds, call renameTransformTemporaryOutputPath()
+     * to rename this directory to become the harvest directory.
+     * @param taskInfo The TaskInfo object representing the task.
+     * @param transformName The name of the transform being done. This is
+     * used in the generation of the path.
+     * @return The full path of the directory used to store the
+     * transformed data. The directory does not yet exist; it must be
+     * created by the caller.
+     */
+    public static String getTaskTransformTemporaryOutputPath(
+            final TaskInfo taskInfo,
+            final String transformName) {
+        return getTaskOutputPath(taskInfo, "after_" + transformName);
+    }
+
+    /** This method is used by transforms that produce new vocabulary
+     * data to replace harvested data. If such a transform succeeds,
+     * call this method. It renames the original harvest directory, and
+     * then renames the temporary directory to become the harvest directory.
+     * @param taskInfo The TaskInfo object representing the task.
+     * @param transformName The name of the transform that has been done.
+     * @return True iff the renaming succeeded.
+     */
+    public static boolean renameTransformTemporaryOutputPath(
+            final TaskInfo taskInfo,
+            final String transformName) {
+        Path transformOutputPath =
+                Paths.get(getTaskOutputPath(taskInfo,
+                        "after_" + transformName));
+        Path harvestPath =
+                Paths.get(getTaskHarvestOutputPath(taskInfo));
+        Path harvestPathDestination =
+                Paths.get(getTaskOutputPath(taskInfo,
+                        "before_" + transformName));
+        try {
+            // Remove any previous harvestPathDestination
+            FileUtils.deleteQuietly(harvestPathDestination.toFile());
+            Files.move(harvestPath, harvestPathDestination);
+            Files.move(transformOutputPath, harvestPath);
+        } catch (IOException e) {
+            logger.error("Exception in renameTransformTemporaryOutputPath", e);
+            return false;
+        }
+        return true;
     }
 
     /** Get the full path of the temporary directory used to store all
