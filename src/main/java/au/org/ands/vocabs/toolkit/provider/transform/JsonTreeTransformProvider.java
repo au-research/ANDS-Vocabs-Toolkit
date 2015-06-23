@@ -22,6 +22,7 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.Rio;
+import org.openrdf.rio.UnsupportedRDFormatException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +73,8 @@ public class JsonTreeTransformProvider extends TransformProvider {
         } catch (DirectoryIteratorException
                 | IOException
                 | RDFParseException
-                | RDFHandlerException ex) {
-            // I/O error encountered during the iteration,
-            // the cause is an IOException
+                | RDFHandlerException
+                | UnsupportedRDFormatException ex) {
             results.put(TaskStatus.EXCEPTION,
                     "Exception in JsonTreeTransform while Parsing RDF");
             logger.error("Exception in JsonTreeTransform while Parsing RDF:",
