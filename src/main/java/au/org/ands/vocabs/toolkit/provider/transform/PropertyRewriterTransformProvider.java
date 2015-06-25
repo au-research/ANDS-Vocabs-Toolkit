@@ -214,6 +214,11 @@ public class PropertyRewriterTransformProvider extends TransformProvider {
                 if (st.getPredicate().equals(term.getKey())) {
                     String key = term.getValue();
                     String value = st.getObject().stringValue();
+                    if (value.isEmpty()) {
+                        // Special case: don't throw away empty object
+                        // literals.
+                        break;
+                    }
                     String valueToBeReturned = getMatchedContent(key, value);
                     if (!(valueToBeReturned.isEmpty())) {
                         model.add(st.getSubject(),
