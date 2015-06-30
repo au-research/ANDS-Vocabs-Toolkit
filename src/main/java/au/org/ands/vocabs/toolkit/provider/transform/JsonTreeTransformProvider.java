@@ -16,6 +16,9 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.model.vocabulary.SKOS;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
@@ -42,6 +45,21 @@ public class JsonTreeTransformProvider extends TransformProvider {
     /** Logger for this class. */
     private final Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
+
+    /** Short form of the concept type name. Used both in typesToLookFor
+     * and populateTopConcepts(). */
+    private static final String CONCEPT_SHORT_FORM = "Concept";
+
+    /** A map of SKOS types to take note of. */
+    private static HashMap<URI, String> typesToLookFor =
+            new HashMap<URI, String>();
+
+    static {
+        typesToLookFor.put(SKOS.CONCEPT_SCHEME, "ConceptScheme");
+        typesToLookFor.put(SKOS.CONCEPT, CONCEPT_SHORT_FORM);
+        typesToLookFor.put(SKOS.COLLECTION, "Collection");
+        typesToLookFor.put(SKOS.ORDERED_COLLECTION, "OrderedCollection");
+    }
 
     /** Access to the Toolkit properties. */
     protected static final Properties PROPS = ToolkitProperties.getProperties();
@@ -124,9 +142,23 @@ public class JsonTreeTransformProvider extends TransformProvider {
             }
             HashMap<String, Object> concept =
                     conceptMap.get(st.getSubject().stringValue());
+            if (st.getPredicate().equals(RDF.TYPE)) {
+                Value typeIRI = st.getObject();
+                if (typesToLookFor.containsKey(typeIRI)) {
+                    concept.put("type", typesToLookFor.get(typeIRI));
+                }
+            }
             if (st.getPredicate().equals(SKOS.PREF_LABEL)) {
                 concept.put("prefLabel", st.getObject().stringValue());
             }
+            // Future work: uncomment the next six lines
+            // when the portal is ready to receive it.
+//            if (st.getPredicate().equals(SKOS.ALT_LABEL)) {
+//                concept.put("altLabel", st.getObject().stringValue());
+//            }
+//            if (st.getPredicate().equals(SKOS.HIDDEN_LABEL)) {
+//                concept.put("hiddenLabel", st.getObject().stringValue());
+//            }
             if (st.getPredicate().equals(SKOS.NOTATION)) {
                 concept.put("notation", st.getObject().stringValue());
             }
@@ -150,10 +182,22 @@ public class JsonTreeTransformProvider extends TransformProvider {
                         (ArrayList<String>) concept.get("narrower");
                 narrowerList.add(st.getObject().stringValue());
             }
+            // Future work: uncomment the next ten lines when work begins
+            // on handling collections.
+//            if (st.getPredicate().equals(SKOS.MEMBER)) {
+//                if (concept.get("member") == null) {
+//                    concept.put("member",
+//                            new ArrayList<String>());
+//                }
+//                @SuppressWarnings("unchecked")
+//                ArrayList<String> memberList =
+//                    (ArrayList<String>) concept.get("member");
+//                memberList.add(st.getObject().stringValue());
+//            }
         }
 
-        /** Build the concepts tree. */
-        /** @return The tree of concepts */
+        /** Build the concepts tree.
+         *  @return The tree of concepts. */
         @SuppressWarnings("unchecked")
         public HashMap<String, HashMap<String, Object>> buildTree() {
             // This is a rearranged version of conceptMap, with
@@ -219,11 +263,15 @@ public class JsonTreeTransformProvider extends TransformProvider {
                     }
                 }
             }
+            // For now, remove all occurrences of the type.
+            // Future work: support collections.
+            narrowerConcepts.remove("type");
             return narrowerConcepts;
         }
 
         /** Populate the top-most concepts.
-         * A concept is considered to be "top-most" if it
+         * A concept is considered to be "top-most" if it is a SKOS Concept
+         * and it
          * does not specify any broader concepts.
          * This (probably) catches both concepts explicitly
          * labelled as top concepts, and also any "dangling"
@@ -235,8 +283,12 @@ public class JsonTreeTransformProvider extends TransformProvider {
             concept : conceptMap.entrySet()) {
                 HashMap<String, Object> propertyMap = concept.getValue();
                 if (!propertyMap.isEmpty()
+                        && CONCEPT_SHORT_FORM.equals(propertyMap.get("type"))
                         && propertyMap.get("broader") == null) {
                     topmostConcepts.put(concept.getKey(), propertyMap);
+                    // For now, remove all occurrences of the type.
+                    // Future work: support collections.
+                    concept.getValue().remove("type");
                 }
             }
         }
