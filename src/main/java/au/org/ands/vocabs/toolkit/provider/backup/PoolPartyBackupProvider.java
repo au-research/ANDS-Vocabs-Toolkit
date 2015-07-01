@@ -218,7 +218,6 @@ public class PoolPartyBackupProvider extends BackupProvider {
             System.err.println("Wrong number of arguments.");
             System.exit(1);
         }
-
     }
 
 }
