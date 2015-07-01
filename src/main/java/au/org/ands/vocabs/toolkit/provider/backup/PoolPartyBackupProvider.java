@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
+import ch.qos.logback.classic.Level;
 
 /** Backup provider for PoolParty. */
 public class PoolPartyBackupProvider extends BackupProvider {
@@ -178,5 +180,45 @@ public class PoolPartyBackupProvider extends BackupProvider {
         return results;
     }
 
+    /**
+     * Main method to allow running backups from the command line.
+     * @param args Command-line arguments.
+     * If the first argument is "-d", enable debugging; otherwise,
+     * debugging output is disabled. Then either specify one
+     * Poolparty project ID, or specify no additional parameters to backup
+     * all projects.
+     */
+    public static void main(final String[] args) {
+        // The value specified as a parameter to getLogger() must be
+        // specific enough to cover any settings in logback.xml.
+        // The casting is done to enable the subsequent call to setLevel().
+        ch.qos.logback.classic.Logger rootLogger =
+                (ch.qos.logback.classic.Logger)
+                org.slf4j.LoggerFactory.getLogger(
+                        "au.org.ands.vocabs");
+        // Put command-line arguments into an ArrayList to make them
+        // easier to process. (I.e., as one would use "shift" in
+        // Bourne shell.)
+        ArrayList<String> argsList = new ArrayList<String>(Arrays.asList(args));
+        if (argsList.size() > 0 && "-d".equals(argsList.get(0))) {
+            rootLogger.setLevel(Level.DEBUG);
+            argsList.remove(0);
+        } else {
+            rootLogger.setLevel(Level.INFO);
+        }
+
+        switch (argsList.size()) {
+        case 0:
+            new PoolPartyBackupProvider().backup(null);
+            break;
+        case 1:
+            new PoolPartyBackupProvider().backup(argsList.get(0));
+            break;
+        default:
+            System.err.println("Wrong number of arguments.");
+            System.exit(1);
+        }
+
+    }
 
 }
