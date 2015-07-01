@@ -392,7 +392,7 @@ public final class ToolkitFileUtils {
             Enumeration<? extends ZipEntry> entries = zipIn.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry e = entries.nextElement();
-                System.out.println("copy: " + e.getName());
+                logger.debug("compressBackupFolder copying: " + e.getName());
                 tempZipOut.putNextEntry(e);
                 if (!e.isDirectory()) {
                     copy(zipIn.getInputStream(e), tempZipOut);
@@ -407,7 +407,8 @@ public final class ToolkitFileUtils {
 
         for (File source : files) {
             if (!source.getName().toLowerCase().endsWith(".zip")) {
-                logger.debug("Compressing and deleting file "
+                logger.debug("compressBackupFolder compressing and "
+                        + "deleting file: "
                         + source.toString());
                 if (zipFile(tempZipOut, source)) {
                     source.delete();
