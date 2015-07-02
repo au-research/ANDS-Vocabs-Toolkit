@@ -290,19 +290,22 @@ public class TaskRunner {
 //        return true;
 //    }
 
+    /** Format to use for timestamps. */
+    private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
     /**
      * Add a timestamp to the results map.
      * @param resultsMap The results map to which the timestamp is to be added.
      */
     public final void addTimestamp(final HashMap<String, String> resultsMap) {
         final SimpleDateFormat dateFormat =
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                new SimpleDateFormat(TIMESTAMP_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         // In case you need to undo the conversion in some other part
         // of the code, here's how to do it:
 //        final SimpleDateFormat dateFormat =
-//                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//                new SimpleDateFormat(TIMESTAMP_FORMAT);
 //        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 //        // Get timestamp some other way than this, of course.
 //        String timestamp = dateFormat.format(new Date());
