@@ -1,7 +1,10 @@
 package au.org.ands.vocabs.toolkit.tasks;
 
 import java.lang.invoke.MethodHandles;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +58,6 @@ public class TaskRunner {
         return status;
     }
 
-
     /** Run the task.
      */
     public final void runTask() {
@@ -67,6 +69,7 @@ public class TaskRunner {
             status = TaskStatus.ERROR;
             results.put("runTask", "No subtasks specified, or invalid"
                     + " format.");
+            addTimestamp(results);
             TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "No subtasks specified. Nothing to do.");
             return;
@@ -78,6 +81,7 @@ public class TaskRunner {
                 logger.error("runTask() didn't get an object:"
                         + subtask.toString());
                 status = TaskStatus.ERROR;
+                addTimestamp(results);
                 TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                         status, "Bad subtask specification.");
                 return;
@@ -115,6 +119,7 @@ public class TaskRunner {
                 logger.error("ERROR while running task: " + thisTask);
                 results.put("error_subtask", thisTask);
                 status = TaskStatus.ERROR;
+                addTimestamp(results);
                 TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                         status, "Error in subtask.");
                 return;
@@ -123,6 +128,7 @@ public class TaskRunner {
         status = TaskStatus.SUCCESS;
         results.put("output_path", ToolkitFileUtils.getTaskOutputPath(taskInfo,
                 null));
+        addTimestamp(results);
         TasksUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "All tasks completed.");
     }
@@ -274,6 +280,7 @@ public class TaskRunner {
         }
     }
 
+    // Possible future work: support a "DELETE" task type.
 //    /** Run a Delete.
 //     * @param subtask Details of the subtask
 //     * @return True, iff the deleting was successful.
@@ -283,7 +290,32 @@ public class TaskRunner {
 //        return true;
 //    }
 
+    /**
+     * Add a timestamp to the results map.
+     * @param resultsMap The results map to which the timestamp is to be added.
+     */
+    public final void addTimestamp(final HashMap<String, String> resultsMap) {
+        final SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+        // In case you need to undo the conversion in some other part
+        // of the code, here's how to do it:
+//        final SimpleDateFormat dateFormat =
+//                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+//        // Get timestamp some other way than this, of course.
+//        String timestamp = dateFormat.format(new Date());
+//        try {
+//            Date date = dateFormat.parse(timestamp);
+//            logger.debug("Timestamp string is: " + timestamp);
+//            logger.debug("Date is: " + date);
+//        } catch (ParseException e) {
+//            logger.error("Exception parsing timestamp", e);
+//        }
+
+        resultsMap.put("timestamp", dateFormat.format(new Date()));
+    }
 
     /** Return the results of running the task.
      * @return The HashMap for the results. */
@@ -293,12 +325,11 @@ public class TaskRunner {
         return results;
     }
 
+    // Code previously considered but rejected for now.
 //    /** Return the results of running the task as a String.
 //     * @return The results as a String. */
 //    public final String getResultsString() {
 //        return getResults().toString();
 //    }
-
-
 
 }
