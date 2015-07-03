@@ -5,6 +5,23 @@
 The toolkit implements a vocabulary repository, and provides an
 interface to a vocabulary portal.
 
+## Installation
+
+### Configuration files
+
+#### toolkit.properties
+
+#### logback.xml
+
+#### metadatarewritemap.conf
+
+#### ELDA Config template
+
+### ant war
+
+### Tomcat deployment
+
+
 ## Toolkit functionality
 
 * Get toolkit information
