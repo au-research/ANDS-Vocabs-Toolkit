@@ -1,3 +1,4 @@
+/** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.provider.backup;
 
 import java.io.IOException;

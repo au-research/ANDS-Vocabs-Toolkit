@@ -1,3 +1,4 @@
+/** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.db.model;
 
 import javax.persistence.Entity;
