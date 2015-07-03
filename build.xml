@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE ant>
 <project basedir="." default="war" name="ANDS-Vocabs-Toolkit">
-    <property environment="env"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
+  <property environment="env" />
+  <property name="debuglevel" value="source,lines,vars" />
+  <property name="target" value="1.7" />
+  <property name="source" value="1.7" />
 
- 	<property name="build" value="build" />
-	<!-- Configuration files: toolkit.properties, logback.xml -->
-	<property name="conf" value="conf" />
-	<property name="jar" value="vocabtoolkit.jar" />
-	<property name="war" value="vocabtoolkit.war" />
-	
-	<target name="clean">
-        <delete dir="${build}"/>
-        <delete file="${jar}"/>
-        <delete file="${war}"/>
-    </target>
+  <property name="build" value="build" />
+  <!-- Configuration files: toolkit.properties, logback.xml -->
+  <property name="conf" value="conf" />
+  <property name="jar" value="vocabtoolkit.jar" />
+  <property name="war" value="vocabtoolkit.war" />
 
-    <path id="compile-main.classpath">
-        <fileset dir="lib" includes="**/*.jar" />
-        <fileset dir="tomcatlib" includes="**/*.jar" />
-    </path>	
-	
-    <target name="compile-main">
-    	<mkdir dir="${build}" />
-        <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
-             <src path="src/main/java"/>
-             <src path="src/test/java"/>
-             <classpath refid="compile-main.classpath"/>
-        </javac>
-    </target>
-	<!-- JAR not usable in the WAR, as JPA seems to require both
+  <target name="clean">
+    <delete dir="${build}" />
+    <delete file="${jar}" />
+    <delete file="${war}" />
+  </target>
+
+  <path id="compile-main.classpath">
+    <fileset dir="lib" includes="**/*.jar" />
+    <fileset dir="tomcatlib" includes="**/*.jar" />
+  </path>
+
+  <target name="compile-main">
+    <mkdir dir="${build}" />
+    <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
+      <src path="src/main/java" />
+      <src path="src/test/java" />
+      <classpath refid="compile-main.classpath" />
+    </javac>
+  </target>
+  <!-- JAR not usable in the WAR, as JPA seems to require both
 	     persistence.xml and entity classes to be at the "top level",
 	     i.e., in WEB-INF/classes.
     <target name="jar" depends="compile-main">
@@ -40,34 +40,72 @@
    		</jar>
    	</target>
    	-->
-    <target name="war" depends="compile-main">
-    	<war destfile="${war}">
-    		<metainf dir="WebContent/META-INF" />
-    		<webinf dir="WebContent/WEB-INF" />
-			<!-- Copy persistence.xml -->
-    		<mappedresources>
-    	        <fileset dir="src/main/java/META-INF" />
-		        <globmapper from="*" to="WEB-INF/classes/META-INF/*"/>
-   		    </mappedresources>
-			<!-- Need to use this trick instead of a lib element because
+  <target name="war" depends="compile-main">
+    <war destfile="${war}">
+      <metainf dir="WebContent/META-INF" />
+      <webinf dir="WebContent/WEB-INF" />
+      <!-- Copy persistence.xml -->
+      <mappedresources>
+        <fileset dir="src/main/java/META-INF" />
+        <globmapper from="*" to="WEB-INF/classes/META-INF/*" />
+      </mappedresources>
+      <!-- Need to use this trick instead of a lib element because
 			     the JAR files are stored in subdirectories.
 			     See http://stackoverflow.com/questions/2802671/how-to-perform-ant-path-mapping-in-a-war-task -->
-    		<mappedresources>
-    	        <fileset dir="lib" includes="**/*.jar" />
-   		        <chainedmapper>
-   		          <flattenmapper/>
-   		          <globmapper from="*" to="WEB-INF/lib/*"/>
-   		        </chainedmapper>
-   		    </mappedresources>
-    		<!-- Can't use JAR; see above. -->
-    		<!-- <lib file="${jar}" /> -->
-    		<!-- Include raw classes instead. -->
-    		<classes dir="${build}" />
-       		<mappedresources>
-        	    <fileset dir="${conf}" />
-        	    <globmapper from="*" to="WEB-INF/classes/*"/>
-       	    </mappedresources>
-    	</war>
-    </target>
+      <mappedresources>
+        <fileset dir="lib" includes="**/*.jar" />
+        <chainedmapper>
+          <flattenmapper />
+          <globmapper from="*" to="WEB-INF/lib/*" />
+        </chainedmapper>
+      </mappedresources>
+      <!-- Can't use JAR; see above. -->
+      <!-- <lib file="${jar}" /> -->
+      <!-- Include raw classes instead. -->
+      <classes dir="${build}" />
+      <mappedresources>
+        <fileset dir="${conf}" />
+        <globmapper from="*" to="WEB-INF/classes/*" />
+      </mappedresources>
+    </war>
+  </target>
+
+  <!-- The following targets are based on:
+		http://llbit.se/?p=1876 -->
+
+  <!-- this target is only run if the 'version' property is undefined -->
+  <target name="update-version-string" depends="-timestamp" unless="Toolkit.version">
+    <!-- get a new version string using git describe if possible -->
+    <echo message="Updating version string..." />
+    <exec executable="git" outputproperty="Toolkit.version" failifexecutionfails="false">
+      <arg value="describe" />
+      <!-- <arg value="- -tags" /> -->
+    </exec>
+    <antcall target="-store-version-string" />
+    <!-- ensure version is defined even if git was not available -->
+    <property file="${conf}/Version.properties" />
+  </target>
+
+  <target name="-timestamp">
+    <tstamp>
+      <format property="Toolkit.versionTimestamp" timezone="UTC" pattern="yyyy-MM-dd'T'HH:mm'Z'" />
+      <format property="Toolkit.buildDate" timezone="UTC" pattern="yyyy-MM-dd" />
+    </tstamp>
+  </target>
+
+  <target name="-store-version-string" depends="-timestamp" if="Toolkit.version">
+    <!-- store the new  version string in the correct property file -->
+    <echo message="version=${version}" />
+    <propertyfile file="${conf}/Version.properties">
+      <entry key="Toolkit.version" value="${Toolkit.version}" />
+      <entry key="Toolkit.versionTimestamp" value="${Toolkit.versionTimestamp}" />
+      <entry key="Toolkit.buildDate" value="${Toolkit.buildDate}" />
+    </propertyfile>
+    <exec executable="git">
+      <arg value="update-index" />
+      <arg value="--assume-unchanged" />
+      <arg value="${conf}/Version.properties" />
+    </exec>
+  </target>
 
 </project>
