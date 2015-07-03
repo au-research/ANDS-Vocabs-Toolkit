@@ -40,7 +40,7 @@
    		</jar>
    	</target>
    	-->
-  <target name="war" depends="compile-main">
+  <target name="war" depends="compile-main,update-version-string">
     <war destfile="${war}">
       <metainf dir="WebContent/META-INF" />
       <webinf dir="WebContent/WEB-INF" />
@@ -83,7 +83,7 @@
     </exec>
     <antcall target="-store-version-string" />
     <!-- ensure version is defined even if git was not available -->
-    <property file="${conf}/Version.properties" />
+    <property file="${conf}/version.properties" />
   </target>
 
   <target name="-timestamp">
@@ -96,7 +96,7 @@
   <target name="-store-version-string" depends="-timestamp" if="Toolkit.version">
     <!-- store the new  version string in the correct property file -->
     <echo message="version=${version}" />
-    <propertyfile file="${conf}/Version.properties">
+    <propertyfile file="${conf}/version.properties">
       <entry key="Toolkit.version" value="${Toolkit.version}" />
       <entry key="Toolkit.versionTimestamp" value="${Toolkit.versionTimestamp}" />
       <entry key="Toolkit.buildDate" value="${Toolkit.buildDate}" />
@@ -104,7 +104,7 @@
     <exec executable="git">
       <arg value="update-index" />
       <arg value="--assume-unchanged" />
-      <arg value="${conf}/Version.properties" />
+      <arg value="${conf}/version.properties" />
     </exec>
   </target>
 
