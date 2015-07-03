@@ -73,13 +73,24 @@
   <!-- The following targets are based on:
 		http://llbit.se/?p=1876 -->
 
+  <!-- To do a new release, create and commit a new version of
+       version.properties.
+       NB: in next line, remove slash between the two hyphens!
+       (XML thinks two consecutive hyphens end the comment.)
+       Call git update-index -/-no-assume-unchanged conf/version.properties
+       to enable git to do the commit of the file.
+       Specify -DToolkit.version=XYZ on the ant command line when building
+       so as to inhibit creating a new version.properties.
+       (Literally "XYZ" or something else; the value doesn't matter.
+       This is not specifying a version number; just defining the property
+       inhibits the update-version-string target.) -->
+
   <!-- this target is only run if the 'version' property is undefined -->
   <target name="update-version-string" depends="-timestamp" unless="Toolkit.version">
     <!-- get a new version string using git describe if possible -->
     <echo message="Updating version string..." />
     <exec executable="git" outputproperty="Toolkit.version" failifexecutionfails="false">
       <arg value="describe" />
-      <!-- <arg value="- -tags" /> -->
     </exec>
     <antcall target="-store-version-string" />
     <!-- ensure version is defined even if git was not available -->
