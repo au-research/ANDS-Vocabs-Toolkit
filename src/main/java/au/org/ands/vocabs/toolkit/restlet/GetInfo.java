@@ -4,7 +4,9 @@ package au.org.ands.vocabs.toolkit.restlet;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
@@ -20,6 +22,7 @@ import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Restlets for getting info about Toolkit supported services. */
 @Path("getInfo")
@@ -45,9 +48,7 @@ public class GetInfo {
             return HarvestProviderUtils.getProvider("PoolParty").getInfo();
         } catch (ClassNotFoundException | InstantiationException
                 | IllegalAccessException e) {
-            // TODO Auto-generated catch block
             logger.error("Exception happened: ", e);
-            // e.printStackTrace();
             return "{\"exception\":\"Can't get PoolParty provider.\"}";
         }
     }
@@ -63,7 +64,6 @@ public class GetInfo {
             return ImporterProviderUtils.getProvider("Sesame").getInfo();
         } catch (ClassNotFoundException | InstantiationException
                 | IllegalAccessException e) {
-            // TODO Auto-generated catch block
             logger.error("Exception happened: ", e);
             // e.printStackTrace();
 //            return "{\"exception\":\"Can't get Sesame provider.\"}";
@@ -81,5 +81,26 @@ public class GetInfo {
         List<Task> tasks = TasksUtils.getAllTasks();
         return tasks;
     }
+
+    /** Get the Toolkit version information from the version.properties
+     * configuration file.
+     * @return The version information.
+     */
+    @Path("version")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public final HashMap<String, String> getVersion() {
+        logger.debug("called getVersion");
+        Properties props = ToolkitProperties.getProperties();
+        HashMap<String, String> result =
+                new HashMap<String, String>();
+        result.put("Toolkit.version", props.getProperty("Toolkit.version"));
+        result.put("Toolkit.versionTimestamp",
+                props.getProperty("Toolkit.versionTimestamp"));
+        result.put("Toolkit.buildDate",
+                props.getProperty("Toolkit.buildDate"));
+        return result;
+    }
+
 
 }

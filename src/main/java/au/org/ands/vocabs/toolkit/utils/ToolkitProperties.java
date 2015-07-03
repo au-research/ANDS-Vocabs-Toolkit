@@ -13,8 +13,11 @@ import org.slf4j.LoggerFactory;
 /** Utility class providing access to toolkit properties. */
 public final class ToolkitProperties {
 
-    /** Base name of the properties file. */
+    /** Base name of the main properties file. */
     private static final String PROPS_FILE = "toolkit.properties";
+
+    /** Base name of the version properties file. */
+    private static final String VERSION_PROPS_FILE = "version.properties";
 
     /** Properties object. */
     private static Properties props;
@@ -75,10 +78,16 @@ public final class ToolkitProperties {
         if (input == null) {
             throw new RuntimeException("Can't find Toolkit properties file.");
         }
+        InputStream input2 = MethodHandles.lookup().lookupClass().
+                getClassLoader().getResourceAsStream(VERSION_PROPS_FILE);
+        if (input2 == null) {
+            throw new RuntimeException("Can't find Toolkit version "
+                    + "properties file.");
+        }
         try {
             // load a properties file
             props.load(input);
-
+            props.load(input2);
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
@@ -86,7 +95,16 @@ public final class ToolkitProperties {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("initProperties can't close properties file",
+                            e);
+                }
+            }
+            if (input2 != null) {
+                try {
+                    input2.close();
+                } catch (IOException e) {
+                    logger.error("initProperties can't close version "
+                            + "properties file", e);
                 }
             }
         }
