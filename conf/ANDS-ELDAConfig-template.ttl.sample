@@ -194,9 +194,19 @@ svoc:basicCollectionViewer a api:Viewer
     ; api:property rdfs:label, skos:prefLabel, skos:member
     .
 
+# ANDS: This is the original svoc:basicConceptViewer
+#svoc:basicConceptViewer a api:Viewer
+#    ; api:name "concept"
+#    ; api:property skos:prefLabel, skos:notation, skos:broader, skos:definition, skos:narrower
+#    .
+
+# ANDS: And this is the ANDS-specific concept viewer.
+#  It fetches labels for narrower and broader concepts.
 svoc:basicConceptViewer a api:Viewer
     ; api:name "concept"
-    ; api:property skos:prefLabel, skos:notation, skos:broader, skos:definition, skos:narrower
+    ; api:property skos:prefLabel, skos:notation,
+      ( skos:broader skos:prefLabel ), skos:definition,
+      ( skos:narrower skos:prefLabel )
     .
 
 # ANDS custom concept scheme viewer
@@ -206,15 +216,15 @@ andsvocabs:basicConceptSchemeViewerLabelled a api:Viewer
     ; api:property rdfs:label, ( skos:hasTopConcept skos:prefLabel )
     .
 
-# ANDS custom concept viewer
+# ANDS custom concept viewer, based on svoc:basicConceptViewer
 #   This one fetches labels for narrower and broader concepts.
-andsvocabs:basicConceptViewerNarrowerBroader a api:Viewer
-    ; api:name "concept-labelled"
-    ; api:include api:labelledDescribeViewer
-    ; api:property skos:prefLabel, skos:notation,
-      ( skos:broader skos:prefLabel ), skos:definition,
-      ( skos:narrower skos:prefLabel )
-    .
+# andsvocabs:basicConceptViewerNarrowerBroader a api:Viewer
+#    ; api:name "concept-labelled"
+#    ; api:include api:labelledDescribeViewer
+#    ; api:property skos:prefLabel, skos:notation,
+#      ( skos:broader skos:prefLabel ), skos:definition,
+#      ( skos:narrower skos:prefLabel )
+#    .
 
 ### andsvocabs:labelledDescribeViewerNarrowerBroader a api:Viewer
 ###     ; api:name "concept-labelled"
@@ -231,12 +241,13 @@ andsvocabs:basicConceptViewerNarrowerBroader a api:Viewer
 #   Implements the identity transformation, so you see all the XML.
 #   Useful for debugging; shows you the input to an XSLT.
 
-andsvocabs:fullxml a api:XsltFormatter
-    ; api:name "fullxml"
-    ; api:mimeType "application/xml"
-    ; elda:metadataOptions "bindings,versions,formats"
-    ; api:stylesheet "resources/default/transform/ands-identity-transform.xsl"
-    .
+# Uncomment the next section when you need to do some debugging.
+#andsvocabs:fullxml a api:XsltFormatter
+#    ; api:name "fullxml"
+#    ; api:mimeType "application/xml"
+#    ; elda:metadataOptions "bindings,versions,formats"
+#    ; api:stylesheet "resources/default/transform/ands-identity-transform.xsl"
+#    .
 
 
 
@@ -274,9 +285,11 @@ svoc:URIEndpoint a api:ItemEndpoint
 ##############################################################
 		; api:itemTemplate  "{URI}"
 		; api:defaultViewer  api:labelledDescribeViewer
-		; api:viewer  api:basicViewer,api:describeViewer,api:labelledDescribeViewer,andsvocabs:basicConceptViewerNarrowerBroader
+		; api:viewer  api:basicViewer,api:describeViewer,api:labelledDescribeViewer
 #		; api:viewer  svoc:labelledDescribeConceptViewer
-                ; api:formatter andsvocabs:fullxml
+# Uncomment the next line (and the definition of andsvocabs:fullxml above)
+# when you need to do some debugging.
+#                ; api:formatter andsvocabs:fullxml
 		.
 
 ## 1. List of concept schemes - basic-view
@@ -335,8 +348,10 @@ svoc:conceptListEndpoint a api:ListEndpoint
 				api:where " ?item a skos:Concept . "
 		]
 		; api:defaultViewer svoc:basicConceptViewer
-		; api:viewer  api:basicViewer,svoc:basicConceptViewer,andsvocabs:basicConceptViewerNarrowerBroader
-                ; api:formatter andsvocabs:fullxml
+		; api:viewer  api:basicViewer,svoc:basicConceptViewer
+# Uncomment the next line (and the definition of andsvocabs:fullxml above)
+# when you need to do some debugging.
+#                ; api:formatter andsvocabs:fullxml
 		.
 
 ## 4. List of concepts where a label matches the text
