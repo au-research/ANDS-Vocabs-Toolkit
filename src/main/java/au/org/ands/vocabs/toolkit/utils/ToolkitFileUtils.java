@@ -39,7 +39,7 @@ public final class ToolkitFileUtils {
      */
     private static final int MAX_SLUG_COMPONENT_LENGTH = 50;
 
-    /** Private contructor for utility class. */
+    /** Private constructor for utility class. */
     private ToolkitFileUtils() {
     }
 
