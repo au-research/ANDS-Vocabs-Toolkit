@@ -114,6 +114,18 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
             Response response = invocationBuilder.get();
 
+            if (response.getStatus()
+                    >= Response.Status.BAD_REQUEST.getStatusCode()) {
+                logger.error("getHarvestFiles got an error from PoolParty; "
+                        + "response code = " + response.getStatus());
+
+                results.put(TaskStatus.ERROR,
+                        "PoolPartyHarvestProvider.getHarvestFiles() "
+                        + "got an error from PoolParty; "
+                        + "response code = " + response.getStatus());
+                return false;
+            }
+
             String responseData = response.readEntity(String.class);
 
             String filePath = ToolkitFileUtils.saveFile(
