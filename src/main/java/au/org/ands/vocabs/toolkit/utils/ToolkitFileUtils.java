@@ -281,7 +281,9 @@ public final class ToolkitFileUtils {
      * (c) converting to lowercase,
      * (d) encoding as a URL,
      * (e) replacing percents with hyphens,
-     * (f) coalescing multiple consecutive hyphens into one.
+     * (f) coalescing multiple consecutive hyphens into one,
+     * (g) trimming the result to a maximum length of
+     *     MAX_SLUG_COMPONENT_LENGTH.
      * @param aString The string that is to be converted.
      * @return The value of aString with slug conventions applied.
      */
