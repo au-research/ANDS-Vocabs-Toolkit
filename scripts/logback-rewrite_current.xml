@@ -1,0 +1,26 @@
+<!DOCTYPE configuration>
+<configuration>
+
+  <appender name="FILE"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>/var/log/apache/ands-vocabs-toolkit-rewrite-current.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>/var/log/apache/ands-vocabs-toolkit-rewrite-current.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <!-- Optional: uncomment the following setting to limit the number 
+        of log files kept. -->
+      <!-- Keep 31 days' worth of history -->
+      <!-- <maxHistory>31</maxHistory> -->
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d [%thread] %level %logger - %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="${root-level:-INFO}">
+    <appender-ref ref="FILE" />
+  </root>
+  <logger name="au.org.ands.vocabs" level="ERROR" />
+  <logger name="org.hibernate" level="OFF" />
+
+</configuration>

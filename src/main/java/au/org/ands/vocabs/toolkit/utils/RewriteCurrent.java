@@ -2,34 +2,34 @@
 package au.org.ands.vocabs.toolkit.utils;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.DBContext;
-import ch.qos.logback.classic.Level;
+
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 
 /** Support program as part of the redirection of SPARQL and SISSVoc
  *  URLs containing "current" as the version identifier. Use this
  *  as a RewriteMap of type "prg" in Apache HTTP server. */
-public final class RedirectCurrent {
+public final class RewriteCurrent {
 
     /** Logger for this class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
     /** Private constructor for utility class. */
-    private RedirectCurrent() {
+    private RewriteCurrent() {
     }
 
     /** Query string for accessing the current version. */
@@ -46,31 +46,22 @@ public final class RedirectCurrent {
      * Output the slug form of that version title.
      * If there is no such current version, output the string "NULL"
      * as required by the Apache HTTP Server RewriteMap.
+     * NB, this relies on the uniqueness of slugs. Won't work if we
+     * allow multiple owners with the same slug.
+     * Logging absolutely must be set up so as not to display any
+     * logging on standard output (as would happen by default for Hibernate).
+     * Specify a custom logback.xml with -Dlogback.configurationFile=...
+     * on the command-line to do this.
      * @param args Command-line arguments.
      */
     public static void main(final String[] args) {
-        // The value specified as a parameter to getLogger() must be
-        // specific enough to cover any settings in logback.xml.
-        // The casting is done to enable the subsequent call to setLevel().
-        ch.qos.logback.classic.Logger rootLogger =
-                (ch.qos.logback.classic.Logger)
-                org.slf4j.LoggerFactory.getLogger(
-                        "au.org.ands.vocabs");
-        rootLogger.setLevel(Level.ERROR);
-
-        // Do the same for Hibernate. NB: May be specific to
-        // the version of Hibernate, and the way we use it
-        // (i.e., with Logback).
-        ch.qos.logback.classic.Logger hibLogger =
-                (ch.qos.logback.classic.Logger)
-                org.slf4j.LoggerFactory.getLogger(
-                        "org.hibernate");
-        hibLogger.setLevel(Level.ERROR);
-
         // This initializes the database connection using the properties
         // defined in the toolkit.properties file.
         EntityManager em = DBContext.getEntityManager();
-        em.getTransaction().begin();
+        EntityTransaction trans = em.getTransaction();
+        trans.begin();
+        // The following as a courtesy, but probably not needed.
+        trans.setRollbackOnly();
         try {
             // Get the raw JDBC connection, for efficiency.
             // NB: This is Hibernate specific!
@@ -91,14 +82,43 @@ public final class RedirectCurrent {
                         // No answer.
                         rewrittenSlug = "NULL";
                     }
+                } catch (CommunicationsException e) {
+                    // Handle the specific case of the Connection object
+                    // timing out. Close down, and try once more.
+                    // If an exception happens here, the program will exit.
+                    // Oops? Good enough for now, unless/until we observe
+                    // any other type of behaviour.
+                    stmt.close();
+                    em.close();
+                    em = DBContext.getEntityManager();
+                    trans = em.getTransaction();
+                    trans.begin();
+                    trans.setRollbackOnly();
+                    conn = em.unwrap(SessionImpl.class).connection();
+                    stmt = conn.prepareStatement(QUERY_STRING);
+                    stmt.setString(1, vocabularySlug);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            rewrittenSlug =
+                                    ToolkitFileUtils.makeSlug(rs.getString(1));
+                        } else {
+                            // No answer.
+                            rewrittenSlug = "NULL";
+                        }
+                    }
                 }
                 System.out.println(rewrittenSlug);
                 System.out.flush();
                 vocabularySlug = input.readLine();
             }
-        } catch (SQLException | IOException e) {
-            LOGGER.error("Exception in RedirectCurrent", e);
+        } catch (Exception e) {
+            // Catch-all, because we don't know what else might happen
+            // in future, and we want a record of that if/when
+            // we get a type of exception we haven't seen before.
+            LOGGER.error("Exception in RewriteCurrent", e);
         }
+        // Tidy up as a courtesy ... although, rollback() will throw
+        // an exception if the connection has timed out.
         em.getTransaction().rollback();
         em.close();
     }
