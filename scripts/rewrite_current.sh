@@ -13,7 +13,7 @@
 
 SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
-java -Dlogback.configurationFile=$SCRIPTPATH/logback-redirect_current.xml \
+java -Dlogback.configurationFile=$SCRIPTPATH/logback-rewrite_current.xml \
      -cp $TOOLKIT_ROOT/WEB-INF/lib/*:$TOOLKIT_ROOT/WEB-INF/classes \
      au.org.ands.vocabs.toolkit.utils.RewriteCurrent \
      "$@" 2>/dev/null
