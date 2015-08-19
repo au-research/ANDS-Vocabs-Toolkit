@@ -142,11 +142,12 @@ public final class ToolkitFileUtils {
             return null;
         }
         TaskInfo taskInfo = new TaskInfo(task, vocab, version);
-        if (version.getVocabId() != task.getVocabularyId()) {
+        if (!version.getVocabId().equals(task.getVocabularyId())) {
             logger.error("getTaskInfo: version's vocab id does not match"
-                    + " task's version id; "
+                    + " task's version's vocab id; "
                     + "task id:"
-                    + taskId + "; version id:" + task.getVersionId());
+                    + taskId + "; vocab id:" + task.getVocabularyId()
+                    + taskId + "; version's vocab id:" + version.getVocabId());
             return null;
         }
         if (vocab.getSlug() == null || vocab.getSlug().trim().isEmpty()) {
