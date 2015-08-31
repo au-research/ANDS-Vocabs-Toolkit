@@ -1,12 +1,25 @@
 # Special rewriting for SPARQL endpoint and SISSVoc URLs with "_current"
 # as the version component.
+
+# Please note: if you are making use of virtual hosts -- and you
+# almost certainly are, at least for port 443 -- you _must_
+# also insert these two lines into _each_ virtual host you want
+# to work (and then uncomment them!).
+# For example, you typically will want to insert it
+# into _both_ the virtual host for port 80 (if defined in conf/httpd.conf)
+# _and_ the virtual host for port 443 (defined in conf.d/ssl.conf).
+# Basically, if the rewriting doesn't work, you probably need to add
+# these two lines within each virtual host definition!
+#   RewriteEngine On
+#   RewriteOptions Inherit
+
 RewriteEngine On
 
 # Uncomment these if you need to debug.
 # RewriteLog "/var/log/httpd/rewrite.log"
 # RewriteLogLevel 3
 
-RewriteLock /var/lock/httpd_rewrite
+RewriteLock /var/log/httpd/lock_httpd_rewrite
 
 # Adjust this path to rewrite_current.sh.
 # Also, you will need to edit rewrite_current.sh to point to the
