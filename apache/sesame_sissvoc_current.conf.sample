@@ -1,0 +1,18 @@
+# Special rewriting for SPARQL endpoint and SISSVoc URLs with "_current"
+# as the version component.
+RewriteEngine On
+
+# Uncomment these if you need to debug.
+# RewriteLog "/var/log/httpd/rewrite.log"
+# RewriteLogLevel 3
+
+RewriteLock /var/lock/httpd_rewrite
+
+# Adjust this path to rewrite_current.sh.
+# Also, you will need to edit rewrite_current.sh to point to the
+# deployed Toolkit.
+RewriteMap currentMap "prg:/usr/local/src/vocabtoolkit/ANDS-Vocabs-Toolkit/scripts/rewrite_current.sh"
+
+# Adjust hostname, port as necessary.
+RewriteRule "^/repository/api/lda/([^/]*)/([^/]*)/current/(.*)" "ajp://localhost:8009/repository/api/lda/$1/$2/${currentMap:$2|current}/$3" [P,L]
+RewriteRule "^/repository/api/sparql/([^/]*)_([^/]*)_current(/.*)?" "ajp://localhost:8009/repository/openrdf-sesame/repositories/$1_$2_${currentMap:$2|current}$3" [P,L]
