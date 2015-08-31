@@ -141,7 +141,6 @@ public final class ToolkitFileUtils {
                     + taskId + "; version id:" + task.getVersionId());
             return null;
         }
-        TaskInfo taskInfo = new TaskInfo(task, vocab, version);
         if (!version.getVocabId().equals(task.getVocabularyId())) {
             logger.error("getTaskInfo: task's vocab id does not match"
                     + " task's version's vocab id; "
@@ -169,6 +168,7 @@ public final class ToolkitFileUtils {
             return null;
         }
 
+        TaskInfo taskInfo = new TaskInfo(task, vocab, version);
         return taskInfo;
     }
 
