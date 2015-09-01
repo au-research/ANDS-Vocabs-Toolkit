@@ -18,6 +18,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.uri.UriComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,22 +287,28 @@ public final class ToolkitFileUtils {
      * (d) encoding as a URL,
      * (e) replacing percents with hyphens,
      * (f) coalescing multiple consecutive hyphens into one,
-     * (g) trimming the result to a maximum length of
-     *     MAX_SLUG_COMPONENT_LENGTH.
+     * (g) removing any leading and trailing hyphens,
+     * (h) trimming the result to a maximum length of
+     *     MAX_SLUG_COMPONENT_LENGTH,
+     * (i) removing any remaining trailing hyphen.
      * @param aString The string that is to be converted.
      * @return The value of aString with slug conventions applied.
      */
     public static String makeSlug(final String aString) {
-        String slug = UriComponent.encode(aString.
+        String slug = StringUtils.strip(
+                UriComponent.encode(aString.
                 replaceAll("\\p{Punct}", "-").
                 replaceAll("\\s", "-").
                 toLowerCase(),
                 UriComponent.Type.PATH_SEGMENT).
                 replaceAll("%", "-").
-                replaceAll("-+", "-");
+                replaceAll("-+", "-"),
+                "-");
 
-        return slug.substring(0, Math.min(MAX_SLUG_COMPONENT_LENGTH,
-                slug.length()));
+        return StringUtils.stripEnd(
+                slug.substring(0, Math.min(MAX_SLUG_COMPONENT_LENGTH,
+                slug.length())),
+                "-");
     }
 
     /**
