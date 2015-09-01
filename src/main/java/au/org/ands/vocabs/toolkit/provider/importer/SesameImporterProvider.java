@@ -126,14 +126,14 @@ public class SesameImporterProvider extends ImporterProvider {
         if (!success) {
             return false;
         }
-        results.put("repository_id", ToolkitFileUtils.getTaskRepositoryId(
+        results.put("repository_id", ToolkitFileUtils.getSesameRepositoryId(
                 taskInfo));
         // Use the nice JAX-RS libraries to construct the path to
         // the SPARQL endpoint.
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(sparqlPrefix);
         WebTarget sparqlTarget = target
-                .path(ToolkitFileUtils.getTaskRepositoryId(taskInfo));
+                .path(ToolkitFileUtils.getSesameRepositoryId(taskInfo));
         results.put("sparql_endpoint",
                 sparqlTarget.getUri().toString());
         return true;
@@ -150,7 +150,7 @@ public class SesameImporterProvider extends ImporterProvider {
         try {
             manager = RepositoryProvider.getRepositoryManager(sesameServer);
 
-            String repositoryID = ToolkitFileUtils.getTaskRepositoryId(
+            String repositoryID = ToolkitFileUtils.getSesameRepositoryId(
                     taskInfo);
             String versionID = taskInfo.getVersion().getTitle();
             String repositoryTitle = taskInfo.getVocabulary().getTitle()
@@ -216,7 +216,7 @@ public class SesameImporterProvider extends ImporterProvider {
         try {
             manager = RepositoryProvider.getRepositoryManager(sesameServer);
 
-            String repositoryID = ToolkitFileUtils.getTaskRepositoryId(
+            String repositoryID = ToolkitFileUtils.getSesameRepositoryId(
                     taskInfo);
 
             Repository repository = manager.getRepository(repositoryID);
@@ -282,7 +282,7 @@ public class SesameImporterProvider extends ImporterProvider {
         RepositoryManager manager = null;
         try {
             manager = RepositoryProvider.getRepositoryManager(sesameServer);
-            String repositoryID = ToolkitFileUtils.getTaskRepositoryId(
+            String repositoryID = ToolkitFileUtils.getSesameRepositoryId(
                     taskInfo);
             Repository repository = manager.getRepository(repositoryID);
             if (repository == null) {

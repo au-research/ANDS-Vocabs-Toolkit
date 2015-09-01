@@ -138,7 +138,7 @@ public class SISSVocPublishProvider extends PublishProvider {
         specProperties.put("SERVICE_LABEL",
                 StringEscapeUtils.escapeJava(
                         taskInfo.getVocabulary().getTitle()));
-        String repositoryId = ToolkitFileUtils.getTaskRepositoryId(taskInfo);
+        String repositoryId = ToolkitFileUtils.getSesameRepositoryId(taskInfo);
         // SPARQL endpoint to use for doing queries
         specProperties.put("SPARQL_ENDPOINT",
                 PROPS.getProperty("SISSVoc.variable.SPARQL_ENDPOINT_PREFIX",
@@ -218,7 +218,7 @@ public class SISSVocPublishProvider extends PublishProvider {
         ToolkitFileUtils.requireDirectory(sissvocSpecOutputPath);
         File specFile = new File(
                 Paths.get(sissvocSpecOutputPath).
-                resolve(ToolkitFileUtils.getTaskRepositoryId(taskInfo)
+                resolve(ToolkitFileUtils.getSesameRepositoryId(taskInfo)
                         + ".ttl").toString());
         try {
             FileUtils.writeStringToFile(specFile, customSpec);
@@ -246,7 +246,7 @@ public class SISSVocPublishProvider extends PublishProvider {
             final HashMap<String, String> results) {
         try {
             Path specFilePath = Paths.get(sissvocSpecOutputPath).
-                    resolve(ToolkitFileUtils.getTaskRepositoryId(taskInfo)
+                    resolve(ToolkitFileUtils.getSesameRepositoryId(taskInfo)
                             + ".ttl");
             if (Files.exists(specFilePath)) {
                 Files.write(specFilePath, new byte[0]);
@@ -274,7 +274,7 @@ public class SISSVocPublishProvider extends PublishProvider {
             final HashMap<String, String> results) {
         try {
             Files.deleteIfExists(Paths.get(sissvocSpecOutputPath).
-                    resolve(ToolkitFileUtils.getTaskRepositoryId(taskInfo)
+                    resolve(ToolkitFileUtils.getSesameRepositoryId(taskInfo)
                             + ".ttl"));
         } catch (IOException e) {
             // This may mean a file permissions problem, so do log it.

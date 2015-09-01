@@ -182,6 +182,9 @@ public final class ToolkitFileUtils {
      */
     public static String getTaskOutputPath(final TaskInfo taskInfo,
             final String extraPath) {
+        // NB: We call makeSlug() on the vocabulary slug, which should
+        // (as of ANDS-Registry-Core commit e365392831ae)
+        // not really be necessary.
         Path path = Paths.get(ToolkitConfig.DATA_FILES_PATH)
                 .resolve(makeSlug(taskInfo.getVocabulary().getOwner()))
                 .resolve(makeSlug(taskInfo.getVocabulary().getSlug()))
@@ -309,10 +312,12 @@ public final class ToolkitFileUtils {
      *            The TaskInfo object representing the task.
      * @return The repository id for the vocabulary with this version.
      */
-    public static String getTaskRepositoryId(final TaskInfo taskInfo) {
+    public static String getSesameRepositoryId(final TaskInfo taskInfo) {
+        // As of ANDS-Registry-Core commit e365392831ae,
+        // now use the vocabulary title slug directly from the database.
         return makeSlug(taskInfo.getVocabulary().getOwner())
                 + "_"
-                + makeSlug(taskInfo.getVocabulary().getSlug())
+                + taskInfo.getVocabulary().getSlug()
                 + "_"
                 + makeSlug(taskInfo.getVersion().getTitle());
     }
@@ -326,9 +331,11 @@ public final class ToolkitFileUtils {
      * @return The repository id for the vocabulary with this version.
      */
     public static String getSISSVocRepositoryPath(final TaskInfo taskInfo) {
+        // As of ANDS-Registry-Core commit e365392831ae,
+        // now use the vocabulary title slug directly from the database.
         return makeSlug(taskInfo.getVocabulary().getOwner())
                 + "/"
-                + makeSlug(taskInfo.getVocabulary().getSlug())
+                + taskInfo.getVocabulary().getSlug()
                 + "/"
                 + makeSlug(taskInfo.getVersion().getTitle());
     }

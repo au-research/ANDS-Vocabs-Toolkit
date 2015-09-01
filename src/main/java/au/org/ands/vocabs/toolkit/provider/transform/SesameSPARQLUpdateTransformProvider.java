@@ -101,7 +101,7 @@ public class SesameSPARQLUpdateTransformProvider extends TransformProvider {
         try {
             manager = RepositoryProvider.getRepositoryManager(sesameServer);
 
-            String repositoryID = ToolkitFileUtils.getTaskRepositoryId(
+            String repositoryID = ToolkitFileUtils.getSesameRepositoryId(
                     taskInfo);
 
             repository = manager.getRepository(repositoryID);
