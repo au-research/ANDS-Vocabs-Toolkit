@@ -100,7 +100,10 @@ svoc:${SVC_ID} a api:API
 		svoc:narrowerTransitiveLabelEndpoint ,
                 # ANDS extras
                 svoc:topConceptsByConceptSchemeEndpoint ,
-                svoc:topConceptsEndpoint
+                svoc:topConceptsEndpoint ,
+                svoc:conceptByLabelNotationURIEndpoint ,
+                svoc:inCollectionURIEndpoint ,
+                svoc:allNarrowerThanURIEndpoint
 
 
 	; api:defaultViewer api:describeViewer
@@ -620,7 +623,7 @@ svoc:narrowerTransitiveLabelEndpoint a api:ListEndpoint
 # ANDS extra endpoints
 
 
-# list all of the top concepts in the vocabulary
+# List all of the top concepts in the vocabulary.
 svoc:topConceptsEndpoint a api:ListEndpoint
                 ; rdfs:comment "List all concepts which are topConcepts of the vocabulary"
                 ; api:uriTemplate  "${SVC_PREFIX}/concept/topConcepts"
@@ -632,11 +635,11 @@ svoc:topConceptsEndpoint a api:ListEndpoint
                 ; api:viewer  api:basicViewer,svoc:basicConceptViewer
                 .
 
-# list of top concepts for a specific conceptscheme
+# List of top concepts for a specific conceptscheme.
 svoc:topConceptsByConceptSchemeEndpoint a api:ListEndpoint
                 ; rdfs:comment "List all concepts which are topConcepts of the vocabulary"
                 ; api:uriTemplate  "${SVC_PREFIX}/concept/topConcepts?scheme={scheme_uri}"
-                ; api:exampleRequestPath  "${SVC_PREFIX}/concept/topConcepts?scheme=uri=http://resource.geosciml.org/classifier/ics/ischart/Cambrian"
+                ; api:exampleRequestPath  "${SVC_PREFIX}/concept/topConcepts?scheme=http://resource.geosciml.org/classifier/ics/ischart/Cambrian"
                 ; api:variable  [ api:name "scheme_uri"; api:type rdfs:Resource ]
                 ; api:selector [
                                 api:where " ?item a skos:Concept .  ?scheme_uri skos:hasTopConcept ?item . "
@@ -644,6 +647,51 @@ svoc:topConceptsByConceptSchemeEndpoint a api:ListEndpoint
                 ; api:defaultViewer svoc:basicConceptViewer
                 ; api:viewer  api:basicViewer,svoc:basicConceptViewer
                 .
+
+# Other endpoints needed specifically for the ANDS Vocab Widget.
+
+# List of concepts where either there's a match:
+# (a) against an rdfs:label, skos:prefLabel, or skos:altLabel, case-insensitive
+# (b) against a skos:notation, exact match
+# (c) against the concept's IRI, case-insensitive, as long as the concep also has a skos:prefLabel.
+svoc:conceptByLabelNotationURIEndpoint a api:ListEndpoint
+                 ; rdfs:comment "List concepts where an RDF label, or a SKOS label/notation, or the concept's own IRI contains this text, case-insensitive"
+                 ; api:uriTemplate  "${SVC_PREFIX}/concept?anycontains={text}"
+                 ; api:exampleRequestPath  "${SVC_PREFIX}/concept?anycontains=Cambrian"
+                 ; api:selector [
+                                 api:where " ?item a skos:Concept .  ?item ?label ?l . FILTER (   ((?label = rdfs:label || ?label = skos:prefLabel || ?label = skos:altLabel ) && regex( str(?l) , ?text , 'i' )   )|| ((?label= skos:notation ) && str(?l) = ?text )   || ( regex( str(?item), ?text, 'i') && ( ?label = skos:prefLabel ))   ) " ## URI match, only when the URI has a prefLabel
+                                ]
+                 ; api:defaultViewer svoc:basicConceptViewer
+                 ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                 .
+
+# List of concepts in the specified collection
+svoc:inCollectionURIEndpoint a api:ListEndpoint
+                ; rdfs:comment "List of concepts which are members of the collection identified by this URI"
+                ; api:uriTemplate  "${SVC_PREFIX}/concept/inCollection?uri={baseCollection}"
+                ; api:exampleRequestPath  "${SVC_PREFIX}/concept/inCollection?uri=http://resource.geosciml.org/classifier/ics/ischart/Cambrian"
+                ; api:variable  [ api:name "baseCollection"; api:type rdfs:Resource ]
+                ; api:selector [
+                                # counter-intuitively, skos:member property indicates the object is a member of the subject
+                                api:where " ?baseCollection skos:member ?item . "
+                ]
+                ; api:defaultViewer svoc:basicConceptViewer
+                ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                .
+
+# Recursively list of all concepts that are narrower than the one identified by this URI
+svoc:allNarrowerThanURIEndpoint a api:ListEndpoint
+                ; rdfs:comment "Recursively list concepts narrower than the one identified by this URI"
+                ; api:uriTemplate  "${SVC_PREFIX}/concept/allNarrower?uri={baseConcept}"
+                ; api:exampleRequestPath  "${SVC_PREFIX}/concept/allNarrower?uri=http://resource.geosciml.org/classifier/ics/ischart/Furongian"
+                ; api:variable  [ api:name "baseConcept"; api:type rdfs:Resource ]
+                ; api:selector [ # logically unintuitive, note order of subject, object
+                                api:where " ?item skos:broader+ ?baseConcept "
+                ]
+                ; api:defaultViewer svoc:basicConceptViewer
+                ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                .
+
 
 
 #
