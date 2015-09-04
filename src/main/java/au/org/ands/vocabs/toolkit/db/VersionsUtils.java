@@ -14,7 +14,7 @@ public final class VersionsUtils {
 
     /** Get version by version id.
      * @param id version id
-     * @return the task
+     * @return the version
      */
     public static Versions getVersionById(final int id) {
         EntityManager em = DBContext.getEntityManager();
