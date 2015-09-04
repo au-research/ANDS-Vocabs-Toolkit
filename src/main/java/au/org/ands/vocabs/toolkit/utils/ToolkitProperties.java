@@ -73,8 +73,15 @@ public final class ToolkitProperties {
      */
     private static void initProperties() {
         props = new Properties();
+        // Let user override the PROPS_FILE setting with the command line.
+        // Useful for running standalone programs (i.e., using classes
+        // that have a main() method).
+        String propsFile = System.getProperty("PROPS_FILE");
+        if (propsFile == null) {
+            propsFile = PROPS_FILE;
+        }
         InputStream input = MethodHandles.lookup().lookupClass().
-                getClassLoader().getResourceAsStream(PROPS_FILE);
+                getClassLoader().getResourceAsStream(propsFile);
         if (input == null) {
             throw new RuntimeException("Can't find Toolkit properties file.");
         }
