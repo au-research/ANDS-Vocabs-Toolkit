@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 /**
- * VersionsUtils model class.
+ * Versions model class.
  */
 @Entity
 @Table(name = "versions",
