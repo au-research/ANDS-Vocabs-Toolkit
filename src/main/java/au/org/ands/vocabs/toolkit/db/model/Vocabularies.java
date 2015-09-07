@@ -41,6 +41,10 @@ public class Vocabularies {
     private String data;
     /** owner. */
     private String owner;
+    /** userOwner. */
+    private String userOwner;
+    /** status. */
+    private String status;
 
     /** Get the id.
      * @return The id
@@ -62,7 +66,7 @@ public class Vocabularies {
     /** Get the id.
      * @return The id
      */
-    @Column(name = "title")
+    @Column(name = "title", length = 255)
     public String getTitle() {
         return title;
     }
@@ -77,7 +81,7 @@ public class Vocabularies {
     /** Get the slug.
      * @return The slug
      */
-    @Column(name = "slug")
+    @Column(name = "slug", length = 255)
     public String getSlug() {
         return slug;
     }
@@ -199,7 +203,7 @@ public class Vocabularies {
     /** Get the owner.
      * @return The owner
      */
-    @Column(name = "owner")
+    @Column(name = "owner", length = 255)
     public String getOwner() {
         return owner;
     }
@@ -210,4 +214,35 @@ public class Vocabularies {
     public void setOwner(final String anOwner) {
         owner = anOwner;
     }
+
+    /** Get the user owner.
+     * @return The user owner
+     */
+    @Column(name = "user_owner", length = 255)
+    public String getUserOwner() {
+        return userOwner;
+    }
+
+    /** Set the user owner.
+     * @param aUserOwner the user owner
+     */
+    public void setUserOwner(final String aUserOwner) {
+        userOwner = aUserOwner;
+    }
+
+    /** Get the status.
+     * @return The status
+     */
+    @Column(name = "status", length = 45)
+    public String getStatus() {
+        return status;
+    }
+
+    /** Set the status.
+     * @param aStatus the status
+     */
+    public void setStatus(final String aStatus) {
+        status = aStatus;
+    }
+
 }
