@@ -101,12 +101,13 @@ public class Download {
 
 
 
-    /** Get the download for an access point, as RDF/JSON.
-     * @param response asynchronous response for this request
-     * @param accessPointId access point project id
-     * @param downloadFormat the download format
-     * xreturn The download for this access point,
-     * as returned by Sesame. */
+    /** Get the download for an access point. The Path for this
+     * method does not include a filename, but allows for a format
+     * query parameter.
+     * @param response Asynchronous response for this request
+     * @param accessPointId Access point id
+     * @param downloadFormat The download format. This may be
+     * ignored, depending (for example) on the access point type. */
     @Path("{access_point_id}")
     @GET
     public final void download(
@@ -151,8 +152,36 @@ public class Download {
                     entity("Invalid access point type").build());
             return;
         }
-
     }
+
+    /** Get the download for an access point. The Path for this
+     * method includes a filename with an extension.
+     * The use of this method enables the URL to contain a path component
+     * with a filename. This enables the use of e.g., curl or wget
+     * to save the download to the "correct" filename.
+     * @param response Asynchronous response for this request
+     * @param accessPointId Access point id.
+     * @param filename The filename specified in the URL. This may
+     * be ignored in constructing the response headers.
+     * @param extension The download format. This may be
+     * ignored, depending (for example) on the access point type. */
+    @Path("{access_point_id}/{filename}.{extension}")
+    @GET
+    public final void downloadWithFilename(
+            @Suspended final AsyncResponse response,
+            @PathParam("access_point_id")
+            final int accessPointId,
+            @PathParam("filename")
+            final String filename,
+            @DefaultValue("rdf")
+            @PathParam("extension")
+            final String extension) {
+        logger.info("Called downloadWithFilename: " + accessPointId
+                + ", filename: " + filename
+                + ", extension: " + extension);
+        download(response, accessPointId, extension);
+    }
+
 
     /** Return a file download.
      * @param response The response back to the browser.
@@ -178,7 +207,7 @@ public class Download {
         }
 
         String localPath = AccessPointsUtils.getToolkitPath(ap);
-        logger.debug("Getting download from file" + localPath
+        logger.debug("Getting download from file: " + localPath
                 + ", MIME type = " + responseMimeType);
         String downloadFilename = Paths.get(localPath).getFileName().toString();
 
@@ -258,7 +287,7 @@ public class Download {
      * @param downloadFormat The download format
      * @return The generated filename.
      */
-    private String downloadFilename(final AccessPoints ap,
+    public static String downloadFilename(final AccessPoints ap,
             final String downloadFormat) {
         // Work out the filename that the download should have.
         Versions version = VersionsUtils.getVersionById(ap.getVersionId());

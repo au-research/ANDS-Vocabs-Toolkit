@@ -1,6 +1,7 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.db;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
@@ -12,6 +13,7 @@ import javax.persistence.Query;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.restlet.Download;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -131,9 +133,13 @@ public final class PopulateAccessPoints {
                                + accessPoint.get("uri").asText());
                        jobPortal.add("format",
                                accessPoint.get("format").asText());
+                       String localPath = AccessPointsUtils.getToolkitPath(ap);
+                       String downloadFilename = Paths.get(localPath).
+                               getFileName().toString();
                        jobPortal.add("uri",
                                sparqlPrefix.replaceFirst("api/sparql.*",
-                                       "api/download/" + ap.getId()));
+                                       "api/download/") + ap.getId()
+                                       + "/" + downloadFilename);
                        ap.setPortalData(jobPortal.build().toString());
                        updateAccessPoint(ap);
                        break;
@@ -158,7 +164,10 @@ public final class PopulateAccessPoints {
                                     Json.createObjectBuilder();
                             job2Portal.add("uri",
                                     uri.replaceFirst("api/sparql.*",
-                                            "api/download/" + ap2.getId()));
+                                            "api/download/") + ap2.getId()
+                                            + "/"
+                                            + Download.downloadFilename(ap2,
+                                                    ""));
                             job2Toolkit.add("uri",
                                     uri.replaceFirst(sparqlPrefix,
                                             sesamePrefix).
