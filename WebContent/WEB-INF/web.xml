@@ -9,6 +9,8 @@
     <param-value>txt : text/plain, xml : application/xml, json : application/json</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
+    <!-- async required because we use AsyncResponse. -->
+    <async-supported>true</async-supported>
   </servlet>
   <servlet-mapping>
     <servlet-name>javax.ws.rs.core.Application</servlet-name>
