@@ -14,7 +14,7 @@ public final class VocabulariesUtils {
 
     /** Get vocabulary by vocabulary id.
      * @param id vocabulary id
-     * @return the task
+     * @return the vocabulary
      */
     public static Vocabularies getVocabularyById(final int id) {
         EntityManager em = DBContext.getEntityManager();
@@ -22,7 +22,5 @@ public final class VocabulariesUtils {
         em.close();
         return v;
     }
-
-
 
 }
