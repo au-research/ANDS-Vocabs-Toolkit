@@ -79,4 +79,26 @@ public final class AccessPointsUtils {
         return uri.asText();
     }
 
+    /** Save a new access point to the database.
+     * @param ap The access point to be saved.
+     */
+    public static void saveAccessPoint(final AccessPoints ap) {
+        EntityManager em = DBContext.getEntityManager();
+        em.getTransaction().begin();
+        em.persist(ap);
+        em.getTransaction().commit();
+        em.close();
+    }
+
+    /** Update an existing access point in the database.
+     * @param ap The access point to be update.
+     */
+    public static void updateAccessPoint(final AccessPoints ap) {
+        EntityManager em = DBContext.getEntityManager();
+        em.getTransaction().begin();
+        em.merge(ap);
+        em.getTransaction().commit();
+        em.close();
+    }
+
 }

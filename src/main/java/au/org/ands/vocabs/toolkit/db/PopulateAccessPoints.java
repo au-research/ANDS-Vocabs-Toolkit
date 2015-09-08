@@ -7,12 +7,9 @@ import java.util.Properties;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.restlet.Download;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
@@ -38,50 +35,6 @@ public final class PopulateAccessPoints {
     private PopulateAccessPoints() {
     }
 
-    /** Get vocabulary by vocabulary id.
-     * @param id vocabulary id
-     * @return the task
-     */
-    public static Vocabularies getVocabularyById(final int id) {
-        EntityManager em = DBContext.getEntityManager();
-        Vocabularies v = em.find(Vocabularies.class, id);
-        em.close();
-        return v;
-    }
-
-    /** Get vocabulary by vocabulary id.
-     * @return an array of all versions
-     */
-    public static List<Versions> getAllVersions() {
-        EntityManager em = DBContext.getEntityManager();
-        Query q = em.createQuery("select v from Versions v");
-        @SuppressWarnings("unchecked")
-        List<Versions> v = q.getResultList();
-        em.close();
-        return v;
-    }
-
-    /** Save a new access point to the database.
-     * @param ap The access point to be saved.
-     */
-    public static void saveAccessPoint(final AccessPoints ap) {
-        EntityManager em = DBContext.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(ap);
-        em.getTransaction().commit();
-        em.close();
-    }
-
-    /** Update an existing access point in the database.
-     * @param ap The access point to be update.
-     */
-    public static void updateAccessPoint(final AccessPoints ap) {
-        EntityManager em = DBContext.getEntityManager();
-        em.getTransaction().begin();
-        em.merge(ap);
-        em.getTransaction().commit();
-        em.close();
-    }
     /**
      * Main program.
      * @param args Command-line arguments
@@ -100,7 +53,7 @@ public final class PopulateAccessPoints {
         sesamePrefix += "repositories/";
         System.out.println("sparqlPrefix: " + sparqlPrefix);
         System.out.println("sesamePrefix: " + sesamePrefix);
-        List<Versions> versions = getAllVersions();
+        List<Versions> versions = VersionsUtils.getAllVersions();
         for (Versions version: versions) {
             System.out.println(version.getId());
             System.out.println(version.getTitle());
@@ -126,7 +79,7 @@ public final class PopulateAccessPoints {
                        ap.setPortalData("");
                        ap.setToolkitData(jobToolkit.build().toString());
                        // Persist what we have ...
-                       saveAccessPoint(ap);
+                       AccessPointsUtils.saveAccessPoint(ap);
                        // ... so that now we can get access to the
                        // ID of the persisted object with ap2.getId().
                        jobPortal.add("uri", "FIXME "
@@ -150,7 +103,7 @@ public final class PopulateAccessPoints {
                                        "api/download/") + ap.getId()
                                        + "/" + downloadFilename);
                        ap.setPortalData(jobPortal.build().toString());
-                       updateAccessPoint(ap);
+                       AccessPointsUtils.updateAccessPoint(ap);
                        break;
                     case "apiSparql":
                         ap.setType(type);
@@ -164,7 +117,7 @@ public final class PopulateAccessPoints {
                             ap2.setType("sesameDownload");
                             ap2.setPortalData("");
                             // Persist what we have ...
-                            saveAccessPoint(ap2);
+                            AccessPointsUtils.saveAccessPoint(ap2);
                             // ... so that now we can get access to the
                             // ID of the persisted object with ap2.getId().
                             JsonObjectBuilder job2Portal =
@@ -184,14 +137,14 @@ public final class PopulateAccessPoints {
                                             "api/download"));
                             ap2.setPortalData(job2Portal.build().toString());
                             ap2.setToolkitData(job2Toolkit.build().toString());
-                            updateAccessPoint(ap2);
+                            AccessPointsUtils.updateAccessPoint(ap2);
                             jobToolkit.add("source", "local");
                         } else {
                             jobToolkit.add("source", "remote");
                         }
                         ap.setPortalData(jobPortal.build().toString());
                         ap.setToolkitData(jobToolkit.build().toString());
-                        saveAccessPoint(ap);
+                        AccessPointsUtils.saveAccessPoint(ap);
                         break;
                     case "webPage":
                         uri = accessPoint.get("uri").asText();
@@ -206,7 +159,7 @@ public final class PopulateAccessPoints {
                         }
                         ap.setPortalData(jobPortal.build().toString());
                         ap.setToolkitData(jobToolkit.build().toString());
-                        saveAccessPoint(ap);
+                        AccessPointsUtils.saveAccessPoint(ap);
                         break;
                     default:
                     }
@@ -215,7 +168,6 @@ public final class PopulateAccessPoints {
                     System.out.println("toolkit_data: " + ap.getToolkitData());
                 }
             }
-
         }
     }
 
