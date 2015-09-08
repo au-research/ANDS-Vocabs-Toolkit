@@ -9,6 +9,7 @@ import java.lang.invoke.MethodHandles;
 import java.nio.file.Paths;
 import java.util.Hashtable;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,6 +21,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -177,6 +179,38 @@ public class Download {
             @PathParam("extension")
             final String extension) {
         logger.info("Called downloadWithFilename: " + accessPointId
+                + ", filename: " + filename
+                + ", extension: " + extension);
+        download(response, accessPointId, extension);
+    }
+
+    /** Get the download for an access point. The Path for this
+     * method includes a filename without an extension. This is to
+     * cope with requests that have been intercepted by the UriConnegFilter
+     * configured with the jersey.config.server.mediaTypeMappings
+     * servlet init-param.
+     * The use of this method enables the URL to contain a path component
+     * with a filename. This enables the use of e.g., curl or wget
+     * to save the download to the "correct" filename.
+     * @param response Asynchronous response for this request
+     * @param request The original HTTP request, from which we will
+     * extract the extension.
+     * @param accessPointId Access point id.
+     * @param filename The filename specified in the URL. This may
+     * be ignored in constructing the response headers. */
+    @Path("{access_point_id}/{filename : [^./]+}")
+    @GET
+    public final void downloadWithFilenameWithoutExtension(
+            @Suspended final AsyncResponse response,
+            @Context final HttpServletRequest request,
+            @PathParam("access_point_id")
+            final int accessPointId,
+            @PathParam("filename")
+            final String filename) {
+        String extension =
+                request.getRequestURI().replaceFirst("^[^.]+\\.", "");
+        logger.info("Called downloadWithFilenameWithoutExtension: "
+                + accessPointId
                 + ", filename: " + filename
                 + ", extension: " + extension);
         download(response, accessPointId, extension);
