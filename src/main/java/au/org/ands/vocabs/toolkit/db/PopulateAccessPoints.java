@@ -131,11 +131,20 @@ public final class PopulateAccessPoints {
                        // ID of the persisted object with ap2.getId().
                        jobPortal.add("uri", "FIXME "
                                + accessPoint.get("uri").asText());
-                       jobPortal.add("format",
-                               accessPoint.get("format").asText());
                        String localPath = AccessPointsUtils.getToolkitPath(ap);
                        String downloadFilename = Paths.get(localPath).
                                getFileName().toString();
+                       String format;
+                       if (downloadFilename.endsWith(".trig")) {
+                           // Force TriG. This is needed for some legacy
+                           // cases where the filename is ".trig" but
+                           // the format has been incorrectly recorded
+                           // as RDF/XML.
+                           format = "TriG";
+                       } else {
+                           format = accessPoint.get("format").asText();
+                       }
+                       jobPortal.add("format", format);
                        jobPortal.add("uri",
                                sparqlPrefix.replaceFirst("api/sparql.*",
                                        "api/download/") + ap.getId()
