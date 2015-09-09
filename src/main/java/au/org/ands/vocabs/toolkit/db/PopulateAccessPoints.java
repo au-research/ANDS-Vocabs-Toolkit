@@ -17,7 +17,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 /** Populate the access_points table based on the content of the versions
  * table. This works on the "original" version of the versions table,
- * in which the "data" attribute contains the access points directly. */
+ * in which the "data" attribute contains the access points directly.
+ * This is to be used for upgrading a Release 16 database to Release 17. */
 public final class PopulateAccessPoints {
 
     /** Access to the Toolkit properties. */
