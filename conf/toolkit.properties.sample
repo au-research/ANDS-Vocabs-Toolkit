@@ -33,6 +33,14 @@ Toolkit.tempPath = [path where data is stored]/temp
 # The file containing the rewrites to be done to vocabulary metadata
 Toolkit.metadataRewriteMapPath = [path where data is stored]/conf/metadatarewritemap.conf
 
+## DOWNLOADS
+
+# Prefix to all public-facing URLs to downloads from the Toolkit
+# Access point data is directly appended, so the URL should probably
+# end with a slash.
+Toolkit.downloadPrefix = [URL probably ending with /download/]
+
+
 ## POOLPARTY 
 
 PoolPartyHarvester.remoteUrl = [pool party api url]

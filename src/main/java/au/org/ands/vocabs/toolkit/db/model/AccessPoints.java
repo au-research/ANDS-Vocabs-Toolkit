@@ -26,6 +26,21 @@ public class AccessPoints {
     /** toolkit data. */
     private String toolkitData;
 
+    /** Value of the apiSparql access point type. */
+    public static final String API_SPARQL_TYPE = "apiSparql";
+
+    /** Value of the file access point type. */
+    public static final String FILE_TYPE = "file";
+
+    /** Value of the sesameDownload access point type. */
+    public static final String SESAME_DOWNLOAD_TYPE = "sesameDownload";
+
+    /** Value of the sissvoc access point type. */
+    public static final String SISSVOC_TYPE = "sissvoc";
+
+    /** Value of the webPage access point type. */
+    public static final String WEBPAGE_TYPE = "webPage";
+
     /** Get the id.
      * @return The id
      */

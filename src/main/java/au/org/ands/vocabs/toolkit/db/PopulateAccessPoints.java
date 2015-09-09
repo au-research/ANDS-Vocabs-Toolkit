@@ -31,6 +31,10 @@ public final class PopulateAccessPoints {
     private static String sesamePrefixProperty =
             PROPS.getProperty("SesameImporter.serverUrl");
 
+    /** URL that is a prefix to download endpoints. */
+    private static String downloadPrefixProperty =
+            PROPS.getProperty("Toolkit.downloadPrefix");
+
     /** Private constructor for a utility class. */
     private PopulateAccessPoints() {
     }
@@ -73,20 +77,25 @@ public final class PopulateAccessPoints {
                     JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
                     String uri;
                     switch (type) {
-                    case "file":
+                    case AccessPoints.FILE_TYPE:
                        ap.setType(type);
-                       jobToolkit.add("path", accessPoint.get("uri").asText());
+                       // Get the path from the original access point.
+                       String filePath = accessPoint.get("uri").asText();
+                       // Save the last component of the path to use
+                       // in the portal URI.
+                       String downloadFilename = Paths.get(filePath).
+                               getFileName().toString();
+                       if (!filePath.startsWith("/")) {
+                           // Relative path that we need to fix up manually.
+                           filePath = "FIXME " + filePath;
+                       }
+                       jobToolkit.add("path", filePath);
                        ap.setPortalData("");
                        ap.setToolkitData(jobToolkit.build().toString());
                        // Persist what we have ...
                        AccessPointsUtils.saveAccessPoint(ap);
                        // ... so that now we can get access to the
                        // ID of the persisted object with ap2.getId().
-                       jobPortal.add("uri", "FIXME "
-                               + accessPoint.get("uri").asText());
-                       String localPath = AccessPointsUtils.getToolkitPath(ap);
-                       String downloadFilename = Paths.get(localPath).
-                               getFileName().toString();
                        String format;
                        if (downloadFilename.endsWith(".trig")) {
                            // Force TriG. This is needed for some legacy
@@ -99,13 +108,12 @@ public final class PopulateAccessPoints {
                        }
                        jobPortal.add("format", format);
                        jobPortal.add("uri",
-                               sparqlPrefix.replaceFirst("api/sparql.*",
-                                       "api/download/") + ap.getId()
-                                       + "/" + downloadFilename);
+                               downloadPrefixProperty + ap.getId()
+                               + "/" + downloadFilename);
                        ap.setPortalData(jobPortal.build().toString());
                        AccessPointsUtils.updateAccessPoint(ap);
                        break;
-                    case "apiSparql":
+                    case AccessPoints.API_SPARQL_TYPE:
                         ap.setType(type);
                         uri = accessPoint.get("uri").asText();
                         jobPortal.add("uri", uri);
@@ -114,7 +122,7 @@ public final class PopulateAccessPoints {
                             // endpoint.
                             AccessPoints ap2 = new AccessPoints();
                             ap2.setVersionId(version.getId());
-                            ap2.setType("sesameDownload");
+                            ap2.setType(AccessPoints.SESAME_DOWNLOAD_TYPE);
                             ap2.setPortalData("");
                             // Persist what we have ...
                             AccessPointsUtils.saveAccessPoint(ap2);
@@ -125,16 +133,13 @@ public final class PopulateAccessPoints {
                             JsonObjectBuilder job2Toolkit =
                                     Json.createObjectBuilder();
                             job2Portal.add("uri",
-                                    uri.replaceFirst("api/sparql.*",
-                                            "api/download/") + ap2.getId()
-                                            + "/"
-                                            + Download.downloadFilename(ap2,
-                                                    ""));
+                                    downloadPrefixProperty + ap2.getId()
+                                    + "/"
+                                    + Download.downloadFilename(ap2,
+                                            ""));
                             job2Toolkit.add("uri",
                                     uri.replaceFirst(sparqlPrefix,
-                                            sesamePrefix).
-                                        replaceFirst("api/sparql",
-                                            "api/download"));
+                                            sesamePrefix));
                             ap2.setPortalData(job2Portal.build().toString());
                             ap2.setToolkitData(job2Toolkit.build().toString());
                             AccessPointsUtils.updateAccessPoint(ap2);
@@ -146,10 +151,10 @@ public final class PopulateAccessPoints {
                         ap.setToolkitData(jobToolkit.build().toString());
                         AccessPointsUtils.saveAccessPoint(ap);
                         break;
-                    case "webPage":
+                    case AccessPoints.WEBPAGE_TYPE:
                         uri = accessPoint.get("uri").asText();
                         if (uri.endsWith("concept/topConcepts")) {
-                            ap.setType("sissvoc");
+                            ap.setType(AccessPoints.SISSVOC_TYPE);
                             jobToolkit.add("source", "local");
                             jobPortal.add("uri", uri.
                                     replaceFirst("/concept/topConcepts$", ""));
