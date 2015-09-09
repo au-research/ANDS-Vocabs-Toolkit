@@ -121,17 +121,6 @@ public class Download {
             final String downloadFormat) {
         logger.info("Called download: " + accessPointId
                 + ", download format: " + downloadFormat);
-        // Have a look at the downloadFormat, irrespective of
-        // whether it is supported -- which is currently only
-        // is for sesameDownload. In future, we _may_ support
-        // transforms for file downloads.
-        final String mimeType =
-                SESAME_FORMAT_TO_MIMETYPE_MAP.get(downloadFormat);
-        if (mimeType == null) {
-            response.resume(Response.status(Status.NOT_FOUND).
-                    entity("Not found: no such format").build());
-            return;
-        }
         AccessPoints ap = AccessPointsUtils.getAccessPointById(accessPointId);
         if (ap == null) {
             response.resume(Response.status(Status.NOT_FOUND).
@@ -141,9 +130,25 @@ public class Download {
 
         switch (ap.getType()) {
         case "file":
+            // For now, transforms for file access points are not supported,
+            // so we don't look at downloadFormat. In future, we _may_ support
+            // transforms for file access points. If that happens, note that
+            // downloadWithFilename() and
+            // downloadWithFilenameWithoutExtension() delegate to this method,
+            // and the downloadFormat parameter may need some care
+            // (i.e., it may be wrong, but the wrongness may or may not be
+            // a problem).
             fileDownload(response, accessPointId, ap);
             break;
         case "sesameDownload":
+            // Have a look at the downloadFormat before proceeding.
+            final String mimeType =
+                    SESAME_FORMAT_TO_MIMETYPE_MAP.get(downloadFormat);
+            if (mimeType == null) {
+                response.resume(Response.status(Status.NOT_FOUND).
+                        entity("Not found: no such format").build());
+                return;
+            }
             sesameDownload(response, accessPointId, ap,
                     downloadFormat, mimeType);
             return;
