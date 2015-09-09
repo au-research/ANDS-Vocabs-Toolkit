@@ -166,6 +166,10 @@ public class Download {
      * The use of this method enables the URL to contain a path component
      * with a filename. This enables the use of e.g., curl or wget
      * to save the download to the "correct" filename.
+     * Because Path annotation template variables are greedy, in a
+     * case where the request URL contains multiple periods, the
+     * extension variable is assigned only the component after
+     * the last period.
      * @param response Asynchronous response for this request
      * @param accessPointId Access point id.
      * @param filename The filename specified in the URL. This may
@@ -190,7 +194,10 @@ public class Download {
     }
 
     /** Get the download for an access point. The Path for this
-     * method includes a filename without an extension. This is to
+     * method includes a filename without any extension. (I.e.,
+     * without any period in the filename. downloadWithFilename()
+     * will catch any filename that has a period in the middle
+     * of the filename that does not mark off an extension.) This is to
      * cope with requests that have been intercepted by the UriConnegFilter
      * configured with the jersey.config.server.mediaTypeMappings
      * servlet init-param.
