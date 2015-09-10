@@ -77,6 +77,7 @@ public abstract class HarvestProvider {
             final JsonNode subtask,
             final HashMap<String, String> results) {
         try {
+            unharvestProviderSpecific(taskInfo, subtask, results);
             FileUtils.deleteDirectory(new File(
                     ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo)));
             return true;
@@ -85,6 +86,18 @@ public abstract class HarvestProvider {
             logger.error("Unharvest failed", e);
         }
         return false;
+    }
+
+    /** Do the provider-specific part of an unharvest.
+     * Update the message parameter with the result
+     * of the unharvest.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
+     * @param results HashMap representing the result of the unharvest.
+     */
+    protected void unharvestProviderSpecific(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
     }
 
     /** Get the contents of an InputStream as a String.

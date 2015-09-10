@@ -156,6 +156,25 @@ public final class AccessPointsUtils {
         return aps;
     }
 
+    /** Delete all access points of a certain type for a version,
+     *  by version id.
+     * @param id version id.
+     * @param type The type of access point to look for.
+     */
+    public static void deleteAccessPointsForVersionAndType(
+            final int id, final String type) {
+        EntityManager em = DBContext.getEntityManager();
+        em.getTransaction().begin();
+        Query q = em.createQuery(
+                "delete from AccessPoints ap "
+                + "where ap.versionId = ?1 "
+                + "and ap.type = ?2").
+                setParameter(1, id).setParameter(2, type);
+        q.executeUpdate();
+        em.getTransaction().commit();
+        em.close();
+    }
+
     /** Get the portal's format setting for a file access point.
      * @param ap the access point
      * @return the access point's format setting, if it has one,

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
@@ -125,6 +126,19 @@ public class FileHarvestProvider extends HarvestProvider {
         return getHarvestFiles(taskInfo.getVersion(), format, filePath,
                 ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo),
                 results);
+    }
+
+    /** Remove any file access points for the version.
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The details of the subtask
+     * @param results HashMap representing the result of the unharvest.
+     */
+    @Override
+    public final void unharvestProviderSpecific(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        AccessPointsUtils.deleteAccessPointsForVersionAndType(
+                taskInfo.getVersion().getId(), AccessPoints.FILE_TYPE);
     }
 
     /** Not implemented for this provider. Returns null.
