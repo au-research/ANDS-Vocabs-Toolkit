@@ -125,6 +125,7 @@ public final class PopulateAccessPoints {
                             ap2.setVersionId(version.getId());
                             ap2.setType(AccessPoints.SESAME_DOWNLOAD_TYPE);
                             ap2.setPortalData("");
+                            ap2.setToolkitData("");
                             // Persist what we have ...
                             AccessPointsUtils.saveAccessPoint(ap2);
                             // ... so that now we can get access to the
@@ -136,8 +137,7 @@ public final class PopulateAccessPoints {
                             job2Portal.add("uri",
                                     downloadPrefixProperty + ap2.getId()
                                     + "/"
-                                    + Download.downloadFilename(ap2,
-                                            ""));
+                                    + Download.downloadFilename(ap2, ""));
                             job2Toolkit.add("uri",
                                     uri.replaceFirst(sparqlPrefix,
                                             sesamePrefix));
