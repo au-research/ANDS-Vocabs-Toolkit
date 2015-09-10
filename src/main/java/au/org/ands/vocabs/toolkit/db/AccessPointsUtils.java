@@ -407,7 +407,7 @@ public final class AccessPointsUtils {
         JsonObjectBuilder jobPortal = Json.createObjectBuilder();
         JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
         jobPortal.add("uri", portalUri);
-        jobToolkit.add("source", source);
+        jobPortal.add("source", source);
         ap.setPortalData(jobPortal.build().toString());
         ap.setToolkitData(jobToolkit.build().toString());
         AccessPointsUtils.saveAccessPoint(ap);
@@ -474,7 +474,7 @@ public final class AccessPointsUtils {
         JsonObjectBuilder jobPortal = Json.createObjectBuilder();
         JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
         jobPortal.add("uri", portalUri);
-        jobToolkit.add("source", source);
+        jobPortal.add("source", source);
         ap.setPortalData(jobPortal.build().toString());
         ap.setToolkitData(jobToolkit.build().toString());
         AccessPointsUtils.saveAccessPoint(ap);

@@ -144,9 +144,9 @@ public final class PopulateAccessPoints {
                             ap2.setPortalData(job2Portal.build().toString());
                             ap2.setToolkitData(job2Toolkit.build().toString());
                             AccessPointsUtils.updateAccessPoint(ap2);
-                            jobToolkit.add("source", "local");
+                            jobPortal.add("source", "local");
                         } else {
-                            jobToolkit.add("source", "remote");
+                            jobPortal.add("source", "remote");
                         }
                         ap.setPortalData(jobPortal.build().toString());
                         ap.setToolkitData(jobToolkit.build().toString());
@@ -156,7 +156,7 @@ public final class PopulateAccessPoints {
                         uri = accessPoint.get("uri").asText();
                         if (uri.endsWith("concept/topConcepts")) {
                             ap.setType(AccessPoints.SISSVOC_TYPE);
-                            jobToolkit.add("source", "local");
+                            jobPortal.add("source", "local");
                             jobPortal.add("uri", uri.
                                     replaceFirst("/concept/topConcepts$", ""));
                         } else {
