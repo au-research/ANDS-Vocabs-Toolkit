@@ -122,54 +122,54 @@ public final class AccessPointsUtils {
         return ap;
     }
 
-    /** Get all access points for a version, by version id.
-     * @param id version id.
+    /** Get all access points for a version.
+     * @param version The version.
      * @return The list of access points for this version.
      */
-    public static List<AccessPoints> getAccessPointsForVersion(final int id) {
+    public static List<AccessPoints> getAccessPointsForVersion(
+            final Versions version) {
         EntityManager em = DBContext.getEntityManager();
         Query q = em.createQuery(
                 "select ap from AccessPoints ap where ap.versionId = ?1").
-                setParameter(1, id);
+                setParameter(1, version.getId());
         @SuppressWarnings("unchecked")
         List<AccessPoints> aps = q.getResultList();
         em.close();
         return aps;
     }
 
-    /** Get all access points of a certain type for a version, by version id.
-     * @param id version id.
+    /** Get all access points of a certain type for a version.
+     * @param version The version.
      * @param type The type of access point to look for.
      * @return The list of access points for this version.
      */
     public static List<AccessPoints> getAccessPointsForVersionAndType(
-            final int id, final String type) {
+            final Versions version, final String type) {
         EntityManager em = DBContext.getEntityManager();
         Query q = em.createQuery(
                 "select ap from AccessPoints ap "
                 + "where ap.versionId = ?1 "
                 + "and ap.type = ?2").
-                setParameter(1, id).setParameter(2, type);
+                setParameter(1, version.getId()).setParameter(2, type);
         @SuppressWarnings("unchecked")
         List<AccessPoints> aps = q.getResultList();
         em.close();
         return aps;
     }
 
-    /** Delete all access points of a certain type for a version,
-     *  by version id.
-     * @param id version id.
+    /** Delete all access points of a certain type for a version.
+     * @param version The version.
      * @param type The type of access point to look for.
      */
     public static void deleteAccessPointsForVersionAndType(
-            final int id, final String type) {
+            final Versions version, final String type) {
         EntityManager em = DBContext.getEntityManager();
         em.getTransaction().begin();
         Query q = em.createQuery(
                 "delete from AccessPoints ap "
                 + "where ap.versionId = ?1 "
                 + "and ap.type = ?2").
-                setParameter(1, id).setParameter(2, type);
+                setParameter(1, version.getId()).setParameter(2, type);
         q.executeUpdate();
         em.getTransaction().commit();
         em.close();
@@ -295,7 +295,7 @@ public final class AccessPointsUtils {
             targetPathString = targetPath.toAbsolutePath().toString();
         }
         List<AccessPoints> aps = getAccessPointsForVersionAndType(
-                version.getId(), AccessPoints.FILE_TYPE);
+                version, AccessPoints.FILE_TYPE);
         for (AccessPoints ap : aps) {
             if (targetPathString.equals(getToolkitPath(ap))) {
                 // Already exists. Check the format.

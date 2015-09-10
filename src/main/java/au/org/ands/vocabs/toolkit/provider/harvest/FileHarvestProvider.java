@@ -138,7 +138,7 @@ public class FileHarvestProvider extends HarvestProvider {
             final JsonNode subtask,
             final HashMap<String, String> results) {
         AccessPointsUtils.deleteAccessPointsForVersionAndType(
-                taskInfo.getVersion().getId(), AccessPoints.FILE_TYPE);
+                taskInfo.getVersion(), AccessPoints.FILE_TYPE);
     }
 
     /** Not implemented for this provider. Returns null.
