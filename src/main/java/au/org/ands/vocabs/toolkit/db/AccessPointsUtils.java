@@ -236,13 +236,14 @@ public final class AccessPointsUtils {
         return path.asText();
     }
 
-    /** Get the portal's uri setting for an apiSparql access point.
+    /** Get the portal's uri setting for an apiSparql or sissvoc access point.
      * @param ap the access point
      * @return the access point's portal uri setting, if it has one,
      * or null otherwise.
      */
     public static String getPortalUri(final AccessPoints ap) {
-        if (!AccessPoints.API_SPARQL_TYPE.equals(ap.getType())) {
+        if (!(AccessPoints.API_SPARQL_TYPE.equals(ap.getType())
+                || (AccessPoints.SISSVOC_TYPE.equals(ap.getType())))) {
             // Not the right type.
             return null;
         }
@@ -447,6 +448,36 @@ public final class AccessPointsUtils {
                 + Download.downloadFilename(ap, ""));
         ap.setPortalData(jobPortal.build().toString());
         AccessPointsUtils.updateAccessPoint(ap);
+    }
+
+    /** Create a sissvoc access point for a version.
+     * Don't duplicate it, if it already exists.
+     * @param version The version for which the access point is to be created.
+     * @param portalUri The URI to put into the portalData.
+     * @param source The source of the endpoint, either "local" or "remote".
+     */
+    public static void createSissvocAccessPoint(final Versions version,
+            final String portalUri,
+            final String source) {
+        List<AccessPoints> aps = getAccessPointsForVersionAndType(
+                version, AccessPoints.SISSVOC_TYPE);
+        for (AccessPoints ap : aps) {
+            if (portalUri.equals(getPortalUri(ap))) {
+                // Already exists. Don't bother checking the source.
+                return;
+            }
+        }
+        // No existing access point for this file, so create a new one.
+        AccessPoints ap = new AccessPoints();
+        ap.setVersionId(version.getId());
+        ap.setType(AccessPoints.SISSVOC_TYPE);
+        JsonObjectBuilder jobPortal = Json.createObjectBuilder();
+        JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
+        jobPortal.add("uri", portalUri);
+        jobToolkit.add("source", source);
+        ap.setPortalData(jobPortal.build().toString());
+        ap.setToolkitData(jobToolkit.build().toString());
+        AccessPointsUtils.saveAccessPoint(ap);
     }
 
 }

@@ -22,6 +22,8 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -87,6 +89,9 @@ public class SISSVocPublishProvider extends PublishProvider {
                 .path(ToolkitFileUtils.getSISSVocRepositoryPath(taskInfo));
         results.put("sissvoc_endpoints",
                 sparqlTarget.getUri().toString());
+        // Add sissvoc endpoint.
+        AccessPointsUtils.createSissvocAccessPoint(taskInfo.getVersion(),
+                sparqlTarget.getUri().toString(), "local");
         return true;
     }
 
@@ -94,6 +99,9 @@ public class SISSVocPublishProvider extends PublishProvider {
     public final boolean unpublish(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
+        // Remove the sissvoc access point.
+        AccessPointsUtils.deleteAccessPointsForVersionAndType(
+                taskInfo.getVersion(), AccessPoints.SISSVOC_TYPE);
         // Use the following version when the elda library
         // supports it.
         //        removeSpecFile(taskInfo, subtask, results);
