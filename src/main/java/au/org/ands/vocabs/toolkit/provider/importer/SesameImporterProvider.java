@@ -38,6 +38,8 @@ import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -136,6 +138,16 @@ public class SesameImporterProvider extends ImporterProvider {
                 .path(ToolkitFileUtils.getSesameRepositoryId(taskInfo));
         results.put("sparql_endpoint",
                 sparqlTarget.getUri().toString());
+        // Add apiSparql endpoint
+        AccessPointsUtils.createApiSparqlAccessPoint(taskInfo.getVersion(),
+                sparqlTarget.getUri().toString(), "local");
+        // Add sesameDownload endpoint
+        WebTarget sesameTarget = client.target(sesameServer)
+                .path("repositories")
+                .path(ToolkitFileUtils.getSesameRepositoryId(taskInfo));
+        AccessPointsUtils.createSesameDownloadAccessPoint(
+                taskInfo.getVersion(),
+                sesameTarget.getUri().toString());
         return true;
     }
 
@@ -278,6 +290,12 @@ public class SesameImporterProvider extends ImporterProvider {
     public final boolean unimport(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
+        // Remove the sesameDownload access point.
+        AccessPointsUtils.deleteAccessPointsForVersionAndType(
+                taskInfo.getVersion(), AccessPoints.SESAME_DOWNLOAD_TYPE);
+        // Remove the apiSparql access point.
+        AccessPointsUtils.deleteAccessPointsForVersionAndType(
+                taskInfo.getVersion(), AccessPoints.API_SPARQL_TYPE);
         // Remove the repository from the Sesame server.
         RepositoryManager manager = null;
         try {
@@ -291,6 +309,13 @@ public class SesameImporterProvider extends ImporterProvider {
                 return true;
             }
             manager.removeRepository(repositoryID);
+            // Seems to be necessary to invoke refresh() to make
+            // the manager "forget" about the repository.
+            // Without it, if you immediately reimport,
+            // createRepository's call to getRepository() wrongly reports
+            // that the repository already exists, and the subsequent
+            // importing of data fails.
+            manager.refresh();
             // If we're still here, success, so return true.
             return true;
         } catch (RepositoryConfigException | RepositoryException e) {

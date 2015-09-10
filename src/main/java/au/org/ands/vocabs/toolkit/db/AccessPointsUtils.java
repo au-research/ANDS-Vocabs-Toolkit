@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
+import au.org.ands.vocabs.toolkit.restlet.Download;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -235,13 +236,31 @@ public final class AccessPointsUtils {
         return path.asText();
     }
 
+    /** Get the portal's uri setting for an apiSparql access point.
+     * @param ap the access point
+     * @return the access point's portal uri setting, if it has one,
+     * or null otherwise.
+     */
+    public static String getPortalUri(final AccessPoints ap) {
+        if (!AccessPoints.API_SPARQL_TYPE.equals(ap.getType())) {
+            // Not the right type.
+            return null;
+        }
+        JsonNode dataJson = TasksUtils.jsonStringToTree(ap.getPortalData());
+        JsonNode uri = dataJson.get("uri");
+        if (uri == null) {
+            return null;
+        }
+        return uri.asText();
+    }
+
     /** Get the Toolkit's uri setting for a sesameDownload access point.
      * @param ap the access point
      * @return the access point's Toolkit uri setting, if it has one,
      * or null otherwise.
      */
     public static String getToolkitUri(final AccessPoints ap) {
-        if (!"sesameDownload".equals(ap.getType())) {
+        if (!AccessPoints.SESAME_DOWNLOAD_TYPE.equals(ap.getType())) {
             // Not the right type.
             return null;
         }
@@ -359,6 +378,73 @@ public final class AccessPointsUtils {
         }
         jobPortal.add("format", deducedFormat);
         // portalData is now complete.
+        ap.setPortalData(jobPortal.build().toString());
+        AccessPointsUtils.updateAccessPoint(ap);
+    }
+
+    /** Create an access point for a version, for a SPARQL endpoint.
+     * Don't duplicate it, if it already exists.
+     * @param version The version for which the access point is to be created.
+     * @param portalUri The URI to put into the portalData.
+     * @param source The source of the endpoint, either "local" or "remote".
+     */
+    public static void createApiSparqlAccessPoint(final Versions version,
+            final String portalUri,
+            final String source) {
+        List<AccessPoints> aps = getAccessPointsForVersionAndType(
+                version, AccessPoints.API_SPARQL_TYPE);
+        for (AccessPoints ap : aps) {
+            if (portalUri.equals(getPortalUri(ap))) {
+                // Already exists. Don't bother checking the source.
+                return;
+            }
+        }
+        // No existing access point for this file, so create a new one.
+        AccessPoints ap = new AccessPoints();
+        ap.setVersionId(version.getId());
+        ap.setType(AccessPoints.API_SPARQL_TYPE);
+        JsonObjectBuilder jobPortal = Json.createObjectBuilder();
+        JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
+        jobPortal.add("uri", portalUri);
+        jobToolkit.add("source", source);
+        ap.setPortalData(jobPortal.build().toString());
+        ap.setToolkitData(jobToolkit.build().toString());
+        AccessPointsUtils.saveAccessPoint(ap);
+    }
+
+    /** Create an access point for a version, for a Sesame download.
+     * Don't duplicate it, if it already exists.
+     * @param version The version for which the access point is to be created.
+     * @param toolkitUri The URI to put into the toolkitData.
+     */
+    public static void createSesameDownloadAccessPoint(
+            final Versions version,
+            final String toolkitUri) {
+        List<AccessPoints> aps = getAccessPointsForVersionAndType(
+                version, AccessPoints.SESAME_DOWNLOAD_TYPE);
+        for (AccessPoints ap : aps) {
+            if (toolkitUri.equals(getToolkitUri(ap))) {
+                // Already exists.
+                return;
+            }
+        }
+        // No existing access point for this file, so create a new one.
+        AccessPoints ap = new AccessPoints();
+        ap.setVersionId(version.getId());
+        ap.setType(AccessPoints.SESAME_DOWNLOAD_TYPE);
+        ap.setPortalData("");
+        JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
+        jobToolkit.add("uri", toolkitUri);
+        ap.setToolkitData(jobToolkit.build().toString());
+        // Persist what we have ...
+        AccessPointsUtils.saveAccessPoint(ap);
+        // ... so that now we can get access to the
+        // ID of the persisted object with ap.getId().
+        JsonObjectBuilder jobPortal = Json.createObjectBuilder();
+        jobPortal.add("uri",
+                downloadPrefixProperty + ap.getId()
+                + "/"
+                + Download.downloadFilename(ap, ""));
         ap.setPortalData(jobPortal.build().toString());
         AccessPointsUtils.updateAccessPoint(ap);
     }
