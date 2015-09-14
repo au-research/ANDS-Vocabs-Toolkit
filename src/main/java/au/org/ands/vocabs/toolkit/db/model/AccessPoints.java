@@ -41,6 +41,12 @@ public class AccessPoints {
     /** Value of the webPage access point type. */
     public static final String WEBPAGE_TYPE = "webPage";
 
+    /** Value of the system source value. */
+    public static final String SYSTEM_SOURCE = "system";
+
+    /** Value of the user source value. */
+    public static final String USER_SOURCE = "user";
+
     /** Get the id.
      * @return The id
      */

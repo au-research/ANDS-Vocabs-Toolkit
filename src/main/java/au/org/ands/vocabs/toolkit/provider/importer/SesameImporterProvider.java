@@ -140,7 +140,7 @@ public class SesameImporterProvider extends ImporterProvider {
                 sparqlTarget.getUri().toString());
         // Add apiSparql endpoint
         AccessPointsUtils.createApiSparqlAccessPoint(taskInfo.getVersion(),
-                sparqlTarget.getUri().toString(), "local");
+                sparqlTarget.getUri().toString(), AccessPoints.SYSTEM_SOURCE);
         // Add sesameDownload endpoint
         WebTarget sesameTarget = client.target(sesameServer)
                 .path("repositories")

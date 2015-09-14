@@ -91,7 +91,7 @@ public class SISSVocPublishProvider extends PublishProvider {
                 sparqlTarget.getUri().toString());
         // Add sissvoc endpoint.
         AccessPointsUtils.createSissvocAccessPoint(taskInfo.getVersion(),
-                sparqlTarget.getUri().toString(), "local");
+                sparqlTarget.getUri().toString(), AccessPoints.SYSTEM_SOURCE);
         return true;
     }
 

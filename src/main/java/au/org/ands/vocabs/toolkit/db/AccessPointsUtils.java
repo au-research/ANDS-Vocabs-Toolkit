@@ -387,7 +387,8 @@ public final class AccessPointsUtils {
      * Don't duplicate it, if it already exists.
      * @param version The version for which the access point is to be created.
      * @param portalUri The URI to put into the portalData.
-     * @param source The source of the endpoint, either "local" or "remote".
+     * @param source The source of the endpoint, either SYSTEM_SOURCE
+     * or USER_SOURCE.
      */
     public static void createApiSparqlAccessPoint(final Versions version,
             final String portalUri,
@@ -454,7 +455,8 @@ public final class AccessPointsUtils {
      * Don't duplicate it, if it already exists.
      * @param version The version for which the access point is to be created.
      * @param portalUri The URI to put into the portalData.
-     * @param source The source of the endpoint, either "local" or "remote".
+     * @param source The source of the endpoint, either SYSTEM_SOURCE
+     * or USER_SOURCE.
      */
     public static void createSissvocAccessPoint(final Versions version,
             final String portalUri,
