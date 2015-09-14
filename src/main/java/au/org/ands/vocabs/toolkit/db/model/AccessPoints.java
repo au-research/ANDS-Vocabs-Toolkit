@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -13,7 +14,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "access_points")
+@NamedQuery(
+        name = AccessPoints.GET_ALL_ACCESSPOINTS,
+        query = "SELECT ap FROM AccessPoints ap")
 public class AccessPoints {
+
+    /** Name of getAllAccessPoints query. */
+    public static final String GET_ALL_ACCESSPOINTS = "getAllAccessPoints";
 
     /** id. */
     private Integer id;

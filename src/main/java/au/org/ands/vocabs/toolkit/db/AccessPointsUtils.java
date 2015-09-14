@@ -112,6 +112,18 @@ public final class AccessPointsUtils {
     private AccessPointsUtils() {
     }
 
+    /** Get all access points.
+     * @return A list of AccessPoints
+     */
+    @SuppressWarnings("unchecked")
+    public static List<AccessPoints> getAllAccessPoints() {
+        EntityManager em = DBContext.getEntityManager();
+        Query query = em.createNamedQuery(AccessPoints.GET_ALL_ACCESSPOINTS);
+        List<AccessPoints> aps = query.getResultList();
+        em.close();
+        return aps;
+    }
+
     /** Get access point by access point id.
      * @param id access point id
      * @return the access point
