@@ -85,6 +85,13 @@ public class GetMetadataTransformProvider extends TransformProvider {
         return false;
     }
 
+    @Override
+    public final boolean untransform(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        return false;
+    }
+
     /**
      * Parse the files harvested from PoolParty and extract the
      * metadata.

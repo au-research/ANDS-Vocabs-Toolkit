@@ -140,4 +140,11 @@ public class SolrIndexTransformProvider extends TransformProvider {
 
     }
 
+    @Override
+    public final boolean untransform(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        return false;
+    }
+
 }

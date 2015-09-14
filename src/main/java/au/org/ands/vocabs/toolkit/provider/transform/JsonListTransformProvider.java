@@ -101,6 +101,7 @@ public class JsonListTransformProvider extends TransformProvider {
         }
         return true;
     }
+
     /** RDF Handler to extract prefLabels, notation, and use broader
      * and narrow properties to construct a list-like structure. */
     class ConceptHandler extends RDFHandlerBase {
@@ -151,6 +152,13 @@ public class JsonListTransformProvider extends TransformProvider {
         public HashMap<String, HashMap<String, Object>> getConceptMap() {
             return conceptMap;
         }
+    }
+
+    @Override
+    public final boolean untransform(final TaskInfo taskInfo,
+            final JsonNode subtask,
+            final HashMap<String, String> results) {
+        return false;
     }
 
 }

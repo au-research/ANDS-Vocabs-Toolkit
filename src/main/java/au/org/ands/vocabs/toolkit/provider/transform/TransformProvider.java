@@ -34,4 +34,16 @@ public abstract class TransformProvider {
             JsonNode subtask,
             final HashMap<String, String> results);
 
+    /** Undo a transform. Update the message parameter with the result
+     * of the untransform. Note: not all transforms can be undone!
+     * @param taskInfo The TaskInfo object describing the entire task.
+     * @param subtask The specification of this untransform subtask
+     * @param results HashMap representing the result of the untransform.
+     * @return True, iff the untransform succeeded.
+     */
+    public abstract boolean untransform(final TaskInfo taskInfo,
+            JsonNode subtask,
+            final HashMap<String, String> results);
+
+
 }

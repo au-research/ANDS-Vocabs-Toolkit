@@ -95,8 +95,8 @@ public class TaskRunner {
                     success = runHarvest(subtask, thisTask);
                     break;
                 case "TRANSFORM":
-//                  case "UNTRANSFORM":
-                    success = runTransform(subtask);
+                case "UNTRANSFORM":
+                    success = runTransform(subtask, thisTask);
                     break;
                 case "IMPORT":
                 case "UNIMPORT":
@@ -175,9 +175,11 @@ public class TaskRunner {
 
     /** Run a transform.
      * @param subtask Details of the subtask
+     * @param taskType The type of transform operation to be performed.
      * @return True, iff the transform was successful.
      */
-    public final boolean runTransform(final JsonNode subtask) {
+    public final boolean runTransform(final JsonNode subtask,
+            final String taskType) {
         logger.debug("runTransform");
         TransformProvider provider;
         String providerName = subtask.get("provider_type").textValue();
@@ -200,7 +202,14 @@ public class TaskRunner {
                     status, "Could not find Provider: " + providerName);
             return false;
         }
-        return provider.transform(taskInfo, subtask, results);
+        switch (taskType) {
+        case "TRANSFORM":
+            return provider.transform(taskInfo, subtask, results);
+        case "UNTRANSFORM":
+            return provider.untransform(taskInfo, subtask, results);
+        default:
+            return false;
+        }
     }
 
     /** Run an import operation.
