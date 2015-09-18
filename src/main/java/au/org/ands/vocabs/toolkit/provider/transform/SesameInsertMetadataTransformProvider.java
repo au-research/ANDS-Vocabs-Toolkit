@@ -73,8 +73,9 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
             + "  ?scheme a skos:ConceptScheme\n"
             + "}";
 
-    /** Update to insert adms:status metadata. Removes any existing
+    /* * Update to insert adms:status metadata. Removes any existing
      * triples of this format. */
+    /* Uncomment when needed.
     private static final String INSERT_ADMS_STATUS_METADATA_UPDATE =
             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
             + "PREFIX adms: <http://www.w3.org/ns/adms#>\n"
@@ -89,6 +90,7 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
             + "} WHERE {\n"
             + "  ?scheme a skos:ConceptScheme\n"
             + "}";
+            */
 
     /** Update to remove (version) metadata. */
     private static final String DELETE_METADATA_UPDATE =
@@ -115,8 +117,8 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
             + "  ?scheme adms:status ?oldVersionStatus \n"
             + "}";
 
-    /** Map of our own version status indicators to the Purls used
-     * by ADMS. */
+    /** Map of our own version status indicators to the PURLs used
+     * by ADMS 1.0. */
     private static HashMap<String, String> admsStatusMap =
             new HashMap<String, String>();
 
@@ -173,6 +175,13 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
             }
         }
 
+        /* Future work: Add ADMS status. The problem is, that the
+         * publication workflow is not so great, so metadata injection
+         * doesn't happen when the status changes. So once set, always
+         * set with the same value. If/when publication workflow is
+         * improved, uncomment this.
+         */
+        /*
         String versionStatus = admsStatusMap.get(version.getStatus());
         if (versionStatus != null) {
             // Reset bindings and apply the ADMS status Update.
@@ -181,6 +190,7 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
             return SesameTransformUtils.runUpdate(taskInfo, subtask, results,
                     INSERT_ADMS_STATUS_METADATA_UPDATE, bindings);
         }
+        */
         return result;
     }
 
