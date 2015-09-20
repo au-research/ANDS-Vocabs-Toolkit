@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <display-name>ANDS-Vocabs-Toolkit</display-name>
+  <servlet>
+    <description>JAX-RS Restlets</description>
+    <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    <init-param>
+    <param-name>jersey.config.server.mediaTypeMappings</param-name>
+    <param-value>txt : text/plain, xml : application/xml, json : application/json</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+    <!-- async required because we use AsyncResponse. -->
+    <async-supported>true</async-supported>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+</web-app>

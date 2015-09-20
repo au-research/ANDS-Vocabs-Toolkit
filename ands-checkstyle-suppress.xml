@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+    "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+    "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<suppressions>
+	<!--  Entity classes have magic numbers for field sizes -->
+    <suppress checks="DesignForExtension|MagicNumber"
+              files="au[\\/]org[\\/]ands[\\/]vocabs[\\/]toolkit[\\/]db[\\/]model[\\/].*java"
+              />
+
+	<!-- package-info.java may be in src/main, even though missing
+	     in src/test -->
+    <suppress checks="JavadocPackage"
+              files="src/test"
+              />
+
+</suppressions>

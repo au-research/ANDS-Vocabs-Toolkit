@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<fileset-config file-format-version="1.2.0" simple-config="false" sync-formatter="false">
+  <fileset name="Java" enabled="true" check-config-name="ANDS-Vocabs-Toolkit" local="false">
+    <file-match-pattern match-pattern="src/main/java/.*\.java$" include-pattern="true"/>
+  </fileset>
+  <fileset name="all" enabled="false" check-config-name="ANDS-Vocabs-Toolkit" local="false">
+    <file-match-pattern match-pattern="." include-pattern="false"/>
+    <file-match-pattern match-pattern="\.java$" include-pattern="true"/>
+  </fileset>
+</fileset-config>
