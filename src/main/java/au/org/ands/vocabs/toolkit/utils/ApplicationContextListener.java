@@ -93,8 +93,9 @@ public class ApplicationContextListener implements ServletContextListener {
                         + "not belong to this webapp's ClassLoader", driver);
             }
         }
+
+        // Invoke any remaining shutdown methods.
+        ToolkitNetUtils.doShutdown();
     }
-
-
 
 }

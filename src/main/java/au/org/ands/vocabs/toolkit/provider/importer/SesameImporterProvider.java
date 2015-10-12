@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 import org.openrdf.repository.Repository;
@@ -43,6 +42,7 @@ import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 //CHECKSTYLE:ON: LineLength
 
@@ -132,7 +132,7 @@ public class SesameImporterProvider extends ImporterProvider {
                 taskInfo));
         // Use the nice JAX-RS libraries to construct the path to
         // the SPARQL endpoint.
-        Client client = ClientBuilder.newClient();
+        Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(sparqlPrefix);
         WebTarget sparqlTarget = target
                 .path(ToolkitFileUtils.getSesameRepositoryId(taskInfo));

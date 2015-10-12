@@ -18,7 +18,6 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -30,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import ch.qos.logback.classic.Level;
 
 /** Backup provider for PoolParty. */
@@ -49,7 +49,7 @@ public class PoolPartyBackupProvider extends BackupProvider {
 
         logger.debug("Getting metadata from " + remoteUrl);
 
-        Client client = ClientBuilder.newClient();
+        Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(remoteUrl);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
@@ -72,6 +72,14 @@ public class PoolPartyBackupProvider extends BackupProvider {
             JsonObject entry = (JsonObject) iter.next();
             pList.add(entry.getString("id"));
         }
+
+        // Tidy up I/O resources.
+        try {
+            is.close();
+        } catch (IOException e) {
+            logger.error("Exception while closing InputStream", e);
+        }
+        response.close();
         return pList;
     }
 
@@ -104,7 +112,7 @@ public class PoolPartyBackupProvider extends BackupProvider {
 
         logger.debug("Getting project from " + remoteUrl);
 
-        Client client = ClientBuilder.newClient();
+        Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(remoteUrl);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
@@ -144,6 +152,10 @@ public class PoolPartyBackupProvider extends BackupProvider {
                     + "from PoolParty; "
                     + "response code = " + response.getStatus());
         }
+
+        // Tidy up I/O resources.
+        response.close();
+
         return result;
     }
 
