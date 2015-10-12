@@ -27,7 +27,10 @@
     <mkdir dir="${build}" />
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
       <src path="src/main/java" />
+      <!-- Don't include test classes. For now, if you want to use
+           the test classes, use the project in Eclipse.
       <src path="src/test/java" />
+      -->
       <classpath refid="compile-main.classpath" />
     </javac>
   </target>
