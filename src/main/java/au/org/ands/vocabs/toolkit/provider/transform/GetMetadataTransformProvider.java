@@ -34,12 +34,12 @@ import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Extract metadata from a PoolParty project, and apply rewritings
  * as specified in the metadata rewrite configuration file. */
@@ -156,7 +156,7 @@ public class GetMetadataTransformProvider extends TransformProvider {
         private String source = "";
 
         /** Constructor. Initializes the metadata rewrite map. */
-        public ConceptHandler() {
+        ConceptHandler() {
             loadRewriteMap();
         }
 
@@ -258,8 +258,8 @@ public class GetMetadataTransformProvider extends TransformProvider {
         /** @param key The key to be replaced
         /** @return The replacement value, or the original value
          *  if there is no match. */
-        public String getMatchedContent(final String section, final String key)
-        {
+        public String getMatchedContent(final String section,
+                final String key) {
             SubnodeConfiguration sObj = metadataRewriteConf.getSection(section);
             String replacement = sObj.getString(key);
             if (replacement != null) {
