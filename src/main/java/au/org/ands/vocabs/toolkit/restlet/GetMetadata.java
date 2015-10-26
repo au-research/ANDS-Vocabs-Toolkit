@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.provider.harvest.PoolPartyHarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.transform.GetMetadataTransformProvider;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 //CHECKSTYLE:ON: LineLength
 
 /** Restlets for getting vocabulary metadata. */
@@ -47,6 +48,12 @@ public class GetMetadata {
                 new HashMap<String, Object>();
         logger.info("called getMetadata/poolParty " + pPProjectId);
         result.putAll(new PoolPartyHarvestProvider().getMetadata(pPProjectId));
+        if (result.containsKey(TaskStatus.ERROR)
+                || result.containsKey(TaskStatus.EXCEPTION)) {
+            // There was a problem getting the data from PoolParty,
+            // so stop here.
+            return result;
+        }
         result.putAll(new GetMetadataTransformProvider().
                 extractMetadata(pPProjectId));
         return result;

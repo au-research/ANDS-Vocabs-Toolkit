@@ -16,7 +16,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.container.AsyncResponse;
@@ -35,6 +34,7 @@ import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 
 /** Restlet for downloading a vocabulary. */
 @Path("download")
@@ -295,7 +295,7 @@ public class Download {
         final String downloadFilename = downloadFilename(ap, downloadFormat);
 
         // Prepare the connection to Sesame.
-        Client client = ClientBuilder.newClient();
+        Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(sesameUri + "/statements");
 
         final Invocation.Builder invocationBuilder =
@@ -316,6 +316,8 @@ public class Download {
                     return;
                 }
 
+                // Oops, we don't do sesameResponseStream.close().
+                // We hope it gets cleaned up in the end.
                 InputStream sesameResponseStream =
                         sesameResponse.readEntity(InputStream.class);
                 response.resume(Response.ok(sesameResponseStream).

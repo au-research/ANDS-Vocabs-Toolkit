@@ -26,5 +26,12 @@ public final class DBContext {
         return entityManagerFactory.createEntityManager();
     }
 
+    /** Prepare for shutdown. Call this only in webapp context shutdown!
+     */
+    public static void doShutdown() {
+        entityManagerFactory.close();
+        entityManagerFactory = null;
+    }
+
 
 }

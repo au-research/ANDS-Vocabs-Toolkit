@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -21,6 +20,7 @@ import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -39,7 +39,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
         logger.debug("Getting metadata from " + remoteUrl);
 
-        Client client = ClientBuilder.newClient();
+        Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(remoteUrl);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
@@ -55,6 +55,10 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         //            JsonReader jsonReader = Json.createReader(is);
         //            JsonStructure jsonStructure = jsonReader.readArray();
         //            return jsonStructure.toString();
+
+        // Oops, for tidyness, should close the Response object here.
+        // But the Jersey implementation closes the underlying
+        // resources as part of readEntity().
         return response.readEntity(String.class);
     }
 
@@ -92,7 +96,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
         logger.debug("Getting project from " + remoteUrl);
 
-        Client client = ClientBuilder.newClient();
+        Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(remoteUrl);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
@@ -135,6 +139,9 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             if (returnOutputPaths) {
                 results.put(exportModule, filePath);
             }
+
+            // Clean up Response object.
+            response.close();
         }
         return true;
     }

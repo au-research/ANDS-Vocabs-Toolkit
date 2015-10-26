@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 import org.apache.commons.io.FileUtils;
@@ -27,6 +26,7 @@ import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -83,7 +83,7 @@ public class SISSVocPublishProvider extends PublishProvider {
 
         // Use the nice JAX-RS libraries to construct the path to
         // the SPARQL endpoint.
-        Client client = ClientBuilder.newClient();
+        Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(sissvocEndpointsPrefix);
         WebTarget sparqlTarget = target
                 .path(ToolkitFileUtils.getSISSVocRepositoryPath(taskInfo));
