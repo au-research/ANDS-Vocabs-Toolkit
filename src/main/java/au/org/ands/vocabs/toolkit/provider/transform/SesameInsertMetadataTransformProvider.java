@@ -1,8 +1,6 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.provider.transform;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -10,11 +8,11 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Transform provider for inserting (version) metadata into a Sesame repository.
@@ -139,14 +137,11 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
         // Get the metadata values to be inserted.
         Versions version = taskInfo.getVersion();
 
-        String issuedDate = null;
-        if (version.getReleaseDate() != null) {
-            // Date. Hmm, we need to fix this.
-            // TimeZone tz = TimeZone.getTimeZone("UTC");
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            // df.setTimeZone(tz);
-            issuedDate = df.format(version.getReleaseDate());
-        }
+        // Use the release date as it is. As it may be
+        // YYYY, YYYY-MM, or YYYY-MM-DD, can't use a date
+        // formatter.
+        String issuedDate = version.getReleaseDate();
+
         String versionTitle = version.getTitle();
 
         // Construct bindings for SPARQL Update.
