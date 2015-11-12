@@ -3,6 +3,7 @@ package au.org.ands.vocabs.toolkit.provider.harvest;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -41,6 +42,9 @@ public class FileHarvestProvider extends HarvestProvider {
 
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
+     * NB: if delete is true, Tomcat must have write access, in order
+     * to be able to delete the file successfully. However, a failed
+     * deletion will not per se cause the subtask to fail.
      * @param version The version to which access points are to be added.
      * @param format The format of the file(s) to be harvested.
      * @param filePath The path to the file or directory to be harvested.
@@ -76,7 +80,12 @@ public class FileHarvestProvider extends HarvestProvider {
                                 format, target);
                         if (delete) {
                             logger.debug("Deleting file: " + entry.toString());
-                            Files.delete(entry);
+                            try {
+                                Files.delete(entry);
+                            } catch (AccessDeniedException e) {
+                                logger.error("Unable to delete file: "
+                                        + entry.toString(), e);
+                            }
                         }
                     }
                 }
@@ -99,7 +108,12 @@ public class FileHarvestProvider extends HarvestProvider {
                         format, target);
                 if (delete) {
                     logger.debug("Deleting file: " + filePathPath.toString());
-                    Files.delete(filePathPath);
+                    try {
+                        Files.delete(filePathPath);
+                    } catch (AccessDeniedException e) {
+                        logger.error("Unable to delete file: "
+                                + filePathPath.toString(), e);
+                    }
                 }
             } catch (IOException e) {
                 results.put(TaskStatus.EXCEPTION,
