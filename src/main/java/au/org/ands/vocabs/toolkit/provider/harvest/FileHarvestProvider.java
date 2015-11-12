@@ -14,6 +14,8 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
@@ -21,8 +23,6 @@ import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Harvest provider for files and directories. */
 public class FileHarvestProvider extends HarvestProvider {
@@ -45,6 +45,7 @@ public class FileHarvestProvider extends HarvestProvider {
      * @param format The format of the file(s) to be harvested.
      * @param filePath The path to the file or directory to be harvested.
      * @param outputPath The directory in which to store output files.
+     * @param delete True, if successfully harvested files are to be deleted.
      * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
@@ -53,12 +54,13 @@ public class FileHarvestProvider extends HarvestProvider {
             final String format,
             final String filePath,
             final String outputPath,
+            final boolean delete,
             final HashMap<String, String> results) {
         ToolkitFileUtils.requireDirectory(outputPath);
         Path filePathPath = Paths.get(filePath);
         Path outputPathPath = Paths.get(outputPath);
         if (Files.isDirectory(filePathPath)) {
-            logger.debug("Harvesting file(s) from directory" + filePath);
+            logger.debug("Harvesting file(s) from directory " + filePath);
             try (DirectoryStream<Path> stream =
                     Files.newDirectoryStream(filePathPath)) {
                 for (Path entry: stream) {
@@ -72,6 +74,10 @@ public class FileHarvestProvider extends HarvestProvider {
                                 StandardCopyOption.REPLACE_EXISTING);
                         AccessPointsUtils.createFileAccessPoint(version,
                                 format, target);
+                        if (delete) {
+                            logger.debug("Deleting file: " + entry.toString());
+                            Files.delete(entry);
+                        }
                     }
                 }
             } catch (DirectoryIteratorException
@@ -91,6 +97,10 @@ public class FileHarvestProvider extends HarvestProvider {
                         StandardCopyOption.REPLACE_EXISTING);
                 AccessPointsUtils.createFileAccessPoint(version,
                         format, target);
+                if (delete) {
+                    logger.debug("Deleting file: " + filePathPath.toString());
+                    Files.delete(filePathPath);
+                }
             } catch (IOException e) {
                 results.put(TaskStatus.EXCEPTION,
                         "Exception in getHarvestFiles while copying file");
@@ -123,9 +133,17 @@ public class FileHarvestProvider extends HarvestProvider {
         } else {
             format = subtask.get("format").textValue();
         }
+
+        // Delete files after successful harvest?
+        boolean delete = false;
+        if (subtask.get("delete") != null
+                && subtask.get("delete").booleanValue()) {
+            delete = true;
+        }
+
         return getHarvestFiles(taskInfo.getVersion(), format, filePath,
                 ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo),
-                results);
+                delete, results);
     }
 
     /** Remove any file access points for the version.
