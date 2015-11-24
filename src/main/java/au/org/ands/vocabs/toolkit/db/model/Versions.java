@@ -1,17 +1,18 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.db.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import au.org.ands.vocabs.toolkit.db.TasksUtils;
 
 /**
  * Versions model class.
@@ -21,14 +22,15 @@ import javax.persistence.UniqueConstraint;
 uniqueConstraints = @UniqueConstraint(columnNames = "repository_id"))
 public class Versions {
 
+    /** Key of the release date used in the data field. */
+    private static final String RELEASE_DATE_KEY = "release_date";
+
     /** id. */
     private Integer id;
     /** title. */
     private String title;
     /** status. */
     private String status;
-    /** releaseDate. */
-    private Date releaseDate;
     /** vocabId. */
     private Integer vocabId;
     /** data. */
@@ -83,21 +85,45 @@ public class Versions {
         status = aStatus;
     }
 
-    /** Get the release date.
+    /** Get the release date. This value is stored in the data field. Note
+     * the Transient annotation, as this is not a column in the table.
      * @return The release date
      */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "release_date")
-    public Date getReleaseDate() {
-        return releaseDate;
+    @Transient
+    public String getReleaseDate() {
+        if (data == null || data.isEmpty()) {
+            return null;
+        }
+        JsonNode dataJson = TasksUtils.jsonStringToTree(data);
+        JsonNode releaseDate = dataJson.get(RELEASE_DATE_KEY);
+        if (releaseDate == null) {
+            return null;
+        }
+        return releaseDate.asText();
     }
 
-    /** Set the release date.
-     * @param aReleaseDate the release date
-     */
-    public void setReleaseDate(final Date aReleaseDate) {
-        releaseDate = aReleaseDate;
-    }
+    // Uncomment and test the following when needed. It has not yet
+    // been tested!
+//    /** Set the release date. This value is stored in the data field.
+//     * Note the Transient annotation, as this is not a column in the table.
+//     * @param aReleaseDate the release date
+//     */
+//    @Transient
+//    public void setReleaseDate(final String aReleaseDate) {
+//        if (data == null || data.isEmpty()) {
+//            data = "{}";
+//        }
+//        JsonNode dataJson = TasksUtils.jsonStringToTree(data);
+//        JsonObjectBuilder jobData = Json.createObjectBuilder();
+//        Iterator<Entry<String, JsonNode>> dataJsonIterator =
+//                dataJson.fields();
+//        while (dataJsonIterator.hasNext()) {
+//            Entry<String, JsonNode> entry = dataJsonIterator.next();
+//            jobData.add(entry.getKey(), entry.getValue().asText());
+//        }
+//        jobData.add(RELEASE_DATE_KEY, aReleaseDate);
+//        data = jobData.build().toString();
+//    }
 
     /** Get the vocab id.
      * @return The vocab id

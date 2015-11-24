@@ -3,6 +3,7 @@ package au.org.ands.vocabs.toolkit.provider.harvest;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
@@ -21,8 +24,6 @@ import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Harvest provider for files and directories. */
 public class FileHarvestProvider extends HarvestProvider {
@@ -41,10 +42,14 @@ public class FileHarvestProvider extends HarvestProvider {
 
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
+     * NB: if delete is true, Tomcat must have write access, in order
+     * to be able to delete the file successfully. However, a failed
+     * deletion will not per se cause the subtask to fail.
      * @param version The version to which access points are to be added.
      * @param format The format of the file(s) to be harvested.
      * @param filePath The path to the file or directory to be harvested.
      * @param outputPath The directory in which to store output files.
+     * @param delete True, if successfully harvested files are to be deleted.
      * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
@@ -53,12 +58,13 @@ public class FileHarvestProvider extends HarvestProvider {
             final String format,
             final String filePath,
             final String outputPath,
+            final boolean delete,
             final HashMap<String, String> results) {
         ToolkitFileUtils.requireDirectory(outputPath);
         Path filePathPath = Paths.get(filePath);
         Path outputPathPath = Paths.get(outputPath);
         if (Files.isDirectory(filePathPath)) {
-            logger.debug("Harvesting file(s) from directory" + filePath);
+            logger.debug("Harvesting file(s) from directory " + filePath);
             try (DirectoryStream<Path> stream =
                     Files.newDirectoryStream(filePathPath)) {
                 for (Path entry: stream) {
@@ -72,6 +78,15 @@ public class FileHarvestProvider extends HarvestProvider {
                                 StandardCopyOption.REPLACE_EXISTING);
                         AccessPointsUtils.createFileAccessPoint(version,
                                 format, target);
+                        if (delete) {
+                            logger.debug("Deleting file: " + entry.toString());
+                            try {
+                                Files.delete(entry);
+                            } catch (AccessDeniedException e) {
+                                logger.error("Unable to delete file: "
+                                        + entry.toString(), e);
+                            }
+                        }
                     }
                 }
             } catch (DirectoryIteratorException
@@ -91,6 +106,15 @@ public class FileHarvestProvider extends HarvestProvider {
                         StandardCopyOption.REPLACE_EXISTING);
                 AccessPointsUtils.createFileAccessPoint(version,
                         format, target);
+                if (delete) {
+                    logger.debug("Deleting file: " + filePathPath.toString());
+                    try {
+                        Files.delete(filePathPath);
+                    } catch (AccessDeniedException e) {
+                        logger.error("Unable to delete file: "
+                                + filePathPath.toString(), e);
+                    }
+                }
             } catch (IOException e) {
                 results.put(TaskStatus.EXCEPTION,
                         "Exception in getHarvestFiles while copying file");
@@ -123,9 +147,17 @@ public class FileHarvestProvider extends HarvestProvider {
         } else {
             format = subtask.get("format").textValue();
         }
+
+        // Delete files after successful harvest?
+        boolean delete = false;
+        if (subtask.get("delete") != null
+                && subtask.get("delete").booleanValue()) {
+            delete = true;
+        }
+
         return getHarvestFiles(taskInfo.getVersion(), format, filePath,
                 ToolkitFileUtils.getTaskHarvestOutputPath(taskInfo),
-                results);
+                delete, results);
     }
 
     /** Remove any file access points for the version.

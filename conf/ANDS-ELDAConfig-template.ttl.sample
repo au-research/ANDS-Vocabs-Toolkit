@@ -103,6 +103,7 @@ svoc:${SVC_ID} a api:API
                 svoc:topConceptsEndpoint ,
                 svoc:conceptByLabelNotationURIEndpoint ,
                 svoc:inCollectionURIEndpoint ,
+                svoc:allBroaderThanURIEndpoint ,
                 svoc:allNarrowerThanURIEndpoint
 
 
@@ -679,7 +680,23 @@ svoc:inCollectionURIEndpoint a api:ListEndpoint
                 ; api:viewer  api:basicViewer,svoc:basicConceptViewer
                 .
 
-# Recursively list of all concepts that are narrower than the one identified by this URI
+# Special endpoint needed by the RDA harvester for the enrichment process.
+# Provided as a courtesy for all other vocabularies.
+# Recursively list all concepts that are broader than the one identified by this URI
+svoc:allBroaderThanURIEndpoint a api:ListEndpoint
+                ; rdfs:comment "Recursively list concepts broader than the one identified by this URI"
+                ; api:uriTemplate  "${SVC_PREFIX}/concept/allBroader?uri={baseConcept}"
+                ; api:exampleRequestPath  "${SVC_PREFIX}/concept/allBroader?uri=http://resource.geosciml.org/classifier/ics/ischart/Cambrian"
+                ; api:variable  [ api:name "baseConcept"; api:type rdfs:Resource ]
+                ; api:selector [ # logically unintuitive, note order of subject, object
+                                api:where " ?item skos:narrower+ ?baseConcept  "
+                ]
+                ; api:defaultViewer svoc:basicConceptViewer
+                ; api:viewer  api:basicViewer,svoc:basicConceptViewer
+                .
+
+# Needed by the vocab widget.
+# Recursively list all concepts that are narrower than the one identified by this URI
 svoc:allNarrowerThanURIEndpoint a api:ListEndpoint
                 ; rdfs:comment "Recursively list concepts narrower than the one identified by this URI"
                 ; api:uriTemplate  "${SVC_PREFIX}/concept/allNarrower?uri={baseConcept}"
