@@ -31,13 +31,13 @@ import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Transform provider for generating a tree-like representation of the
  * concepts as JSON. This assumes a vocabulary encoded using SKOS. */
@@ -121,8 +121,9 @@ public class JsonTreeTransformProvider extends TransformProvider {
         return true;
     }
 
-    /** RDF Handler to extract prefLabels, notation, and use broader
-     * and narrow properties to construct a tree-like structure. */
+    /** RDF Handler to extract prefLabels, notation, definition,
+     * and use broader and narrow properties to construct a tree-like
+     * structure. */
     class ConceptHandler extends RDFHandlerBase {
 
         /** Map from concept IRI to a map that maps
@@ -162,6 +163,9 @@ public class JsonTreeTransformProvider extends TransformProvider {
 //            }
             if (st.getPredicate().equals(SKOS.NOTATION)) {
                 concept.put("notation", st.getObject().stringValue());
+            }
+            if (st.getPredicate().equals(SKOS.DEFINITION)) {
+                concept.put("definition", st.getObject().stringValue());
             }
             if (st.getPredicate().equals(SKOS.BROADER)) {
                 if (concept.get("broader") == null) {
