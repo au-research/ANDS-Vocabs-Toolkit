@@ -122,4 +122,15 @@
     </exec>
   </target>
 
+  <target name="javadoc">
+    <javadoc sourcepath="src/main/java"
+             destdir="doc/api"
+             classpathref="compile-main.classpath"
+             linksource="true"
+             includenosourcepackages="true"
+             >
+    </javadoc>
+  </target>
+
+
 </project>
