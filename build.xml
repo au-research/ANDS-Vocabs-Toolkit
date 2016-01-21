@@ -12,6 +12,9 @@
   <property name="jar" value="vocabtoolkit.jar" />
   <property name="war" value="vocabtoolkit.war" />
 
+  <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
+    classpath="libdev/checkstyle-6.14.1/checkstyle-6.14.1-all.jar" />
+
   <target name="clean">
     <delete dir="${build}" />
     <delete file="${jar}" />
@@ -132,5 +135,32 @@
     </javadoc>
   </target>
 
+
+  <target name="checkstyle"
+          description="Generates a report of code convention violations.">
+
+    <!-- Be very picky: fail even on a single warning. -->
+    <checkstyle config="ands-checkstyle.xml"
+        maxWarnings="0">
+      <!-- Options that could be added to checkstyle element: -->
+      <!--    failureProperty="checkstyle.failure" -->
+      <!--    failOnViolation="false" -->
+      <!-- classpathref seems not to be needed: -->
+      <!--    classpathref="compile-main.classpath" -->
+      <!-- Possible future work: write report to a file: -->
+      <!--  <formatter type="xml" tofile="checkstyle_report.xml"/> -->
+      <!-- Define "samedir" property as used in the config. (The
+           "samedir" property is an Eclipse-CS thing. -->
+      <property key="samedir" value="." />
+      <fileset dir="src/main" includes="**/*.java"/>
+    </checkstyle>
+
+    <!-- Possible future work: if generating a report, make a pretty
+         version. -->
+    <!--  <style in="checkstyle_report.xml"
+                 out="checkstyle_report.html"
+                 style="checkstyle.xsl"/> -->
+
+  </target>
 
 </project>
