@@ -1,0 +1,4 @@
+Tomcat libraries needed only for compilation.
+
+LICENSE: The licence that applies to Tomcat.
+servlet-api.jar: As taken from the Tomcat 7.0.61 binary distribution.
