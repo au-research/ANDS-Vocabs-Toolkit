@@ -7,20 +7,35 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.DBContext;
-
 import com.mchange.v2.c3p0.C3P0Registry;
 import com.mchange.v2.c3p0.PooledDataSource;
+
+import au.org.ands.vocabs.toolkit.db.DBContext;
 
 /** Context listener for the Toolkit web application.
  */
 public class ApplicationContextListener implements ServletContextListener {
+
+    /** Keep a record of the ServletContext. This field is set only
+     * by {@link #contextInitialized(ServletContextEvent)}. Therefore,
+     * if running code as a standalone application, this will stay null.
+     */
+    private static ServletContext servletContext;
+
+    /** Getter for the ServletContext. This will be null, if running
+     * code as a standalone application.
+     * @return The ServletContext of the web application.
+     */
+    public static ServletContext getServletContext() {
+        return servletContext;
+    }
 
     /** Listener for context initialization.
      *  Only does a basic logging of startup for now.
@@ -31,6 +46,7 @@ public class ApplicationContextListener implements ServletContextListener {
         Logger logger = LoggerFactory.getLogger(
                 MethodHandles.lookup().lookupClass());
         logger.info("In Toolkit contextInitialized()");
+        servletContext = sce.getServletContext();
     }
 
     /** Listener for context destruction.
