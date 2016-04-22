@@ -213,7 +213,6 @@ public final class ToolkitProperties {
                 }
             }
         }
-        dumpProperties();
     }
 
     /** Dump all the properties using INFO-level logging. */
