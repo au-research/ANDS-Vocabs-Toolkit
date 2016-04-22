@@ -26,6 +26,12 @@
     <fileset dir="tomcatlib" includes="**/*.jar" />
   </path>
 
+  <path id="dev-compile-main.classpath">
+    <fileset dir="lib" includes="**/*.jar" />
+    <fileset dir="libdev" includes="**/*.jar" />
+    <fileset dir="tomcatlib" includes="**/*.jar" />
+  </path>
+
   <target name="compile-main">
     <mkdir dir="${build}" />
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
@@ -126,11 +132,12 @@
   </target>
 
   <target name="javadoc">
-    <javadoc sourcepath="src/main/java"
+    <javadoc sourcepath="src/main/java;src/test/java"
              destdir="doc/api"
-             classpathref="compile-main.classpath"
+             classpathref="dev-compile-main.classpath"
              linksource="true"
              includenosourcepackages="true"
+             private="true"
              >
     </javadoc>
   </target>
