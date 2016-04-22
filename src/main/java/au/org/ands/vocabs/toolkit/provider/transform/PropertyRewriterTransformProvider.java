@@ -236,11 +236,12 @@ public class PropertyRewriterTransformProvider extends TransformProvider {
             model.add(st);
          }
 
-        /** Get the replacement string for a key in a section. */
-        /** @param section The section to look for.
-        /** @param key The key to be replaced
-        /** @return The replacement value, or the original value
-         *  if there is no match. */
+        /** Get the replacement string for a key in a section.
+         * @param section The section to look for.
+         * @param key The key to be replaced.
+         * @return The replacement value, or the original value
+         *  if there is no match.
+         */
         public String getMatchedContent(final String section,
                 final String key) {
             SubnodeConfiguration sObj = metadataRewriteConf.getSection(section);

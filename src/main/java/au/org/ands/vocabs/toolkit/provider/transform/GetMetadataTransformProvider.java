@@ -240,24 +240,26 @@ public class GetMetadataTransformProvider extends TransformProvider {
             }
         }
 
-        /** Getter for concepts list. */
-        /** @return The completed concept map. */
+        /** Getter for concepts list.
+         * @return The completed concept map.
+         */
         public HashMap<String, HashMap<String, HashMap<String,
             ArrayList<String>>>> getMetadata() {
             return metadataMap;
         }
 
-        /** Setter for source. */
-        /** @param aSource Source filename. */
+        /** Setter for source.
+         * @param aSource Source filename. */
         public void setSource(final String aSource) {
             source = aSource;
         }
 
-        /** Get the replacement string for a key in a section. */
-        /** @param section The section to look for.
-        /** @param key The key to be replaced
-        /** @return The replacement value, or the original value
-         *  if there is no match. */
+        /** Get the replacement string for a key in a section.
+         * @param section The section to look for.
+         * @param key The key to be replaced.
+         * @return The replacement value, or the original value
+         *  if there is no match.
+         */
         public String getMatchedContent(final String section,
                 final String key) {
             SubnodeConfiguration sObj = metadataRewriteConf.getSection(section);
