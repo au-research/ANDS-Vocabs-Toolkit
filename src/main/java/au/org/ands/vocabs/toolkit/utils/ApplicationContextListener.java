@@ -23,6 +23,10 @@ import au.org.ands.vocabs.toolkit.db.DBContext;
  */
 public class ApplicationContextListener implements ServletContextListener {
 
+    /** Period in ms to sleep at end of context destruction, to allow
+     * time for watchdog threads to go away. */
+    private static final int CLEANUP_SLEEP = 50;
+
     /** Keep a record of the ServletContext. This field is set only
      * by {@link #contextInitialized(ServletContextEvent)}. Therefore,
      * if running code as a standalone application, this will stay null.
@@ -112,6 +116,18 @@ public class ApplicationContextListener implements ServletContextListener {
 
         // Invoke any remaining shutdown methods.
         ToolkitNetUtils.doShutdown();
+
+        // Wait just a little bit for watchdog threads to close.
+        // Didn't seem to need this until starting to make use of
+        // the H2 database for testing.
+        // The H2 watchdog thread has a loop containing
+        // a 25 ms sleep. So by sleeping for 50 ms, we can allow it
+        // time to go away by itself.
+        try {
+            Thread.sleep(CLEANUP_SLEEP);
+        } catch (InterruptedException e) {
+            // No problem.
+        }
     }
 
 }
