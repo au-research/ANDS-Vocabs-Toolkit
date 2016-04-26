@@ -72,7 +72,7 @@ public class Task {
     /** Get the params.
      * @return The params
      */
-    @Column(name = "params")
+    @Column(name = "params", length = 65535)
     public String getParams() {
         return params;
     }
@@ -87,7 +87,7 @@ public class Task {
     /** Get the response.
      * @return The response
      */
-    @Column(name = "response", length = 45)
+    @Column(name = "response", length = 65535)
     public String getResponse() {
         return response;
     }
