@@ -52,7 +52,7 @@ public class RunTask {
             taskInfo = ToolkitFileUtils.getTaskInfo(taskId);
         } catch (Throwable e) {
             throwableText = "; caught exception: " + e.getMessage();
-            logger.info("Caught an exception getting TaskInfo for task id: "
+            logger.error("Caught an exception getting TaskInfo for task id: "
                     + taskId, e);
         }
         if (taskInfo == null) {
