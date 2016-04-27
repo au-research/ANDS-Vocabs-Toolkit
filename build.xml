@@ -3,8 +3,8 @@
 <project basedir="." default="war" name="ANDS-Vocabs-Toolkit">
   <property environment="env" />
   <property name="debuglevel" value="source,lines,vars" />
-  <property name="target" value="1.7" />
-  <property name="source" value="1.7" />
+  <property name="target" value="1.8" />
+  <property name="source" value="1.8" />
 
   <property name="build" value="build" />
   <!-- Configuration files: toolkit.properties, logback.xml -->
