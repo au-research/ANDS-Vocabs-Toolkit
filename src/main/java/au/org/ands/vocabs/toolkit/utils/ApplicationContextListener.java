@@ -2,6 +2,8 @@
 package au.org.ands.vocabs.toolkit.utils;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -51,6 +53,10 @@ public class ApplicationContextListener implements ServletContextListener {
                 MethodHandles.lookup().lookupClass());
         logger.info("In Toolkit contextInitialized()");
         servletContext = sce.getServletContext();
+        if (servletContext == null) {
+            logger.error("servletContext is null! This probably means "
+                    + "a Tomcat JAR is missing.");
+        }
     }
 
     /** Listener for context destruction.
@@ -71,8 +77,8 @@ public class ApplicationContextListener implements ServletContextListener {
 
         // ... to be done ...
 
-        // Close the JPA EntityManagerFactory.
-        DBContext.doShutdown();
+        // Carefully close the JPA EntityManagerFactory.
+        dbShutdown();
 
         // Close any C3P0 DB connection pools.
         for (Object ds : C3P0Registry.getPooledDataSources()) {
@@ -117,6 +123,10 @@ public class ApplicationContextListener implements ServletContextListener {
         // Invoke any remaining shutdown methods.
         ToolkitNetUtils.doShutdown();
 
+        // When running tests, log4j may have started a thread;
+        // shut it down.
+        log4jShutdown();
+
         // Wait just a little bit for watchdog threads to close.
         // Didn't seem to need this until starting to make use of
         // the H2 database for testing.
@@ -129,5 +139,99 @@ public class ApplicationContextListener implements ServletContextListener {
             // No problem.
         }
     }
+
+    /** Shut down the database context. This method takes care not
+     * to force the <i>creation</i> of the database context, if it
+     * does not already exist. This is useful in the case of
+     * stopping the web application before any use has been
+     * made of the database. Without such care, context shutdown
+     * may fail.
+     */
+    private void dbShutdown() {
+        Logger logger = LoggerFactory.getLogger(
+                MethodHandles.lookup().lookupClass());
+        try {
+            // See http://stackoverflow.com/questions/482633/
+            //            in-java-is-it-possible-to-know-whether-a-
+            //            class-has-already-been-loaded
+            // But note that the approved answer uses
+            // ClassLoader.getSystemClassLoader(), but this
+            // is wrong in a servlet context. Use
+            // getClass().getClassLoader() instead.
+            // Use reflection to get the protected method findLoadedClass()
+            // that otherwise can't be invoked directly.
+            Method fLC = ClassLoader.class.getDeclaredMethod(
+                    "findLoadedClass", new Class[] {String.class});
+            fLC.setAccessible(true);
+            ClassLoader classLoader = getClass().getClassLoader();
+            // Now see if the DBContext class has been loaded
+            Object dbContextClass =
+                    fLC.invoke(classLoader,
+                            "au.org.ands.vocabs.toolkit.db.DBContext");
+            if (dbContextClass != null) {
+                // The class has indeed been loaded already.
+                logger.info("Calling DBContext.doShutdown");
+                DBContext.doShutdown();
+            } else {
+                logger.info("DBContext not loaded; no shutdown required");
+            }
+        } catch (NoSuchMethodException | SecurityException
+                | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            logger.error("Exception while attempting to find "
+                    + "DBContext class during context shutdown", e);
+        }
+    }
+
+    /** Shut down log4j logging. Log4j is not normally used during
+     * production, but is used by test harnesses. Without this,
+     * context shutdown gives an error about a thread
+     * "AsyncAppender-Dispatcher-Thread-1" not having been stopped.
+     */
+    private void log4jShutdown() {
+        Logger logger = LoggerFactory.getLogger(
+                MethodHandles.lookup().lookupClass());
+        try {
+            // See http://stackoverflow.com/questions/482633/
+            //            in-java-is-it-possible-to-know-whether-a-
+            //            class-has-already-been-loaded
+            // But note that the approved answer uses
+            // ClassLoader.getSystemClassLoader(), but this
+            // is wrong in a servlet context. Use
+            // getClass().getClassLoader() instead.
+            // Use reflection to get the protected method findLoadedClass()
+            // that otherwise can't be invoked directly.
+            Method fLC = ClassLoader.class.getDeclaredMethod(
+                    "findLoadedClass", new Class[] {String.class});
+            fLC.setAccessible(true);
+            ClassLoader classLoader = getClass().getClassLoader();
+            // Now see if the LogManager class has been loaded
+            Object log4jContextClass =
+                    fLC.invoke(classLoader,
+                            "org.apache.log4j.LogManager");
+            if (log4jContextClass != null) {
+                // The class has indeed been loaded already.
+                logger.info("Calling log4j LogManager.shutdown()");
+                // Use SuppressWarnings because we are not
+                // importing the LogManager class, and so can't
+                // provide the generic type parameter.
+                @SuppressWarnings("rawtypes")
+                Class log4jClass = Class.forName(
+                        "org.apache.log4j.LogManager");
+                // Ditto.
+                @SuppressWarnings("unchecked")
+                Method shutdown = log4jClass.getMethod("shutdown");
+                shutdown.invoke(null);
+            } else {
+                logger.info("log4j not loaded; no shutdown required");
+            }
+        } catch (NoSuchMethodException | SecurityException
+                | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException | ClassNotFoundException e) {
+            logger.error("Exception while attempting to find "
+                    + "log4j Manager class during context shutdown", e);
+        }
+    }
+
 
 }
