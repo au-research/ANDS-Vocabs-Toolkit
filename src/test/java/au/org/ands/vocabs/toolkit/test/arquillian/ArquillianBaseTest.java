@@ -97,12 +97,22 @@ public class ArquillianBaseTest extends Arquillian {
             war.addAsResource(new File(
                     "src/main/java/META-INF/persistence.xml"),
                     "META-INF/persistence.xml");
-            war.addAsResource(new File("conf/toolkit-h2.properties"),
-                    "toolkit.properties");
-            war.addAsResource(new File("conf/toolkit-h2.properties"),
-                    "toolkit-h2-test.properties");
-            war.addAsResource(new File("conf/toolkit-h2-bamboo.properties"),
-                    "toolkit-h2-bamboo.properties");
+            //war.addAsResource(new File("conf/toolkit-h2.properties"),
+            //        "toolkit.properties");
+            try {
+                // Optional resource.
+                war.addAsResource(new File("conf/toolkit-h2.properties"),
+                        "toolkit-h2.properties");
+            } catch (IllegalArgumentException e) {
+                // No problem if these files don't exist.
+            }
+            try {
+                // Optional resource.
+                war.addAsResource(new File("conf/toolkit-h2-bamboo.properties"),
+                        "toolkit-h2-bamboo.properties");
+            } catch (IllegalArgumentException e) {
+                // No problem if these files don't exist.
+            }
             war.addAsResource(new File("conf/version.properties"),
                     "version.properties");
 
