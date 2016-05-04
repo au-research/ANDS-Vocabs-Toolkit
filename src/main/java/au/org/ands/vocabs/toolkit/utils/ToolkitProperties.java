@@ -38,10 +38,24 @@ public final class ToolkitProperties {
      * deployed webapp. */
     private static final String VERSION_PROPS_FILE = "version.properties";
 
-    /** Properties object. */
+    /** Name of a system property, which, if specified, will cause
+     * the classpath to be dumped at the beginning of
+     * {@link #initProperties()}.
+     */
+    private static final String DUMP_CLASSPATH = "dumpClasspath";
+
+    /** Name of a system property, which, if specified, will cause
+     * the loaded properties to be dumped at the end of
+     * {@link #initProperties()}.
+     */
+    private static final String DUMP_PROPERTY = "dumpProperties";
+
+    /** Properties object. After initialization, contains all
+     * properties loaded from
+     * the toolkit properties file and the version properties file. */
     private static Properties props;
 
-    /** Logger. */
+    /** Logger for this class. */
     private static Logger logger;
 
     /** This is a utility class. No instantiation. */
@@ -53,8 +67,9 @@ public final class ToolkitProperties {
                 MethodHandles.lookup().lookupClass());
     }
 
-    /** Get the toolkit properties.
-     * @return the properties
+    /** Get the toolkit properties. (Forces initialization of the properties,
+     * if that has not already happened.)
+     * @return The properties.
      */
     public static Properties getProperties() {
         if (props == null) {
@@ -63,9 +78,11 @@ public final class ToolkitProperties {
         return props;
     }
 
-    /** Get a toolkit property.
-     * @param propName the property name
-     * @return the properties
+    /** Get the value of a toolkit property.
+     * (Forces initialization of the properties,
+     * if that has not already happened.)
+     * @param propName The name of the property to fetch.
+     * @return The value of the property.
      */
     public static String getProperty(final String propName) {
         if (props == null) {
@@ -74,11 +91,14 @@ public final class ToolkitProperties {
         return props.getProperty(propName);
     }
 
-    /** Get a toolkit property.
-     * @param propName the property name
-     * @param defaultValue a default value to use, if there is no
-     * property with name propName
-     * @return the properties
+    /** Get the value of a toolkit property. This version of the method
+     * allows specifying a default value for the property, if one
+     * has not been specified. (Forces initialization of the properties,
+     * if that has not already happened.)
+     * @param propName The name of the property to fetch.
+     * @param defaultValue A default value to use, if there is no
+     * property with name propName.
+     * @return The value of the property.
      */
     public static String getProperty(final String propName,
             final String defaultValue) {
@@ -105,12 +125,25 @@ public final class ToolkitProperties {
      * directory when the JVM was started.)
      */
     private static void initProperties() {
+        logger.debug("In ToolkitProperties.initProperties()");
+        if (System.getProperty(DUMP_CLASSPATH) != null) {
+            // A dump of the classpath has been requested.
+            logger.info("java.class.path = "
+                    + System.getProperty("java.class.path"));
+        }
+
         // Initialize props here, before loading any values into it.
         props = new Properties();
         // Get the ServletContext, if any. If running standalone code,
         // this will be null.
         ServletContext servletContext =
                 ApplicationContextListener.getServletContext();
+        if (servletContext == null) {
+            // In production, this is definitely an error. But don't
+            // flag as an error, as out-of-container unit testing
+            // is supported. (E.g., see the main() method.)
+            logger.info("servletContext is null!");
+        }
         // InputStream for reading toolkit.properties.
         InputStream input = null;
         // Let user override the PROPS_FILE setting with the command line.
@@ -121,6 +154,8 @@ public final class ToolkitProperties {
             // Use "normal" file opening process.
             try {
                 if (servletContext != null) {
+                    logger.debug("Getting properties from a file, "
+                            + "with servlet context");
                     String contextPath =
                             servletContext.getRealPath(File.separator);
                     Path path = Paths.get(contextPath).resolve(propsFile);
@@ -129,6 +164,8 @@ public final class ToolkitProperties {
                     // No servlet context, so no resolution against
                     // a path. In this case, doesn't _have_ to be an
                     // absolute path, but easier if it is.
+                    logger.debug("Getting properties from a file, "
+                            + "without servlet context");
                     input = new FileInputStream(propsFile);
                 }
             } catch (FileNotFoundException e) {
@@ -177,6 +214,8 @@ public final class ToolkitProperties {
             // property or JNDI property. So default to looking for
             // it within the webapp.
             propsFile = PROPS_FILE;
+            logger.debug("Getting properties from the default file within "
+                    + "the webapp");
             input = MethodHandles.lookup().lookupClass().
                 getClassLoader().getResourceAsStream(propsFile);
         }
@@ -213,16 +252,26 @@ public final class ToolkitProperties {
                 }
             }
         }
+        if (System.getProperty(DUMP_PROPERTY) != null) {
+            // A dump of all the properties has been requested.
+            dumpProperties();
+        }
     }
 
-    /** Dump all the properties using INFO-level logging. */
+    /** Dump all the properties using INFO-level logging. If a
+     * property name contains the word "password", its value
+     * is not displayed. */
     private static void dumpProperties() {
         Enumeration<?> e = props.propertyNames();
 
         logger.info("All toolkit properties:");
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
-            logger.info(key + " -- " + props.getProperty(key));
+            if (key.matches(".*password.*")) {
+                logger.info(key + ": value not displayed, for security.");
+            } else {
+                logger.info(key + " -- " + props.getProperty(key));
+            }
         }
         logger.info("End of toolkit properties.");
     }
