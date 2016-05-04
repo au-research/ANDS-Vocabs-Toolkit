@@ -10,6 +10,7 @@
   <property name="build-test" value="build-test" />
   <!-- Configuration files: toolkit.properties, logback.xml -->
   <property name="conf" value="conf" />
+  <property name="conf-test" value="conf-test" />
   <property name="jar" value="vocabtoolkit.jar" />
   <property name="war" value="vocabtoolkit.war" />
   <property name="javadoc-output" value="doc/api" />
@@ -222,6 +223,8 @@
       <exclude name="arquillian-notyet/*.jar" />
     </fileset>
     <fileset dir="tomcatlib" includes="**/*.jar" />
+    <!-- Include conf-test for arquillian.xml. -->
+    <pathelement path="${conf-test}" />
   </path>
 
 
