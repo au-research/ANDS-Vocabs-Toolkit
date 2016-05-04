@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Vocab Toolkit Arquillian tests">
+
+  <!-- To run this suite, you must pass in a Java command line option
+       that specifies the location of a properties file.
+       E.g.,
+       -DPROPS_FILE=conf/toolkit-h2-bamboo.properties
+       -->
+
+  <test name="Toolkit Arquillian tests" preserve-order="true">
+    <groups>
+      <run>
+        <include name="arquillian" />
+      </run>
+    </groups>
+    <packages>
+      <package name="au.org.ands.vocabs.toolkit.test.*" />
+   </packages>
+  </test>
+
+</suite>

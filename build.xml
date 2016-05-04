@@ -7,22 +7,38 @@
   <property name="source" value="1.8" />
 
   <property name="build" value="build" />
+  <property name="build-test" value="build-test" />
   <!-- Configuration files: toolkit.properties, logback.xml -->
   <property name="conf" value="conf" />
   <property name="jar" value="vocabtoolkit.jar" />
   <property name="war" value="vocabtoolkit.war" />
+  <property name="javadoc-output" value="doc/api" />
+  <property name="test-output" value="test-output" />
 
   <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
     classpath="libdev/checkstyle-6.14.1/checkstyle-6.14.1-all.jar" />
 
+  <taskdef resource="testngtasks"
+    classpath="libdev/testng-6.9.10/testng-6.9.10.jar"/>
+
   <target name="clean">
     <delete dir="${build}" />
+    <delete dir="${build-test}" />
     <delete file="${jar}" />
     <delete file="${war}" />
+    <delete dir="${javadoc-output}" />
+    <delete dir="${test-output}" />
   </target>
 
   <path id="compile-main.classpath">
     <fileset dir="lib" includes="**/*.jar" />
+    <fileset dir="tomcatlib" includes="**/*.jar" />
+  </path>
+
+  <path id="compile-test.classpath">
+    <pathelement path="${build}" />
+    <fileset dir="lib" includes="**/*.jar" />
+    <fileset dir="libdev" includes="**/*.jar" />
     <fileset dir="tomcatlib" includes="**/*.jar" />
   </path>
 
@@ -43,6 +59,15 @@
       <classpath refid="compile-main.classpath" />
     </javac>
   </target>
+
+  <target name="compile-test" depends="compile-main">
+    <mkdir dir="${build-test}" />
+    <javac debug="true" debuglevel="${debuglevel}" destdir="${build-test}" includeantruntime="false" source="${source}" target="${target}">
+      <src path="src/test/java" />
+      <classpath refid="compile-test.classpath" />
+    </javac>
+  </target>
+
   <!-- JAR not usable in the WAR, as JPA seems to require both
 	     persistence.xml and entity classes to be at the "top level",
 	     i.e., in WEB-INF/classes.
@@ -133,7 +158,7 @@
 
   <target name="javadoc">
     <javadoc sourcepath="src/main/java;src/test/java"
-             destdir="doc/api"
+             destdir="${javadoc-output}"
              classpathref="dev-compile-main.classpath"
              linksource="true"
              includenosourcepackages="true"
@@ -168,6 +193,91 @@
                  out="checkstyle_report.html"
                  style="checkstyle.xsl"/> -->
 
+  </target>
+
+  <path id="testng.classpath">
+    <pathelement path="${build}" />
+    <pathelement path="${build-test}" />
+    <fileset dir="lib">
+      <include name="**/*.jar" />
+      <exclude name="javamelody*/*.jar" />
+      <!-- No, don't exclude MySQL.
+        au.org.ands.vocabs.toolkit.utils.RewriteCurrent
+        makes use of
+        com.mysql.jdbc.exceptions.jdbc4.CommunicationsException.
+      exclude name="mysql*/*.jar"  -->
+      <exclude name="mysql*/*.jar" />
+      <exclude name="**/*javadoc*.jar" />
+      <exclude name="**/*sources*.jar" />
+    </fileset>
+    <fileset dir="libtest">
+      <include name="**/*.jar" />
+      <exclude name="**/*javadoc*.jar" />
+      <exclude name="**/*sources*.jar" />
+    </fileset>
+    <fileset dir="libdev">
+      <include name="**/*.jar" />
+      <exclude name="**/*javadoc*.jar" />
+      <exclude name="**/*sources*.jar" />
+      <exclude name="arquillian-notyet/*.jar" />
+    </fileset>
+    <fileset dir="tomcatlib" includes="**/*.jar" />
+  </path>
+
+
+  <target name="testng" depends="compile-test">
+    <testng
+      classpathref="testng.classpath"
+    >
+      <jvmarg
+        value="-DPROPS_FILE=WEB-INF/classes/toolkit-h2-test.properties" />
+      <jvmarg
+        value="-DdumpClasspath" />
+      <jvmarg
+        value="-DdumpProperties" />
+      <xmlfileset dir="src/test/resources" includes="arquillian-tests.xml"/>
+    </testng>
+  </target>
+
+  <!-- Target for running TestNG in Bamboo. Relies on Bamboo
+      variables for passwords.
+      ant \
+      -DbambooBuildWorkingDirectory=${bamboo.build.working.directory} \
+      -DbambooPoolPartyHarvesterRemoteUrl=http://pp.url/ \
+      -DbambooPoolPartyHarvesterUsername=username-splat \
+      -DbambooPoolPartyHarvesterPassword=password-splat \
+      testng-bamboo
+  -->
+  <target name="testng-bamboo" depends="compile-test">
+    <copy
+      file="conf/toolkit-h2-bamboo-template.properties"
+      tofile="conf/toolkit-h2-bamboo.properties">
+      <filterset>
+        <filter
+          token="bambooBuildWorkingDirectory"
+          value="${bambooBuildWorkingDirectory}" />
+        <filter
+          token="bambooPoolPartyHarvesterRemoteUrl"
+          value="${bambooPoolPartyHarvesterRemoteUrl}" />
+        <filter
+          token="bambooPoolPartyHarvesterUsername"
+          value="${bambooPoolPartyHarvesterUsername}" />
+        <filter
+          token="bambooPoolPartyHarvesterPassword"
+          value="${bambooPoolPartyHarvesterPassword}" />
+      </filterset>
+    </copy>
+    <testng
+      classpathref="testng.classpath"
+    >
+      <jvmarg value=
+        "-DPROPS_FILE=WEB-INF/classes/toolkit-h2-bamboo.properties" />
+      <jvmarg
+        value="-DdumpClasspath" />
+      <jvmarg
+        value="-DdumpProperties" />
+      <xmlfileset dir="src/test/resources" includes="arquillian-tests.xml"/>
+    </testng>
   </target>
 
 </project>
