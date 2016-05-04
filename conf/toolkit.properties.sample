@@ -15,6 +15,11 @@ javax.persistence.jdbc.password=[db_password]
 # This is the most basic setting; customize as per instructions at:
 #   http://www.mchange.com/projects/c3p0/
 hibernate.c3p0.testConnectionOnCheckout=true
+# Future work:
+# Add this to the Tomcat JVM command line after c3p0 libraries
+# are upgraded to version 0.9.5 or later, then tune the debugging
+# so c3p0/MLog logging also goes through LogBack.
+#  -Dcom.mchange.v2.log.MLog=com.mchange.v2.log.slf4j.Slf4jMLog
 # This is needed (at least with MySQL) to ensure that changes made
 # to the database externally (i.e., by the portal) are immediately
 # visible to JPA queries.
@@ -39,13 +44,13 @@ Toolkit.metadataRewriteMapPath = [path where data is stored]/conf/metadatarewrit
 
 ## DOWNLOADS
 
-# Prefix to all public-facing URLs to downloads from the Toolkit
+# Prefix to all public-facing URLs to downloads from the Toolkit.
 # Access point data is directly appended, so the URL should probably
 # end with a slash.
 Toolkit.downloadPrefix = [URL probably ending with /download/]
 
 
-## POOLPARTY 
+## POOLPARTY
 
 PoolPartyHarvester.remoteUrl = [pool party api url]
 PoolPartyHarvester.username = [pool party username]
