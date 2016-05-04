@@ -124,8 +124,17 @@ public class ApplicationContextListener implements ServletContextListener {
         ToolkitNetUtils.doShutdown();
 
         // When running tests, log4j may have started a thread;
-        // shut it down.
-        log4jShutdown();
+        // shut it down. However, note that if Arquillian uses
+        // multiple deployments, shutting down log4j in this way
+        // causes deployments after the first to fail. So
+        // for now, comment this out, and revisit later.
+        // The symptom of this being comment out is this line
+        // printed by Tomcat on context shutdown:
+        //    [testng] SEVERE: The web application [/test] appears to have
+        //    started a thread named [AsyncAppender-Dispatcher-Thread-1]
+        //    but has failed to stop it. This is very likely to create
+        //    a memory leak.
+        // log4jShutdown();
 
         // Wait just a little bit for watchdog threads to close.
         // Didn't seem to need this until starting to make use of
@@ -187,7 +196,13 @@ public class ApplicationContextListener implements ServletContextListener {
      * production, but is used by test harnesses. Without this,
      * context shutdown gives an error about a thread
      * "AsyncAppender-Dispatcher-Thread-1" not having been stopped.
+     * However, if Arquillian uses
+     * multiple deployments, shutting down log4j in this way
+     * causes deployments after the first to fail. So
+     * don't call this method if there are going to be multiple
+     * deployments during Arquillian testing.
      */
+    @SuppressWarnings("unused")
     private void log4jShutdown() {
         Logger logger = LoggerFactory.getLogger(
                 MethodHandles.lookup().lookupClass());
@@ -205,6 +220,11 @@ public class ApplicationContextListener implements ServletContextListener {
                     "findLoadedClass", new Class[] {String.class});
             fLC.setAccessible(true);
             ClassLoader classLoader = getClass().getClassLoader();
+            // A version of the previous line that uses the Thread
+            // ClassLoader. This doesn't seem to help the problem
+            // identified in the method comment.
+            // ClassLoader classLoader =
+            //        Thread.currentThread().getContextClassLoader();
             // Now see if the LogManager class has been loaded
             Object log4jContextClass =
                     fLC.invoke(classLoader,
@@ -232,6 +252,5 @@ public class ApplicationContextListener implements ServletContextListener {
                     + "log4j Manager class during context shutdown", e);
         }
     }
-
 
 }
