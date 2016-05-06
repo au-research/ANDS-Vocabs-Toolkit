@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE ant>
-<project basedir="." default="war" name="ANDS-Vocabs-Toolkit">
+<project
+  basedir="."
+  default="war"
+  name="ANDS-Vocabs-Toolkit"
+  xmlns:jacoco="antlib:org.jacoco.ant"
+  >
   <property environment="env" />
   <property name="debuglevel" value="source,lines,vars" />
   <property name="target" value="1.8" />
@@ -15,12 +20,21 @@
   <property name="war" value="vocabtoolkit.war" />
   <property name="javadoc-output" value="doc/api" />
   <property name="test-output" value="test-output" />
+  <property name="jacoco-output" value="jacoco.exec" />
+  <property name="jacoco-report" value="jacoco-report" />
 
-  <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
+  <taskdef
+    resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
     classpath="libdev/checkstyle-6.14.1/checkstyle-6.14.1-all.jar" />
 
   <taskdef resource="testngtasks"
-    classpath="libdev/testng-6.9.10/testng-6.9.10.jar"/>
+    classpath="libdev/testng-6.9.10/testng-6.9.10.jar" />
+
+  <taskdef
+    uri="antlib:org.jacoco.ant"
+    resource="org/jacoco/ant/antlib.xml">
+    <classpath path="libdev/jacoco-0.7.6.201602180812/jacocoant.jar" />
+  </taskdef>
 
   <target name="clean">
     <delete dir="${build}" />
@@ -29,6 +43,8 @@
     <delete file="${war}" />
     <delete dir="${javadoc-output}" />
     <delete dir="${test-output}" />
+    <delete file="${jacoco-output}" />
+    <delete dir="${jacoco-report}" />
   </target>
 
   <path id="compile-main.classpath">
@@ -229,17 +245,34 @@
 
 
   <target name="testng" depends="compile-test">
-    <testng
-      classpathref="testng.classpath"
-    >
-      <jvmarg
-        value="-DPROPS_FILE=WEB-INF/classes/toolkit-h2-test.properties" />
-      <jvmarg
-        value="-DdumpClasspath" />
-      <jvmarg
-        value="-DdumpProperties" />
-      <xmlfileset dir="src/test/resources" includes="arquillian-tests.xml"/>
-    </testng>
+    <jacoco:coverage
+      destfile="${jacoco-output}">
+      <testng
+        classpathref="testng.classpath"
+      >
+        <jvmarg
+          value="-DPROPS_FILE=WEB-INF/classes/toolkit-h2.properties" />
+        <jvmarg
+          value="-DdumpClasspath" />
+        <jvmarg
+          value="-DdumpProperties" />
+        <xmlfileset dir="src/test/resources" includes="arquillian-tests.xml"/>
+      </testng>
+    </jacoco:coverage>
+    <jacoco:report>
+      <executiondata>
+        <file file="jacoco.exec"/>
+      </executiondata>
+      <structure name="ANDS-Vocabs-Toolkit">
+        <classfiles>
+          <fileset dir="${build}"/>
+        </classfiles>
+        <sourcefiles encoding="UTF-8">
+          <fileset dir="src/main/java"/>
+        </sourcefiles>
+      </structure>
+      <html destdir="${jacoco-report}"/>
+    </jacoco:report>
   </target>
 
   <!-- Target for running TestNG in Bamboo. Relies on Bamboo
@@ -270,17 +303,34 @@
           value="${bambooPoolPartyHarvesterPassword}" />
       </filterset>
     </copy>
-    <testng
-      classpathref="testng.classpath"
-    >
-      <jvmarg value=
-        "-DPROPS_FILE=WEB-INF/classes/toolkit-h2-bamboo.properties" />
-      <jvmarg
-        value="-DdumpClasspath" />
-      <jvmarg
-        value="-DdumpProperties" />
-      <xmlfileset dir="src/test/resources" includes="arquillian-tests.xml"/>
-    </testng>
+    <jacoco:coverage
+      destfile="${jacoco-output}">
+      <testng
+        classpathref="testng.classpath"
+      >
+        <jvmarg value=
+          "-DPROPS_FILE=WEB-INF/classes/toolkit-h2-bamboo.properties" />
+        <jvmarg
+          value="-DdumpClasspath" />
+        <jvmarg
+          value="-DdumpProperties" />
+        <xmlfileset dir="src/test/resources" includes="arquillian-tests.xml"/>
+      </testng>
+    </jacoco:coverage>
+    <jacoco:report>
+      <executiondata>
+        <file file="jacoco.exec"/>
+      </executiondata>
+      <structure name="ANDS-Vocabs-Toolkit">
+        <classfiles>
+          <fileset dir="${build}"/>
+        </classfiles>
+        <sourcefiles encoding="UTF-8">
+          <fileset dir="src/main/java"/>
+        </sourcefiles>
+      </structure>
+      <html destdir="${jacoco-report}"/>
+    </jacoco:report>
   </target>
 
 </project>
