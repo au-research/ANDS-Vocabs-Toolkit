@@ -280,6 +280,14 @@
 
   <!-- Target for running TestNG in Bamboo. Relies on Bamboo
       variables for passwords.
+      To test locally on the command line:
+      ant \
+      -DbambooBuildWorkingDirectory=$(pwd) \
+      -DbambooPoolPartyHarvesterRemoteUrl=http://pp.url/ \
+      -DbambooPoolPartyHarvesterUsername=username-splat \
+      -DbambooPoolPartyHarvesterPassword=password-splat \
+      testng-bamboo
+      To test within Bamboo:
       ant \
       -DbambooBuildWorkingDirectory=${bamboo.build.working.directory} \
       -DbambooPoolPartyHarvesterRemoteUrl=http://pp.url/ \
