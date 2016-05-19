@@ -101,8 +101,12 @@ public class ArquillianBaseTest extends Arquillian {
                 .forEach(p -> war.addAsResource(p.toFile(),
                         p.toString().substring(
                                 RESOURCES_DEPLOY_PATH.length())));
+            // Uncomment the following, if log4j configuration required.
             //war.addAsResource(new File("conf/logging.properties"),
             //        "logging.properties");
+            // Logback logging configuration.
+            war.addAsResource(new File("conf-test/logback-test.xml"),
+                    "logback.xml");
             war.addAsResource(new File(
                     "src/main/java/META-INF/persistence.xml"),
                     "META-INF/persistence.xml");
