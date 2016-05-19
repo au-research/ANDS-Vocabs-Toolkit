@@ -212,6 +212,8 @@
 
   </target>
 
+  <property name="resources-test-input" value="src/test/resources/deploy" />
+
   <path id="testng.classpath">
     <pathelement path="${build}" />
     <pathelement path="${build-test}" />
@@ -236,11 +238,12 @@
       <include name="**/*.jar" />
       <exclude name="**/*javadoc*.jar" />
       <exclude name="**/*sources*.jar" />
-      <exclude name="arquillian-notyet/*.jar" />
+      <exclude name="arquillian-notyet/**/*.jar" />
     </fileset>
     <fileset dir="tomcatlib" includes="**/*.jar" />
     <!-- Include conf-test for arquillian.xml. -->
     <pathelement path="${conf-test}" />
+    <pathelement path="${resources-test-input}" />
   </path>
 
 

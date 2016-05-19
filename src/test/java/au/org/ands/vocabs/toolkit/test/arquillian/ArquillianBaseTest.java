@@ -29,6 +29,9 @@ public class ArquillianBaseTest extends Arquillian {
                 MethodHandles.lookup().lookupClass());
     }
 
+    /** Path to test resources that are to be deployed. */
+    private static final String RESOURCES_DEPLOY_PATH =
+            "src/test/resources/deploy";
 
     /* This is what is output by Tomcat on context shutdown
      * if the MySQL driver is included in the deployment (or in
@@ -92,6 +95,12 @@ public class ArquillianBaseTest extends Arquillian {
             Files.walk(Paths.get("WebContent/WEB-INF"))
                 .filter(Files::isRegularFile)
                 .forEach(p -> war.addAsWebInfResource(p.toFile()));
+            // Add test data
+            Files.walk(Paths.get(RESOURCES_DEPLOY_PATH))
+                .filter(Files::isRegularFile)
+                .forEach(p -> war.addAsResource(p.toFile(),
+                        p.toString().substring(
+                                RESOURCES_DEPLOY_PATH.length())));
             //war.addAsResource(new File("conf/logging.properties"),
             //        "logging.properties");
             war.addAsResource(new File(
