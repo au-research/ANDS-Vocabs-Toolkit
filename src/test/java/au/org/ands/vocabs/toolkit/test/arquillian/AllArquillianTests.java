@@ -2,14 +2,19 @@
 
 package au.org.ands.vocabs.toolkit.test.arquillian;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
+import org.dbunit.DatabaseUnitException;
+import org.hibernate.HibernateException;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.slf4j.Logger;
@@ -19,7 +24,10 @@ import org.testng.annotations.Test;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
+import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
 import au.org.ands.vocabs.toolkit.test.utils.NetClientUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 /** All Arquillian tests of the Toolkit.
  * Very unfortunately, there is no way to share Arquillian deployments
@@ -50,13 +58,50 @@ public class AllArquillianTests extends ArquillianBaseTest {
      * when there are no tasks. */
     @Test
     public final void testGetAllTasks() {
-        logger.info("In testGetAllTasks");
+        logger.info("In testGetAllTasks()");
         List<Task> taskList = TasksUtils.getAllTasks();
         Assert.assertNotNull(taskList,
                 "getAllTasks() with no tasks");
         Assert.assertEquals(taskList.size(), 0,
                 "getAllTasks() with no tasks");
-        // Assert.fail("Test of failing in testGetAllTasks");
+    }
+
+    // Tests of class
+    // au.org.ands.vocabs.toolkit.provider.transform.JsonTreeTransformProvider.
+
+    /** Server-side test of {@code JsonTreeTransformProvider}.
+     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws HibernateException If a problem getting the underlying
+     *          JDBC connection.
+     * @throws IOException If a problem getting test data for DBUnit,
+     *          or reading JSON from the correct and test output files.
+     * @throws SQLException If DBUnit has a problem performing
+     *           performing JDBC operations.
+     */
+    @Test
+    public final void testJsonTreeTransformProvider1() throws
+        DatabaseUnitException, HibernateException, IOException, SQLException {
+        logger.info("In testJsonTreeTransformProvider1()");
+        ArquillianTestUtils.loadDbunitTestFile(
+                "testJsonTreeTransformProvider1");
+        List<Task> taskList = TasksUtils.getAllTasks();
+        logger.info("testJsonTreeTransformProvider1: task list length = "
+                + taskList.size());
+        TaskInfo taskInfo = ToolkitFileUtils.getTaskInfo(1);
+        Assert.assertNotNull(taskInfo, "Test data not loaded");
+        TaskRunner runner = new TaskRunner(taskInfo);
+        runner.runTask();
+        HashMap<String, String> results = runner.getResults();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(results.get("status"), "success",
+                "JsonTreeTransformProvider failed");
+        String conceptsTreeFilename = results.get("concepts_tree");
+        ArquillianTestUtils.compareJson(conceptsTreeFilename,
+                "src/test/resources/input/"
+                + "au.org.ands.vocabs.toolkit.test.arquillian."
+                + "AllArquillianTests.testJsonTreeTransformProvider1/"
+                + "test-data1-concepts_tree.json");
     }
 
 
@@ -75,12 +120,18 @@ public class AllArquillianTests extends ArquillianBaseTest {
      */
     private @ArquillianResource URL baseURL;
 
-    /** Client-side test of the system health check function. */
+    /** Client-side test of the system health check function.
+     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws IOException If a problem getting test data for DBUnit.
+     * @throws SQLException If DBUnit has a problem performing
+     *           performing JDBC operations.
+     */
     @Test
     @RunAsClient
-    public final void testSystemHealthCheck(
-            ) {
-        logger.info("In testSystemHealthCheck");
+    public final void testSystemHealthCheck() throws
+        DatabaseUnitException, IOException, SQLException {
+        logger.info("In testSystemHealthCheck()");
+        ArquillianTestUtils.clientClearDatabase(baseURL);
         Response response = NetClientUtils.doGet(baseURL,
                 "getInfo/systemHealthCheck", MediaType.APPLICATION_JSON_TYPE);
 

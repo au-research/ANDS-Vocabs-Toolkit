@@ -2,6 +2,7 @@
 
 package au.org.ands.vocabs.toolkit.test.arquillian;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
@@ -24,6 +25,10 @@ import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.FileAssert;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import au.org.ands.vocabs.toolkit.db.DBContext;
 import au.org.ands.vocabs.toolkit.test.utils.NetClientUtils;
@@ -145,5 +150,32 @@ public final class ArquillianTestUtils {
         response.close();
     }
 
+    /** Compare two files containing JSON, asserting that they contain
+     * the same content.
+     * @param testFilename The filename of the file containing the generated
+     *      content. An TestNG assertion is made that this file exists.
+     * @param correctFilename The filename of the file containing the correct
+     *      value.
+     * @throws IOException If reading either file fails.
+     */
+    public static void compareJson(final String testFilename,
+            final String correctFilename) throws IOException {
+        File testFile = new File(testFilename);
+        FileAssert.assertFile(testFile,
+                "Test file (" + testFilename + ") is not "
+                        + "a proper file");
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode testJson;
+        JsonNode correctJson;
+        // IOException not caught here, but allowed to propagate.
+        testJson = mapper.readTree(new File(testFilename));
+        correctJson = mapper.readTree(new File(correctFilename));
+        Assert.assertEquals(testJson, correctJson);
+        // NB This uses a top-level equality test done by TestNG.
+        // There is also a top-level equality test implemented by Jackson:
+        // correctJson.equals(testJson). The TestNG one seems to give
+        // the same end result, but gives better diagnostics in case
+        // a difference is found.
+    }
 
 }

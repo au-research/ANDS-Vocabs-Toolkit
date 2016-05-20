@@ -1,0 +1,31 @@
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix my:    <http://test/> .
+
+<http://test/uri1/narrower1/narrower1> a skos:Concept ;
+   skos:prefLabel "Label 1.1.1" ;
+   skos:definition "Definition 1.1.1" ;
+   skos:notation "1.1.1" .
+
+<http://test/uri1> a skos:Concept ;
+  skos:prefLabel "Label 1" ;
+  skos:definition "Definition 1" ;
+  skos:notation "1" ;
+  skos:narrower <http://test/uri1/narrower1> .
+  
+<http://test/noPrefLabel2> a skos:Concept ;
+  skos:definition: "... sorted by IRI" .
+
+<http://test/uri1/narrower1> a skos:Concept ;
+   skos:prefLabel "Label 1.1" ;
+   skos:definition "Definition 1.1" ;
+   skos:notation "1.1" ;
+   skos:narrower <http://test/uri1/narrower1/narrower1> .
+
+<http://test/uri2> a skos:Concept ;
+  skos:prefLabel "Label 2" ;
+  skos:definition: "Definition 2" .
+
+<http://test/noPrefLabel1> a skos:Concept ;
+  skos:definition: "Concepts without preflabels go at the end ..." .
+
+
