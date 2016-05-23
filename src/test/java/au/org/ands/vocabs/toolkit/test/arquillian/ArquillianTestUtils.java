@@ -3,6 +3,7 @@
 package au.org.ands.vocabs.toolkit.test.arquillian;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.Response.Status.Family;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.h2.H2Connection;
@@ -127,6 +129,28 @@ public final class ArquillianTestUtils {
             // Force commit at the JDBC level, as closing the EntityManager
             // does a rollback!
             conn.commit();
+        }
+        em.close();
+    }
+
+    /** Do a full export of the database in DBUnit format.
+     * @param exportFilename The name of the file into which the
+     *      export is to go.
+     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws HibernateException If a problem getting the underlying
+     *          JDBC connection.
+     * @throws IOException If a problem writing the export.
+     * @throws SQLException If DBUnit has a problem performing
+     *           performing JDBC operations.
+     */
+    public static void exportFullDBData(final String exportFilename) throws
+        DatabaseUnitException, HibernateException, IOException, SQLException {
+        EntityManager em = DBContext.getEntityManager();
+        try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
+            IDatabaseConnection connection = new H2Connection(conn, null);
+            IDataSet fullDataSet = connection.createDataSet();
+            FlatXmlDataSet.write(fullDataSet,
+                    new FileOutputStream(exportFilename));
         }
         em.close();
     }
