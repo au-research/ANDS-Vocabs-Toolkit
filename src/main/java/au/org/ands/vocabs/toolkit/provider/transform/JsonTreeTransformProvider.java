@@ -212,14 +212,6 @@ public class JsonTreeTransformProvider extends TransformProvider {
         /** The narrower concepts of the concept. */
         private TreeSet<Concept> narrower;
 
-        /** The default constructor is disabled. Always use
-         * the constructor which takes a String parameter.
-         */
-        @SuppressWarnings("unused")
-        private Concept() {
-            // Not allowed.
-        }
-
         /** Constructor with an IRI specified.
          * @param anIRI The IRI of the concept. Must be non-null.
          * @throws IllegalArgumentException Thrown if {@code anIRI == null}.
