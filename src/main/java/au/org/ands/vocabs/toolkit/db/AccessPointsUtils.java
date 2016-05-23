@@ -15,17 +15,18 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 import au.org.ands.vocabs.toolkit.restlet.Download;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Work with database access points. */
 public final class AccessPointsUtils {
@@ -115,10 +116,11 @@ public final class AccessPointsUtils {
     /** Get all access points.
      * @return A list of AccessPoints
      */
-    @SuppressWarnings("unchecked")
     public static List<AccessPoints> getAllAccessPoints() {
         EntityManager em = DBContext.getEntityManager();
-        Query query = em.createNamedQuery(AccessPoints.GET_ALL_ACCESSPOINTS);
+        TypedQuery<AccessPoints> query =
+                em.createNamedQuery(AccessPoints.GET_ALL_ACCESSPOINTS,
+                        AccessPoints.class);
         List<AccessPoints> aps = query.getResultList();
         em.close();
         return aps;
@@ -142,10 +144,10 @@ public final class AccessPointsUtils {
     public static List<AccessPoints> getAccessPointsForVersion(
             final Versions version) {
         EntityManager em = DBContext.getEntityManager();
-        Query q = em.createQuery(
-                "select ap from AccessPoints ap where ap.versionId = ?1").
+        TypedQuery<AccessPoints> q = em.createQuery(
+                "select ap from AccessPoints ap where ap.versionId = ?1",
+                AccessPoints.class).
                 setParameter(1, version.getId());
-        @SuppressWarnings("unchecked")
         List<AccessPoints> aps = q.getResultList();
         em.close();
         return aps;
@@ -159,12 +161,12 @@ public final class AccessPointsUtils {
     public static List<AccessPoints> getAccessPointsForVersionAndType(
             final Versions version, final String type) {
         EntityManager em = DBContext.getEntityManager();
-        Query q = em.createQuery(
+        TypedQuery<AccessPoints> q = em.createQuery(
                 "select ap from AccessPoints ap "
                 + "where ap.versionId = ?1 "
-                + "and ap.type = ?2").
+                + "and ap.type = ?2",
+                AccessPoints.class).
                 setParameter(1, version.getId()).setParameter(2, type);
-        @SuppressWarnings("unchecked")
         List<AccessPoints> aps = q.getResultList();
         em.close();
         return aps;

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +49,10 @@ public final class TasksUtils {
     /** Get all tasks.
      * @return A list of Tasks
      */
-    @SuppressWarnings("unchecked")
     public static List<Task> getAllTasks() {
         EntityManager em = DBContext.getEntityManager();
-        Query query = em.createNamedQuery(Task.GET_ALL_TASKS);
+        TypedQuery<Task> query = em.createNamedQuery(Task.GET_ALL_TASKS,
+                Task.class);
         List<Task> tasks = query.getResultList();
         em.close();
         return tasks;
