@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.h2.H2Connection;
@@ -99,7 +100,12 @@ public final class ArquillianTestUtils {
         em.close();
     }
 
-    /** Load a DBUnit test file into the database.
+    /** Load a DbUnit test file into the database.
+     * The file is loaded as a {@code FlatXmlDataSet}.
+     * To make it more convenient to enter JSON data, the dataset is
+     * wrapped as a {@code ReplacementDataSet}, and all instances
+     * of '' (two contiguous apostrophes) are replaced with "
+     * (one double quote).
      * @param testName The name of the test method. Used to generate
      *      the filename of the file to load.
      * @throws DatabaseUnitException If a problem with DBUnit.
@@ -109,14 +115,14 @@ public final class ArquillianTestUtils {
      * @throws SQLException If DBUnit has a problem performing
      *           performing JDBC operations.
      */
-    public static void loadDbunitTestFile(final String testName) throws
+    public static void loadDbUnitTestFile(final String testName) throws
         DatabaseUnitException, HibernateException, IOException, SQLException {
         EntityManager em = DBContext.getEntityManager();
         try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
 
             IDatabaseConnection connection = new H2Connection(conn, null);
 
-            FlatXmlDataSet dataset = new FlatXmlDataSetBuilder()
+            FlatXmlDataSet xmlDataset = new FlatXmlDataSetBuilder()
                     .setMetaDataSetFromDtd(getResourceAsInputStream(
                             "test/dbunit-toolkit-export-choice.dtd"))
                     .build(getResourceAsInputStream(
@@ -124,6 +130,8 @@ public final class ArquillianTestUtils {
                             + "test.arquillian.AllArquillianTests."
                             + testName
                             + "/input-dbunit.xml"));
+            ReplacementDataSet dataset = new ReplacementDataSet(xmlDataset);
+            dataset.addReplacementSubstring("''", "\"");
             logger.info("doing clean_insert");
             DatabaseOperation.CLEAN_INSERT.execute(connection, dataset);
             // Force commit at the JDBC level, as closing the EntityManager

@@ -82,7 +82,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
     public final void testJsonTreeTransformProvider1() throws
         DatabaseUnitException, HibernateException, IOException, SQLException {
         logger.info("In testJsonTreeTransformProvider1()");
-        ArquillianTestUtils.loadDbunitTestFile(
+        ArquillianTestUtils.loadDbUnitTestFile(
                 "testJsonTreeTransformProvider1");
         List<Task> taskList = TasksUtils.getAllTasks();
         logger.info("testJsonTreeTransformProvider1: task list length = "

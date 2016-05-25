@@ -16,6 +16,16 @@
       ID="1"
       VOCABULARY_ID="1"
       VERSION_ID="1"
-      PARAMS="[{&quot;type&quot;:&quot;HARVEST&quot;,&quot;provider_type&quot;:&quot;File&quot;,&quot;file_path&quot;:&quot;src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testJsonTreeTransformProvider1/test-data1.ttl&quot;},{&quot;type&quot;:&quot;TRANSFORM&quot;,&quot;provider_type&quot;:&quot;JsonTree&quot;}]"
+      PARAMS="[
+                {
+                  ''type'': ''HARVEST'',
+                  ''provider_type'': ''File'',
+                  ''file_path'': ''src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testJsonTreeTransformProvider1/test-data1.ttl''
+                },
+                {
+                  ''type'': ''TRANSFORM'',
+                  ''provider_type'': ''JsonTree''
+                }
+              ]"
       />
 </dataset>
