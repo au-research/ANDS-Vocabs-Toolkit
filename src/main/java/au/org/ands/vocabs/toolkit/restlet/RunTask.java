@@ -20,7 +20,7 @@ import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
-/** Restlets for running a Toolkit supported tasks. */
+/** Restlets for running Toolkit supported tasks. */
 @Path("runTask")
 public class RunTask {
 
@@ -32,10 +32,11 @@ public class RunTask {
     @Context
     private ServletContext context;
 
-    /** Get the list of PoolParty projects.
-     * @param taskId The task id.
-     * @return The list of PoolParty projects, in JSON format,
-     * as returned by PoolParty. */
+    /** Run a task.
+     * @param taskId The task id. The id of the task
+     *      in the task database table.
+     * @return The result of running the task, either in JSON or XML format.
+     */
     @Path("{taskId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @GET
