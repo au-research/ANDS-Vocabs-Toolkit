@@ -18,7 +18,8 @@
   <property name="conf-test" value="conf-test" />
   <property name="jar" value="vocabtoolkit.jar" />
   <property name="war" value="vocabtoolkit.war" />
-  <property name="javadoc-output" value="doc/api" />
+  <property name="javadoc-output" value="doc/javadoc" />
+  <property name="swagger-output" value="doc/api" />
   <property name="test-output" value="test-output" />
   <property name="jacoco-output" value="jacoco.exec" />
   <property name="jacoco-report" value="jacoco-report" />
@@ -42,6 +43,7 @@
     <delete file="${jar}" />
     <delete file="${war}" />
     <delete dir="${javadoc-output}" />
+    <delete dir="${swagger-output}" />
     <delete dir="${test-output}" />
     <delete file="${jacoco-output}" />
     <delete dir="${jacoco-report}" />
@@ -181,6 +183,26 @@
              includenosourcepackages="true"
              private="true"
              >
+      <tag name="responseMessage" description="HTTP Response Status:" />
+    </javadoc>
+  </target>
+
+  <target name="swagger">
+    <javadoc sourcepath="src/main/java;src/test/java"
+             destdir="${swagger-output}"
+             classpathref="dev-compile-main.classpath"
+             linksource="true"
+             includenosourcepackages="true"
+             private="true"
+             >
+      <doclet
+        name="com.tenxerconsulting.swagger.doclet.ServiceDoclet"
+        path="libdev/swagger-doclet-1.1.3/swagger-doclet-1.1.3.jar"
+        >
+        <param name="-apiVersion" value="1"/>
+        <param name="-docBasePath" value="."/>
+        <param name="-apiBasePath" value="http://myapi/apibasepath"/>
+      </doclet>
     </javadoc>
   </target>
 
