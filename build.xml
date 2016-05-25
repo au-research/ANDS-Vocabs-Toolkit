@@ -188,7 +188,7 @@
   </target>
 
   <target name="swagger">
-    <javadoc sourcepath="src/main/java;src/test/java"
+    <javadoc sourcepath="src/main/java"
              destdir="${swagger-output}"
              classpathref="dev-compile-main.classpath"
              linksource="true"
