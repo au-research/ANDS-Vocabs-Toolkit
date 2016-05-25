@@ -184,6 +184,9 @@
              private="true"
              >
       <tag name="responseMessage" description="HTTP Response Status:" />
+      <tag name="paramsAllowableValues"
+        description="Allowable Values for Parameters:" />
+      <tag name="responseType" description="Response Type:" />
     </javadoc>
   </target>
 
@@ -201,7 +204,8 @@
         >
         <param name="-apiVersion" value="1"/>
         <param name="-docBasePath" value="."/>
-        <param name="-apiBasePath" value="http://myapi/apibasepath"/>
+        <param name="-apiBasePath"
+          value="http://devl.ands.org.au/repository/api/toolkit"/>
       </doclet>
     </javadoc>
   </target>
