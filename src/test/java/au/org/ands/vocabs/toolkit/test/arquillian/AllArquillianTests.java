@@ -2,6 +2,7 @@
 
 package au.org.ands.vocabs.toolkit.test.arquillian;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
+import org.apache.commons.io.FileUtils;
 import org.dbunit.DatabaseUnitException;
 import org.hibernate.HibernateException;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -20,6 +22,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
@@ -27,6 +30,8 @@ import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
 import au.org.ands.vocabs.toolkit.test.utils.NetClientUtils;
+import au.org.ands.vocabs.toolkit.utils.ApplicationContextListener;
+import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
 /** All Arquillian tests of the Toolkit.
@@ -49,8 +54,28 @@ public class AllArquillianTests extends ArquillianBaseTest {
                 MethodHandles.lookup().lookupClass());
     }
 
-    // Server-side tests go here. Client-side tests later on.
+    // Test setup/shutdown
 
+    /** Set up the suite. This means:
+     * clear out the contents of the repository (deleting
+     * the directory pointed to by property {@code Toolkit.storagePath}).
+     * Note: Arquillian invokes this method first on the client side, and
+     * then on the server side after deployment.
+     * @throws IOException If unable to remove the repository directory
+     *      {@code Toolkit.storagePath}.
+     */
+    @BeforeSuite(groups = "arquillian")
+    public final void setupSuite() throws IOException {
+        if (ApplicationContextListener.getServletContext() == null) {
+            logger.info("In AllArquillianTests.setupSuite() on client side");
+        } else {
+            logger.info("In AllArquillianTests.setupSuite() on server side");
+            FileUtils.deleteDirectory(new File(
+                    ToolkitConfig.ROOT_FILES_PATH));
+        }
+    }
+
+    // Server-side tests go here. Client-side tests later on.
 
     // Tests of class au.org.ands.vocabs.toolkit.db.TasksUtils.
 
@@ -88,15 +113,32 @@ public class AllArquillianTests extends ArquillianBaseTest {
         logger.info("testJsonTreeTransformProvider1: task list length = "
                 + taskList.size());
         TaskInfo taskInfo = ToolkitFileUtils.getTaskInfo(1);
-        Assert.assertNotNull(taskInfo, "Test data not loaded");
+        Assert.assertNotNull(taskInfo, "Test data not loaded, task 1");
         TaskRunner runner = new TaskRunner(taskInfo);
         runner.runTask();
         HashMap<String, String> results = runner.getResults();
 
         Assert.assertNotNull(results);
         Assert.assertEquals(results.get("status"), "success",
-                "JsonTreeTransformProvider failed");
+                "JsonTreeTransformProvider failed on task 1");
         String conceptsTreeFilename = results.get("concepts_tree");
+        ArquillianTestUtils.compareJson(conceptsTreeFilename,
+                "src/test/resources/input/"
+                + "au.org.ands.vocabs.toolkit.test.arquillian."
+                + "AllArquillianTests.testJsonTreeTransformProvider1/"
+                + "test-data1-concepts_tree.json");
+
+        taskInfo = ToolkitFileUtils.getTaskInfo(2);
+        Assert.assertNotNull(taskInfo, "Test data not loaded, task 2");
+        runner = new TaskRunner(taskInfo);
+        runner.runTask();
+        results = runner.getResults();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(results.get("status"), "success",
+                "JsonTreeTransformProvider failed on task 2");
+        conceptsTreeFilename = results.get("concepts_tree");
+        // Note the use of the same correct output as the previous test.
         ArquillianTestUtils.compareJson(conceptsTreeFilename,
                 "src/test/resources/input/"
                 + "au.org.ands.vocabs.toolkit.test.arquillian."
