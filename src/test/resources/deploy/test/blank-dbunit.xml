@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "dbunit-toolkit-export-choice.dtd" >
+<!-- Used to blank out the database. -->
+<dataset>
+  <VOCABULARIES/>
+  <VERSIONS/>
+  <ACCESS_POINTS/>
+  <TASK/>
+</dataset>

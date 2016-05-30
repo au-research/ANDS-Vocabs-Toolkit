@@ -786,6 +786,12 @@ skos:altLabel
 		api:structured true;
 		a         rdf:Property  .
 
+skos:hiddenLabel
+		api:label "hiddenLabel" ;
+		api:multiValued true ;
+		api:structured true;
+		a         rdf:Property  .
+
 skos:notation
 		a owl:DatatypeProperty;
 		api:label "notation"  .

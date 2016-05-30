@@ -91,7 +91,7 @@ public class JsonListTransformProvider extends TransformProvider {
             HashMap<String, HashMap<String, Object>> conceptMap =
                     conceptHandler.getConceptMap();
             FileUtils.writeStringToFile(out,
-                    TasksUtils.hashMapToJSONString(conceptMap));
+                    TasksUtils.mapToJSONString(conceptMap));
         } catch (IOException ex) {
             results.put(TaskStatus.EXCEPTION,
                     "Exception in JsonListTransform while Parsing RDF");

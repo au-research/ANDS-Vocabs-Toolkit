@@ -3,24 +3,26 @@ package au.org.ands.vocabs.toolkit.db;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import au.org.ands.vocabs.toolkit.db.model.Task;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
-import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
+import au.org.ands.vocabs.toolkit.db.model.Task;
+import au.org.ands.vocabs.toolkit.db.model.Versions;
+import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 
 /** Work with database tasks. */
 public final class TasksUtils {
@@ -47,10 +49,10 @@ public final class TasksUtils {
     /** Get all tasks.
      * @return A list of Tasks
      */
-    @SuppressWarnings("unchecked")
     public static List<Task> getAllTasks() {
         EntityManager em = DBContext.getEntityManager();
-        Query query = em.createNamedQuery(Task.GET_ALL_TASKS);
+        TypedQuery<Task> query = em.createNamedQuery(Task.GET_ALL_TASKS,
+                Task.class);
         List<Task> tasks = query.getResultList();
         em.close();
         return tasks;
@@ -113,20 +115,50 @@ public final class TasksUtils {
             callerLogger.debug(details);
         }
         results.put("status", status);
-        setTaskStatusAndData(task, status, hashMapToJSONString(results));
+        setTaskStatusAndData(task, status, mapToJSONString(results));
     }
 
-    /** Convert a HashMap to a string containing JSON.
-     * @param map The HashMap to be converted
-     * @return The resulting string
+    /** Convert a Map to a String in JSON format. The Map can
+     * be either an unsorted type (e.g., HashMap), or a sorted type
+     * (i.e., a class that implements SortedMap, such as TreeMap).
+     * For sorted types, key/value pairs are output in sorted order
+     * based on keys.
+     * If any values are also maps, the same respect for sortedness
+     * applies to them.
+     * (This behaviour relies on the Jackson library.)
+     * @param map The Map to be converted. Generic types are used for
+     *   both keys and values.
+     * @return The Map converted to a String, in JSON format.
      */
-    public static String hashMapToJSONString(
-            final HashMap<String, ?> map) {
+    public static String mapToJSONString(
+            final Map<?, ?> map) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
-            logger.error("Exception in hashMapToJSONString", e);
+            logger.error("Exception in mapToJSONString", e);
+            return "{\"exception\":\"Exception while "
+                    + "converting map to JSON\"}";
+        }
+    }
+
+    /** Convert a Collection to a String in JSON format. The Collection can
+     * be either an unsorted type (e.g., HashSet), or a sorted type
+     * (i.e., a class that implements SortedSet, such as TreeSet).
+     * For sorted types, output is in sorted order of values.
+     * If any values are also Collections, the same respect for sortedness
+     * applies to them.
+     * (This behaviour relies on the Jackson library.)
+     * @param map The Collection to be converted.
+     * @return The Collection converted to a String, in JSON format.
+     */
+    public static String collectionToJSONString(
+            final Collection<?> map) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            logger.error("Exception in collectionToJSONString", e);
             return "{\"exception\":\"Exception while "
                     + "converting map to JSON\"}";
         }

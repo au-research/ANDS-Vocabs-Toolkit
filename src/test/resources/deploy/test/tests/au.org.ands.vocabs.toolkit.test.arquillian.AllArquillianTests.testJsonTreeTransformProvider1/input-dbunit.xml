@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../dbunit-toolkit-export-choice.dtd" >
+<dataset>
+  <VOCABULARIES
+      ID="1"
+      OWNER="ands"
+      TITLE="testJsonTreeTransformProvider1"
+      SLUG="testjsontreetransformprovider1"
+      />
+  <VERSIONS
+      ID="1"
+      VOCAB_ID="1"
+      TITLE="v1" />
+  <ACCESS_POINTS/>
+  <TASK
+      ID="1"
+      VOCABULARY_ID="1"
+      VERSION_ID="1"
+      PARAMS="[
+                {
+                  ''type'': ''HARVEST'',
+                  ''provider_type'': ''File'',
+                  ''file_path'': ''src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testJsonTreeTransformProvider1/test-data1.ttl''
+                },
+                {
+                  ''type'': ''TRANSFORM'',
+                  ''provider_type'': ''JsonTree''
+                }
+              ]"
+      />
+  <TASK
+      ID="2"
+      VOCABULARY_ID="1"
+      VERSION_ID="1"
+      PARAMS="[
+                {
+                  ''type'': ''UNHARVEST'',
+                  ''provider_type'': ''File''
+                },
+                {
+                  ''type'': ''HARVEST'',
+                  ''provider_type'': ''File'',
+                  ''file_path'': ''src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testJsonTreeTransformProvider1/test-data2.ttl''
+                },
+                {
+                  ''type'': ''TRANSFORM'',
+                  ''provider_type'': ''JsonTree''
+                }
+              ]"
+      />
+</dataset>

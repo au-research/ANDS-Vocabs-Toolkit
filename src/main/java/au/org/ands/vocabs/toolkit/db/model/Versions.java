@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -18,8 +17,7 @@ import au.org.ands.vocabs.toolkit.db.TasksUtils;
  * Versions model class.
  */
 @Entity
-@Table(name = "versions",
-uniqueConstraints = @UniqueConstraint(columnNames = "repository_id"))
+@Table(name = "versions")
 public class Versions {
 
     /** Key of the release date used in the data field. */
@@ -35,8 +33,6 @@ public class Versions {
     private Integer vocabId;
     /** data. */
     private String data;
-    /** respositoryId. */
-    private String repositoryId;
 
     /** Get the id.
      * @return The id
@@ -153,21 +149,6 @@ public class Versions {
      */
     public void setData(final String aData) {
         data = aData;
-    }
-
-    /** Get the repository id.
-     * @return The repository id
-     */
-    @Column(name = "repository_id", unique = true, length = 128)
-    public String getRepositoryId() {
-        return repositoryId;
-    }
-
-    /** Set the repository id.
-     * @param aRepositoryId the repository id
-     */
-    public void setRepositoryId(final String aRepositoryId) {
-        repositoryId = aRepositoryId;
     }
 
 }

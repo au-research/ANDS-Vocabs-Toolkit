@@ -4,7 +4,7 @@ package au.org.ands.vocabs.toolkit.db;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import au.org.ands.vocabs.toolkit.db.model.Versions;
 
@@ -31,8 +31,8 @@ public final class VersionsUtils {
      */
     public static List<Versions> getAllVersions() {
         EntityManager em = DBContext.getEntityManager();
-        Query q = em.createQuery("select v from Versions v");
-        @SuppressWarnings("unchecked")
+        TypedQuery<Versions> q = em.createQuery("select v from Versions v",
+                Versions.class);
         List<Versions> v = q.getResultList();
         em.close();
         return v;

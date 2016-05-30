@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- After copying this file, update the path to the DTD
+     so that validation works again. -->
+<!DOCTYPE dataset SYSTEM "dbunit-toolkit-export-choice.dtd" >
+<dataset>
+  <VOCABULARIES
+      ID="1"
+      TITLE=""
+      />
+  <VERSIONS/>
+  <ACCESS_POINTS/>
+  <TASK/>
+</dataset>

@@ -409,5 +409,176 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libdev/testng-6.9.10/testng-6.9.10.jar" sourcepath="libdev/testng-6.9.10/testng-6.9.10-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/ANDS-Vocabs-Toolkit/libdev/testng-6.9.10/testng-6.9.10-javadoc.jar!/"/>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/jcommander-1.48/jcommander-1.48.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-warp-api-1.0.0.Alpha7.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-testng-core-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-container-test-api-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/shrinkwrap-api-1.2.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-test-spi-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-core-spi-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-core-impl-base-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-test-impl-base-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-core-api-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-test-api-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-testng-container-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-container-test-spi-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-tomcat-embedded-7-1.0.0.CR7.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-container-spi-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/shrinkwrap-spi-1.2.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/shrinkwrap-impl-base-1.2.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-container-impl-base-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-warp-impl-1.0.0.Alpha7.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-warp-spi-1.0.0.Alpha7.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-container-test-impl-base-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/littleproxy-1.0.0-beta5.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-config-api-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-config-impl-base-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/shrinkwrap-descriptors-api-base-2.0.0-alpha-8.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/shrinkwrap-descriptors-spi-2.0.0-alpha-8.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/tomcat-embed-logging-juli-7.0.69.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/tomcat-embed-core-7.0.69.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-testenricher-cdi-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-testenricher-initialcontext-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/arquillian-testenricher-resource-1.1.11.Final.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/arquillian-1.1.11/tomcat-embed-jasper-7.0.69.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libdev/dbunit-2.5.2/dbunit-2.5.2.jar" sourcepath="libdev/dbunit-2.5.2/dbunit-2.5.2-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
