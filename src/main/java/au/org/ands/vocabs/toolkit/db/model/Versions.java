@@ -6,19 +6,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import au.org.ands.vocabs.toolkit.db.DBContext;
 import au.org.ands.vocabs.toolkit.db.TasksUtils;
 
 /**
  * Versions model class.
  */
-@PersistenceUnit(unitName = DBContext.UNIT_NAME)
 @Entity
 @Table(name = "versions")
 public class Versions {
