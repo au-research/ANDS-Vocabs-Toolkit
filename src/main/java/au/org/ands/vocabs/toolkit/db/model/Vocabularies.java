@@ -63,7 +63,7 @@ public class Vocabularies {
         id = anId;
     }
 
-    /** Get the id.
+    /** Get the title.
      * @return The id
      */
     @Column(name = "title", length = 255)
