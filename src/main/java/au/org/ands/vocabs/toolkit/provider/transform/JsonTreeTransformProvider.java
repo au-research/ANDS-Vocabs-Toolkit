@@ -195,7 +195,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
      * the result of this transform based on prefLabels.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    class Concept implements Comparable<Concept> {
+    static class Concept implements Comparable<Concept> {
 
         /** The IRI of the concept. */
         private String iri;
