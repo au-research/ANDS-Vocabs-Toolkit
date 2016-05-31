@@ -7,12 +7,15 @@ import javax.persistence.Persistence;
 
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
-/** Provide access to the database. */
+/** Provide access to the vocabulary database. */
 public final class DBContext {
+
+    /** The persistence unit name as specified in persistence.xml. */
+    public static final String UNIT_NAME = "ANDS-Vocabs-Toolkit";
 
     /** Access to persistence context. */
     private static EntityManagerFactory entityManagerFactory =
-            Persistence.createEntityManagerFactory("ANDS-Vocabs-Toolkit",
+            Persistence.createEntityManagerFactory(UNIT_NAME,
                     ToolkitProperties.getProperties());
 
     /** Private constructor for a utility class. */

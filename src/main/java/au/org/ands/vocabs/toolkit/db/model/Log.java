@@ -6,11 +6,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
+
+import au.org.ands.vocabs.toolkit.db.DBContext;
 
 /**
  * Log model class.
  */
+@PersistenceUnit(unitName = DBContext.UNIT_NAME)
 @Entity
 @Table(name = "log")
 public class Log {
