@@ -136,13 +136,21 @@ public final class ToolkitProperties {
         props = new Properties();
         // Get the ServletContext, if any. If running standalone code,
         // this will be null.
-        ServletContext servletContext =
-                ApplicationContextListener.getServletContext();
+        ServletContext servletContext = null;
+        try {
+            servletContext = ApplicationContextListener.getServletContext();
+        } catch (NoClassDefFoundError e) {
+            // This means we're probably running a standalone application,
+            // not running inside a container. So the Servlet API JAR
+            // is not even in the classpath.
+        }
         if (servletContext == null) {
-            // In production, this is definitely an error. But don't
-            // flag as an error, as out-of-container unit testing
-            // is supported. (E.g., see the main() method.)
-            logger.info("servletContext is null!");
+            // In production, running in a servlet container,
+            // this is definitely an error.
+            // But don't flag as an error, as out-of-container applications,
+            // and unit testing are supported.
+            // (E.g., see the main() method, and the RewriteCurrent class.)
+            logger.info("servletContext is null. Standalone application?");
         }
         // InputStream for reading toolkit.properties.
         InputStream input = null;
@@ -275,7 +283,6 @@ public final class ToolkitProperties {
         }
         logger.info("End of toolkit properties.");
     }
-
 
     /** Main method for testing.
      * @param args Command-line arguments.
