@@ -88,14 +88,14 @@
   </target>
 
   <!-- JAR not usable in the WAR, as JPA seems to require both
-	     persistence.xml and entity classes to be at the "top level",
-	     i.e., in WEB-INF/classes.
+       persistence.xml and entity classes to be at the "top level",
+       i.e., in WEB-INF/classes.
     <target name="jar" depends="compile-main">
-    	<jar destfile="${jar}">
-    		<fileset dir="${build}" />
-   		</jar>
-   	</target>
-   	-->
+        <jar destfile="${jar}">
+            <fileset dir="${build}" />
+        </jar>
+    </target>
+   -->
   <target name="war" depends="compile-main,update-version-string">
     <war destfile="${war}">
       <metainf dir="WebContent/META-INF" />
@@ -106,8 +106,8 @@
         <globmapper from="*" to="WEB-INF/classes/META-INF/*" />
       </mappedresources>
       <!-- Need to use this trick instead of a lib element because
-			     the JAR files are stored in subdirectories.
-			     See http://stackoverflow.com/questions/2802671/how-to-perform-ant-path-mapping-in-a-war-task -->
+           the JAR files are stored in subdirectories.
+           See http://stackoverflow.com/questions/2802671/how-to-perform-ant-path-mapping-in-a-war-task -->
       <mappedresources>
         <fileset dir="lib" includes="**/*.jar" />
         <chainedmapper>
@@ -127,7 +127,7 @@
   </target>
 
   <!-- The following targets are based on:
-		http://llbit.se/?p=1876 -->
+       http://llbit.se/?p=1876 -->
 
   <!-- To do a new release, create and commit a new version of
        version.properties.
