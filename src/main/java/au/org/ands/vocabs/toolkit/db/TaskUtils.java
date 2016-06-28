@@ -20,19 +20,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import au.org.ands.vocabs.toolkit.db.model.Task;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.db.model.Version;
+import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 
 /** Work with database tasks. */
-public final class TasksUtils {
+public final class TaskUtils {
 
     /** Logger for this class. */
     private static Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
     /** Private constructor for a utility class. */
-    private TasksUtils() {
+    private TaskUtils() {
     }
 
     /** Get a task by ID.
@@ -61,22 +61,22 @@ public final class TasksUtils {
 
     /** Get a vocabulary by ID.
      * @param id vocabulary id
-     * @return The Vocabularies object
+     * @return The Vocabulary object
      */
-    public static Vocabularies getVocabularyById(final int id) {
+    public static Vocabulary getVocabularyById(final int id) {
         EntityManager em = DBContext.getEntityManager();
-        Vocabularies v = em.find(Vocabularies.class, id);
+        Vocabulary v = em.find(Vocabulary.class, id);
         em.close();
         return v;
     }
 
     /** Get a version by ID.
      * @param id version id
-     * @return The Versions object
+     * @return The Version object
      */
-    public static Versions getVersionById(final int id) {
+    public static Version getVersionById(final int id) {
         EntityManager em = DBContext.getEntityManager();
-        Versions v = em.find(Versions.class, id);
+        Version v = em.find(Version.class, id);
         em.close();
         return v;
     }

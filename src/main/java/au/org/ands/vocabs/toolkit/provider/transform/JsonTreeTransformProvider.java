@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -171,7 +171,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
             // Jackson will serialize TreeSets in sorted order of values
             // (i.e., the Concept objects' prefLabels).
             FileUtils.writeStringToFile(out,
-                    TasksUtils.collectionToJSONString(conceptTree));
+                    TaskUtils.collectionToJSONString(conceptTree));
         } catch (IOException ex) {
             results.put(TaskStatus.EXCEPTION,
                     "Exception in JsonTreeTransform while generating result");

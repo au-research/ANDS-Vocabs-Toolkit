@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
-import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
+import au.org.ands.vocabs.toolkit.db.AccessPointUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
+import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -54,7 +54,7 @@ public class FileHarvestProvider extends HarvestProvider {
      * @return True, iff the harvest succeeded.
      */
     public final boolean getHarvestFiles(
-            final Versions version,
+            final Version version,
             final String format,
             final String filePath,
             final String outputPath,
@@ -76,7 +76,7 @@ public class FileHarvestProvider extends HarvestProvider {
                                 entry.getFileName());
                         Files.copy(entry, target,
                                 StandardCopyOption.REPLACE_EXISTING);
-                        AccessPointsUtils.createFileAccessPoint(version,
+                        AccessPointUtils.createFileAccessPoint(version,
                                 format, target);
                         if (delete) {
                             logger.debug("Deleting file: " + entry.toString());
@@ -104,7 +104,7 @@ public class FileHarvestProvider extends HarvestProvider {
                         filePathPath.getFileName());
                 Files.copy(filePathPath, target,
                         StandardCopyOption.REPLACE_EXISTING);
-                AccessPointsUtils.createFileAccessPoint(version,
+                AccessPointUtils.createFileAccessPoint(version,
                         format, target);
                 if (delete) {
                     logger.debug("Deleting file: " + filePathPath.toString());
@@ -133,7 +133,7 @@ public class FileHarvestProvider extends HarvestProvider {
             final HashMap<String, String> results) {
         if (subtask.get("file_path") == null
                 || subtask.get("file_path").textValue().isEmpty()) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "No file_path specified. Nothing to do.");
             return false;
@@ -169,8 +169,8 @@ public class FileHarvestProvider extends HarvestProvider {
     public final void unharvestProviderSpecific(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {
-        AccessPointsUtils.deleteAccessPointsForVersionAndType(
-                taskInfo.getVersion(), AccessPoints.FILE_TYPE);
+        AccessPointUtils.deleteAccessPointsForVersionAndType(
+                taskInfo.getVersion(), AccessPoint.FILE_TYPE);
     }
 
     /** Not implemented for this provider. Returns null.

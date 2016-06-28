@@ -8,8 +8,8 @@ import java.util.Properties;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
+import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.restlet.Download;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
@@ -58,27 +58,27 @@ public final class PopulateAccessPoints {
         sesamePrefix += "repositories/";
         System.out.println("sparqlPrefix: " + sparqlPrefix);
         System.out.println("sesamePrefix: " + sesamePrefix);
-        List<Versions> versions = VersionsUtils.getAllVersions();
-        for (Versions version: versions) {
+        List<Version> versions = VersionUtils.getAllVersions();
+        for (Version version: versions) {
             System.out.println(version.getId());
             System.out.println(version.getTitle());
             String data = version.getData();
             System.out.println(data);
-            JsonNode dataJson = TasksUtils.jsonStringToTree(data);
+            JsonNode dataJson = TaskUtils.jsonStringToTree(data);
             JsonNode accessPoints = dataJson.get("access_points");
             if (accessPoints != null) {
                 System.out.println(accessPoints);
                 System.out.println(accessPoints.size());
                 for (JsonNode accessPoint: accessPoints) {
                     System.out.println(accessPoint);
-                    AccessPoints ap = new AccessPoints();
+                    AccessPoint ap = new AccessPoint();
                     ap.setVersionId(version.getId());
                     String type = accessPoint.get("type").asText();
                     JsonObjectBuilder jobPortal = Json.createObjectBuilder();
                     JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
                     String uri;
                     switch (type) {
-                    case AccessPoints.FILE_TYPE:
+                    case AccessPoint.FILE_TYPE:
                        ap.setType(type);
                        // Get the path from the original access point.
                        String filePath = accessPoint.get("uri").asText();
@@ -94,7 +94,7 @@ public final class PopulateAccessPoints {
                        ap.setPortalData("");
                        ap.setToolkitData(jobToolkit.build().toString());
                        // Persist what we have ...
-                       AccessPointsUtils.saveAccessPoint(ap);
+                       AccessPointUtils.saveAccessPoint(ap);
                        // ... so that now we can get access to the
                        // ID of the persisted object with ap2.getId().
                        String format;
@@ -112,22 +112,22 @@ public final class PopulateAccessPoints {
                                downloadPrefixProperty + ap.getId()
                                + "/" + downloadFilename);
                        ap.setPortalData(jobPortal.build().toString());
-                       AccessPointsUtils.updateAccessPoint(ap);
+                       AccessPointUtils.updateAccessPoint(ap);
                        break;
-                    case AccessPoints.API_SPARQL_TYPE:
+                    case AccessPoint.API_SPARQL_TYPE:
                         ap.setType(type);
                         uri = accessPoint.get("uri").asText();
                         jobPortal.add("uri", uri);
                         if (uri.startsWith(sparqlPrefix)) {
                             // One of ours, so also add a sesameDownload
                             // endpoint.
-                            AccessPoints ap2 = new AccessPoints();
+                            AccessPoint ap2 = new AccessPoint();
                             ap2.setVersionId(version.getId());
-                            ap2.setType(AccessPoints.SESAME_DOWNLOAD_TYPE);
+                            ap2.setType(AccessPoint.SESAME_DOWNLOAD_TYPE);
                             ap2.setPortalData("");
                             ap2.setToolkitData("");
                             // Persist what we have ...
-                            AccessPointsUtils.saveAccessPoint(ap2);
+                            AccessPointUtils.saveAccessPoint(ap2);
                             // ... so that now we can get access to the
                             // ID of the persisted object with ap2.getId().
                             JsonObjectBuilder job2Portal =
@@ -143,20 +143,20 @@ public final class PopulateAccessPoints {
                                             sesamePrefix));
                             ap2.setPortalData(job2Portal.build().toString());
                             ap2.setToolkitData(job2Toolkit.build().toString());
-                            AccessPointsUtils.updateAccessPoint(ap2);
-                            jobPortal.add("source", AccessPoints.SYSTEM_SOURCE);
+                            AccessPointUtils.updateAccessPoint(ap2);
+                            jobPortal.add("source", AccessPoint.SYSTEM_SOURCE);
                         } else {
-                            jobPortal.add("source", AccessPoints.USER_SOURCE);
+                            jobPortal.add("source", AccessPoint.USER_SOURCE);
                         }
                         ap.setPortalData(jobPortal.build().toString());
                         ap.setToolkitData(jobToolkit.build().toString());
-                        AccessPointsUtils.saveAccessPoint(ap);
+                        AccessPointUtils.saveAccessPoint(ap);
                         break;
-                    case AccessPoints.WEBPAGE_TYPE:
+                    case AccessPoint.WEBPAGE_TYPE:
                         uri = accessPoint.get("uri").asText();
                         if (uri.endsWith("concept/topConcepts")) {
-                            ap.setType(AccessPoints.SISSVOC_TYPE);
-                            jobPortal.add("source", AccessPoints.SYSTEM_SOURCE);
+                            ap.setType(AccessPoint.SISSVOC_TYPE);
+                            jobPortal.add("source", AccessPoint.SYSTEM_SOURCE);
                             jobPortal.add("uri", uri.
                                     replaceFirst("/concept/topConcepts$", ""));
                         } else {
@@ -165,7 +165,7 @@ public final class PopulateAccessPoints {
                         }
                         ap.setPortalData(jobPortal.build().toString());
                         ap.setToolkitData(jobToolkit.build().toString());
-                        AccessPointsUtils.saveAccessPoint(ap);
+                        AccessPointUtils.saveAccessPoint(ap);
                         break;
                     default:
                     }

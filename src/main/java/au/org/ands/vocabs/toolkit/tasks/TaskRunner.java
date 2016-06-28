@@ -10,7 +10,7 @@ import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
@@ -65,13 +65,13 @@ public class TaskRunner {
         status = TaskStatus.SUCCESS;
         task = taskInfo.getTask();
         results.put("task_id", task.getId().toString());
-        ArrayNode subtasks = TasksUtils.getSubtasks(task.getParams());
+        ArrayNode subtasks = TaskUtils.getSubtasks(task.getParams());
         if (subtasks == null || subtasks.size() == 0) {
             status = TaskStatus.ERROR;
             results.put("runTask", "No subtasks specified, or invalid"
                     + " format.");
             addTimestamp(results);
-            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+            TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "No subtasks specified. Nothing to do.");
             return;
         }
@@ -83,7 +83,7 @@ public class TaskRunner {
                         + subtask.toString());
                 status = TaskStatus.ERROR;
                 addTimestamp(results);
-                TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                         status, "Bad subtask specification.");
                 return;
             }
@@ -112,7 +112,7 @@ public class TaskRunner {
                 default:
                     status = TaskStatus.ERROR;
                     results.put("invalid_sub_task", thisTask);
-                    TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                    TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                             status, "Invalid subtask specification.");
                 break;
             }
@@ -121,7 +121,7 @@ public class TaskRunner {
                 results.put("error_subtask", thisTask);
                 status = TaskStatus.ERROR;
                 addTimestamp(results);
-                TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+                TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                         status, "Error in subtask.");
                 return;
             }
@@ -130,7 +130,7 @@ public class TaskRunner {
         results.put("output_path", ToolkitFileUtils.getTaskOutputPath(taskInfo,
                 null));
         addTimestamp(results);
-        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+        TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "All tasks completed.");
     }
 
@@ -145,7 +145,7 @@ public class TaskRunner {
         String providerName = subtask.get("provider_type").textValue();
         logger.debug("runHarvest, task type: " + taskType);
         status = taskType + "ING";
-        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+        TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Harvest in progress");
         try {
             provider = HarvestProviderUtils.getProvider(providerName);
@@ -159,7 +159,7 @@ public class TaskRunner {
 
         if (provider == null) {
             status = TaskStatus.ERROR;
-            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+            TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "Could not find Provider: " + providerName);
             return false;
         }
@@ -184,7 +184,7 @@ public class TaskRunner {
         TransformProvider provider;
         String providerName = subtask.get("provider_type").textValue();
         status = "TRANSFORMING";
-        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+        TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Import in progress");
          try {
             provider = TransformProviderUtils.getProvider(providerName);
@@ -198,7 +198,7 @@ public class TaskRunner {
 
         if (provider == null) {
             status = TaskStatus.ERROR;
-            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+            TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "Could not find Provider: " + providerName);
             return false;
         }
@@ -223,7 +223,7 @@ public class TaskRunner {
         String providerName = subtask.get("provider_type").textValue();
         logger.debug("runImport, task type: " + taskType);
         status = taskType + "ING";
-        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+        TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Import in progress");
          try {
             provider = ImporterProviderUtils.getProvider(providerName);
@@ -237,7 +237,7 @@ public class TaskRunner {
 
         if (provider == null) {
             status = TaskStatus.ERROR;
-            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+            TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "Could not find Provider: " + providerName);
             return false;
         }
@@ -262,7 +262,7 @@ public class TaskRunner {
         String providerName = subtask.get("provider_type").textValue();
         logger.debug("runPublish, task type: " + taskType);
         status = taskType + "ING";
-        TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+        TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Import in progress");
          try {
             provider = PublishProviderUtils.getProvider(providerName);
@@ -276,7 +276,7 @@ public class TaskRunner {
 
         if (provider == null) {
             status = TaskStatus.ERROR;
-            TasksUtils.updateMessageAndTaskStatus(logger, task, results,
+            TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                     status, "Could not find Provider: " + providerName);
             return false;
         }

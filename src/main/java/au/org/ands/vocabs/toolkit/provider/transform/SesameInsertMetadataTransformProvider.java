@@ -10,7 +10,7 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import au.org.ands.vocabs.toolkit.db.model.Versions;
+import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
@@ -135,7 +135,7 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
             final HashMap<String, String> results) {
         boolean result = true;
         // Get the metadata values to be inserted.
-        Versions version = taskInfo.getVersion();
+        Version version = taskInfo.getVersion();
 
         // Use the release date as it is. As it may be
         // YYYY, YYYY-MM, or YYYY-MM-DD, can't use a date

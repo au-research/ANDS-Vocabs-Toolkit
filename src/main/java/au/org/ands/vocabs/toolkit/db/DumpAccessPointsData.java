@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,8 +27,8 @@ public final class DumpAccessPointsData {
      * @param args Command-line arguments
      */
     public static void main(final String[] args) {
-        List<AccessPoints> aps = AccessPointsUtils.getAllAccessPoints();
-        for (AccessPoints ap: aps) {
+        List<AccessPoint> aps = AccessPointUtils.getAllAccessPoints();
+        for (AccessPoint ap: aps) {
             System.out.println(ap.getId());
             System.out.println(ap.getVersionId());
             System.out.println(ap.getType());
@@ -36,7 +36,7 @@ public final class DumpAccessPointsData {
             String td = ap.getToolkitData();
 
             System.out.println("portal_data:");
-            JsonNode pdJson = TasksUtils.jsonStringToTree(pd);
+            JsonNode pdJson = TaskUtils.jsonStringToTree(pd);
             Iterator<Entry<String, JsonNode>> pdJsonIterator =
                     pdJson.fields();
             while (pdJsonIterator.hasNext()) {
@@ -46,7 +46,7 @@ public final class DumpAccessPointsData {
             }
 
             System.out.println("toolkit_data:");
-            JsonNode tdJson = TasksUtils.jsonStringToTree(td);
+            JsonNode tdJson = TaskUtils.jsonStringToTree(td);
             Iterator<Entry<String, JsonNode>> tdJsonIterator =
                     tdJson.fields();
             while (tdJsonIterator.hasNext()) {

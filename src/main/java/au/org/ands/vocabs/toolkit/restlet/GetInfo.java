@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
@@ -78,7 +78,7 @@ public class GetInfo {
     @GET
     public final List<Task> systemHealthCheck() {
         logger.debug("called systemHealthCheck");
-        List<Task> tasks = TasksUtils.getAllTasks();
+        List<Task> tasks = TaskUtils.getAllTasks();
         return tasks;
     }
 

@@ -21,7 +21,7 @@ import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -54,7 +54,7 @@ public class SesameHarvestProvider extends HarvestProvider {
             final HashMap<String, String> results) {
 
         if (subtask.get("repository_base") == null) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "No Sesame repository_base specified.");
             return false;
@@ -62,14 +62,14 @@ public class SesameHarvestProvider extends HarvestProvider {
 
         String remoteBase = subtask.get("repository_base").textValue();
         if (remoteBase.isEmpty()) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "Blank Sesame repository_base specified.");
             return false;
         }
 
         if (subtask.get("repository_id") == null) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "No Sesame repository_id specified.");
             return false;
@@ -77,7 +77,7 @@ public class SesameHarvestProvider extends HarvestProvider {
 
         String repositoryId = subtask.get("repository_id").textValue();
         if (repositoryId.isEmpty()) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "Blank Sesame repository_id specified.");
             return false;

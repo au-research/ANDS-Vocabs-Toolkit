@@ -25,7 +25,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
@@ -84,7 +84,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
     @Test
     public final void testGetAllTasks() {
         logger.info("In testGetAllTasks()");
-        List<Task> taskList = TasksUtils.getAllTasks();
+        List<Task> taskList = TaskUtils.getAllTasks();
         Assert.assertNotNull(taskList,
                 "getAllTasks() with no tasks");
         Assert.assertEquals(taskList.size(), 0,
@@ -109,7 +109,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
         logger.info("In testJsonTreeTransformProvider1()");
         ArquillianTestUtils.loadDbUnitTestFile(
                 "testJsonTreeTransformProvider1");
-        List<Task> taskList = TasksUtils.getAllTasks();
+        List<Task> taskList = TaskUtils.getAllTasks();
         logger.info("testJsonTreeTransformProvider1: task list length = "
                 + taskList.size());
         TaskInfo taskInfo = ToolkitFileUtils.getTaskInfo(1);

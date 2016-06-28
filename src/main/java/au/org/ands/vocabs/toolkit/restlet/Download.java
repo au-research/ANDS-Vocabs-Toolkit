@@ -27,12 +27,12 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
-import au.org.ands.vocabs.toolkit.db.VersionsUtils;
-import au.org.ands.vocabs.toolkit.db.VocabulariesUtils;
-import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.db.AccessPointUtils;
+import au.org.ands.vocabs.toolkit.db.VersionUtils;
+import au.org.ands.vocabs.toolkit.db.VocabularyUtils;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
+import au.org.ands.vocabs.toolkit.db.model.Version;
+import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 
@@ -137,7 +137,7 @@ public class Download {
             final String downloadFormat) {
         logger.info("Called download: " + accessPointId
                 + ", download format: " + downloadFormat);
-        AccessPoints ap = AccessPointsUtils.getAccessPointById(accessPointId);
+        AccessPoint ap = AccessPointUtils.getAccessPointById(accessPointId);
         if (ap == null) {
             response.resume(Response.status(Status.NOT_FOUND).
                     entity("Not found: no such access point").build());
@@ -251,8 +251,8 @@ public class Download {
      * @param ap The access point.
      */
     private void fileDownload(final AsyncResponse response,
-            final int accessPointId, final AccessPoints ap) {
-        String format = AccessPointsUtils.getFormat(ap);
+            final int accessPointId, final AccessPoint ap) {
+        String format = AccessPointUtils.getFormat(ap);
         if (format == null) {
             response.resume(Response.status(Status.NOT_FOUND).
                     entity("Not found: no format specified "
@@ -268,7 +268,7 @@ public class Download {
             return;
         }
 
-        String localPath = AccessPointsUtils.getToolkitPath(ap);
+        String localPath = AccessPointUtils.getToolkitPath(ap);
         logger.debug("Getting download from file: " + localPath
                 + ", MIME type = " + responseMimeType);
         String downloadFilename = Paths.get(localPath).getFileName().toString();
@@ -302,9 +302,9 @@ public class Download {
      * @param mimeType The MIME type of the download.
      */
     private void sesameDownload(final AsyncResponse response,
-            final int accessPointId, final AccessPoints ap,
+            final int accessPointId, final AccessPoint ap,
             final String downloadFormat, final String mimeType) {
-        String sesameUri = AccessPointsUtils.getToolkitUri(ap);
+        String sesameUri = AccessPointUtils.getToolkitUri(ap);
         logger.debug("Getting download from " + sesameUri
                 + ", downloadFormat = " + downloadFormat);
 
@@ -351,12 +351,12 @@ public class Download {
      * @param downloadFormat The download format
      * @return The generated filename.
      */
-    public static String downloadFilename(final AccessPoints ap,
+    public static String downloadFilename(final AccessPoint ap,
             final String downloadFormat) {
         // Work out the filename that the download should have.
-        Versions version = VersionsUtils.getVersionById(ap.getVersionId());
-        Vocabularies vocabulary =
-                VocabulariesUtils.getVocabularyById(version.getVocabId());
+        Version version = VersionUtils.getVersionById(ap.getVersionId());
+        Vocabulary vocabulary =
+                VocabularyUtils.getVocabularyById(version.getVocabId());
         final String downloadFilename =
                 ToolkitFileUtils.makeSlug(vocabulary.getOwner())
                 + "_"

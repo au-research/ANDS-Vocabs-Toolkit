@@ -13,11 +13,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Vocabularies model class.
+ * Vocabulary model class.
  */
 @Entity
 @Table(name = "vocabularies")
-public class Vocabularies {
+public class Vocabulary {
 
     /** id. */
     private Integer id;

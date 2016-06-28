@@ -6,22 +6,22 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import au.org.ands.vocabs.toolkit.db.model.Versions;
+import au.org.ands.vocabs.toolkit.db.model.Version;
 
 /** Work with database versions. */
-public final class VersionsUtils {
+public final class VersionUtils {
 
     /** Private constructor for a utility class. */
-    private VersionsUtils() {
+    private VersionUtils() {
     }
 
     /** Get version by version id.
      * @param id version id
      * @return the version
      */
-    public static Versions getVersionById(final int id) {
+    public static Version getVersionById(final int id) {
         EntityManager em = DBContext.getEntityManager();
-        Versions v = em.find(Versions.class, id);
+        Version v = em.find(Version.class, id);
         em.close();
         return v;
     }
@@ -29,11 +29,11 @@ public final class VersionsUtils {
     /** Get all versions.
      * @return an array of all versions
      */
-    public static List<Versions> getAllVersions() {
+    public static List<Version> getAllVersions() {
         EntityManager em = DBContext.getEntityManager();
-        TypedQuery<Versions> q = em.createQuery("select v from Versions v",
-                Versions.class);
-        List<Versions> v = q.getResultList();
+        TypedQuery<Version> q = em.createQuery("select v from Version v",
+                Version.class);
+        List<Version> v = q.getResultList();
         em.close();
         return v;
     }

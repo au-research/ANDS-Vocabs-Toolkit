@@ -23,10 +23,10 @@ import org.glassfish.jersey.uri.UriComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.db.model.Version;
+import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 
 /** Utility methods for working with files. */
@@ -121,13 +121,13 @@ public final class ToolkitFileUtils {
      * @return The TaskInfo object
      */
     public static TaskInfo getTaskInfo(final int taskId) {
-        Task task = TasksUtils.getTaskById(taskId);
+        Task task = TaskUtils.getTaskById(taskId);
         if (task == null) {
             logger.error("getTaskInfo: getTaskById returned null; task id:"
                     + taskId);
             return null;
         }
-        Vocabularies vocab = TasksUtils.getVocabularyById(
+        Vocabulary vocab = TaskUtils.getVocabularyById(
                 task.getVocabularyId());
         if (vocab == null) {
             logger.error("getTaskInfo: getVocabularyById returned null; "
@@ -135,7 +135,7 @@ public final class ToolkitFileUtils {
                     + taskId + "; vocab id:" + task.getVocabularyId());
             return null;
         }
-        Versions version = TasksUtils.getVersionById(task.getVersionId());
+        Version version = TaskUtils.getVersionById(task.getVersionId());
         if (version == null) {
             logger.error("getTaskInfo: getVersionById returned null; "
                     + "task id:"

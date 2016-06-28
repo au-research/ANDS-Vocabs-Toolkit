@@ -9,7 +9,7 @@ import org.openrdf.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
@@ -42,7 +42,7 @@ public class SesameSPARQLUpdateTransformProvider extends TransformProvider {
             final JsonNode subtask,
             final HashMap<String, String> results) {
         if (subtask.get("sparql_update") == null) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "No SPARQL update statement specified.");
             return false;

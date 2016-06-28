@@ -37,8 +37,8 @@ import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.AccessPointsUtils;
-import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
+import au.org.ands.vocabs.toolkit.db.AccessPointUtils;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -139,13 +139,13 @@ public class SesameImporterProvider extends ImporterProvider {
         results.put("sparql_endpoint",
                 sparqlTarget.getUri().toString());
         // Add apiSparql endpoint
-        AccessPointsUtils.createApiSparqlAccessPoint(taskInfo.getVersion(),
-                sparqlTarget.getUri().toString(), AccessPoints.SYSTEM_SOURCE);
+        AccessPointUtils.createApiSparqlAccessPoint(taskInfo.getVersion(),
+                sparqlTarget.getUri().toString(), AccessPoint.SYSTEM_SOURCE);
         // Add sesameDownload endpoint
         WebTarget sesameTarget = client.target(sesameServer)
                 .path("repositories")
                 .path(ToolkitFileUtils.getSesameRepositoryId(taskInfo));
-        AccessPointsUtils.createSesameDownloadAccessPoint(
+        AccessPointUtils.createSesameDownloadAccessPoint(
                 taskInfo.getVersion(),
                 sesameTarget.getUri().toString());
         return true;
@@ -291,11 +291,11 @@ public class SesameImporterProvider extends ImporterProvider {
             final JsonNode subtask,
             final HashMap<String, String> results) {
         // Remove the sesameDownload access point.
-        AccessPointsUtils.deleteAccessPointsForVersionAndType(
-                taskInfo.getVersion(), AccessPoints.SESAME_DOWNLOAD_TYPE);
+        AccessPointUtils.deleteAccessPointsForVersionAndType(
+                taskInfo.getVersion(), AccessPoint.SESAME_DOWNLOAD_TYPE);
         // Remove the apiSparql access point.
-        AccessPointsUtils.deleteAccessPointsForVersionAndType(
-                taskInfo.getVersion(), AccessPoints.API_SPARQL_TYPE);
+        AccessPointUtils.deleteAccessPointsForVersionAndType(
+                taskInfo.getVersion(), AccessPoint.API_SPARQL_TYPE);
         // Remove the repository from the Sesame server.
         RepositoryManager manager = null;
         try {

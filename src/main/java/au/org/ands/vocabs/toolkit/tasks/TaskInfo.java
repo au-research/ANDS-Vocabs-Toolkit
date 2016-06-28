@@ -2,8 +2,8 @@
 package au.org.ands.vocabs.toolkit.tasks;
 
 import au.org.ands.vocabs.toolkit.db.model.Task;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.db.model.Version;
+import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 
 /** Class encapsulating all information about a task. */
 public class TaskInfo {
@@ -11,22 +11,22 @@ public class TaskInfo {
     /** Task object for this task. */
     private Task task;
 
-    /** Vocabularies object for this task. */
-    private Vocabularies vocabulary;
+    /** Vocabulary object for this task. */
+    private Vocabulary vocabulary;
 
-    /** Versions object for this task. */
-    private Versions version;
+    /** Version object for this task. */
+    private Version version;
 
     /** Constructor.
      * @param aTask The Task object
-     * @param aVocabularies The Vocabularies object
-     * @param aVersions The Versions object
+     * @param aVocabulary The Vocabulary object
+     * @param aVersion The Version object
      */
-    public TaskInfo(final Task aTask, final Vocabularies aVocabularies,
-            final Versions aVersions) {
+    public TaskInfo(final Task aTask, final Vocabulary aVocabulary,
+            final Version aVersion) {
         task = aTask;
-        vocabulary = aVocabularies;
-        version = aVersions;
+        vocabulary = aVocabulary;
+        version = aVersion;
     }
 
     /** Getter for the Task object.
@@ -36,17 +36,17 @@ public class TaskInfo {
         return task;
     }
 
-    /** Getter for the Vocabularies object.
-     * @return The Vocabularies object.
+    /** Getter for the Vocabulary object.
+     * @return The Vocabulary object.
      */
-    public final Vocabularies getVocabulary() {
+    public final Vocabulary getVocabulary() {
         return vocabulary;
     }
 
-    /** Getter for the Versions object.
-     * @return The Versions object.
+    /** Getter for the Version object.
+     * @return The Version object.
      */
-    public final Versions getVersion() {
+    public final Version getVersion() {
         return version;
     }
 

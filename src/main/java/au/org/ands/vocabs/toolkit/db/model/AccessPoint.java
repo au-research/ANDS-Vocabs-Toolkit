@@ -10,14 +10,14 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
- * AccessPoints model class.
+ * Access Point model class.
  */
 @Entity
 @Table(name = "access_points")
 @NamedQuery(
-        name = AccessPoints.GET_ALL_ACCESSPOINTS,
-        query = "SELECT ap FROM AccessPoints ap")
-public class AccessPoints {
+        name = AccessPoint.GET_ALL_ACCESSPOINTS,
+        query = "SELECT ap FROM AccessPoint ap")
+public class AccessPoint {
 
     /** Name of getAllAccessPoints query. */
     public static final String GET_ALL_ACCESSPOINTS = "getAllAccessPoints";

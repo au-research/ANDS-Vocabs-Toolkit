@@ -23,7 +23,7 @@ import org.openrdf.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -59,7 +59,7 @@ public class SPARQLHarvestProvider extends HarvestProvider {
             final HashMap<String, String> results) {
         if (subtask.get("sparql_endpoint") == null
                 || subtask.get("sparql_endpoint").textValue().isEmpty()) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "No sparql_endpoint specified. Nothing to do.");
             return false;

@@ -21,7 +21,7 @@ public final class TestJsonParsing {
               + " \"PoolParty\",\"project_id\":"
               + " \"1DCE1494-A022-0001-FFBD-12DE19E01FEB\"},"
               + "{\"type\": \"TRANSFORM\"},{\"type\": \"IMPORT\"}]";
-      JsonNode root = TasksUtils.jsonStringToTree(jsonString);
+      JsonNode root = TaskUtils.jsonStringToTree(jsonString);
       if (root == null) {
           System.out.println("Got null.");
       } else {

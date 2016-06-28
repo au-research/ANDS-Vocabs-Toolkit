@@ -20,7 +20,7 @@ import org.openrdf.repository.manager.RepositoryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -110,7 +110,7 @@ public final class SesameTransformUtils {
                 LOGGER.error("SesameTransformUtils.runUpdate(): "
                         + "no such repository: "
                         + repositoryID);
-                TasksUtils.updateMessageAndTaskStatus(LOGGER,
+                TaskUtils.updateMessageAndTaskStatus(LOGGER,
                         taskInfo.getTask(),
                         results, TaskStatus.ERROR,
                         "SesameTransformUtils.runUpdate(): no such repository: "
@@ -120,7 +120,7 @@ public final class SesameTransformUtils {
         } catch (RepositoryConfigException | RepositoryException e) {
             LOGGER.error("Exception in SesameTransformUtils.runUpdate() "
                     + "opening repository", e);
-            TasksUtils.updateMessageAndTaskStatus(LOGGER,
+            TaskUtils.updateMessageAndTaskStatus(LOGGER,
                     taskInfo.getTask(),
                     results, TaskStatus.EXCEPTION,
                     "Exception in SesameTransformUtils.runUpdate() "
@@ -142,7 +142,7 @@ public final class SesameTransformUtils {
                 LOGGER.error("Bad update passed to "
                         + "SesameTransformUtils.runUpdate(): "
                         + updateString, e);
-                TasksUtils.updateMessageAndTaskStatus(LOGGER,
+                TaskUtils.updateMessageAndTaskStatus(LOGGER,
                         taskInfo.getTask(),
                         results, TaskStatus.EXCEPTION,
                         "Bad update passed to "
@@ -152,7 +152,7 @@ public final class SesameTransformUtils {
             } catch (UpdateExecutionException e) {
                 LOGGER.error("SesameTransformUtils.runUpdate() update failed: "
                         + updateString, e);
-                TasksUtils.updateMessageAndTaskStatus(LOGGER,
+                TaskUtils.updateMessageAndTaskStatus(LOGGER,
                         taskInfo.getTask(),
                         results, TaskStatus.EXCEPTION,
                         "SesameTransformUtils.runUpdate() update failed: "
@@ -166,7 +166,7 @@ public final class SesameTransformUtils {
         } catch (RepositoryException e) {
             LOGGER.error("Exception in SesameTransformUtils.runUpdate() with "
                     + "connection handling", e);
-            TasksUtils.updateMessageAndTaskStatus(LOGGER,
+            TaskUtils.updateMessageAndTaskStatus(LOGGER,
                     taskInfo.getTask(),
                     results, TaskStatus.EXCEPTION,
                     "Exception in SesameTransformUtils.runUpdate() with "

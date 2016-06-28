@@ -11,14 +11,14 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 
 /**
- * Versions model class.
+ * Version model class.
  */
 @Entity
 @Table(name = "versions")
-public class Versions {
+public class Version {
 
     /** Key of the release date used in the data field. */
     private static final String RELEASE_DATE_KEY = "release_date";
@@ -90,7 +90,7 @@ public class Versions {
         if (data == null || data.isEmpty()) {
             return null;
         }
-        JsonNode dataJson = TasksUtils.jsonStringToTree(data);
+        JsonNode dataJson = TaskUtils.jsonStringToTree(data);
         JsonNode releaseDate = dataJson.get(RELEASE_DATE_KEY);
         if (releaseDate == null) {
             return null;
