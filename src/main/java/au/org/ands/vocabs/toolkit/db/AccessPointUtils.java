@@ -144,10 +144,12 @@ public final class AccessPointUtils {
     public static List<AccessPoint> getAccessPointsForVersion(
             final Version version) {
         EntityManager em = DBContext.getEntityManager();
-        TypedQuery<AccessPoint> q = em.createQuery(
-                "select ap from AccessPoint ap where ap.versionId = ?1",
+        TypedQuery<AccessPoint> q = em.createNamedQuery(
+                AccessPoint.GET_ACCESSPOINTS_FOR_VERSION,
                 AccessPoint.class).
-                setParameter(1, version.getId());
+                setParameter(
+                        AccessPoint.GET_ACCESSPOINTS_FOR_VERSION_VERSIONID,
+                        version.getId());
         List<AccessPoint> aps = q.getResultList();
         em.close();
         return aps;
@@ -161,12 +163,15 @@ public final class AccessPointUtils {
     public static List<AccessPoint> getAccessPointsForVersionAndType(
             final Version version, final String type) {
         EntityManager em = DBContext.getEntityManager();
-        TypedQuery<AccessPoint> q = em.createQuery(
-                "select ap from AccessPoint ap "
-                + "where ap.versionId = ?1 "
-                + "and ap.type = ?2",
+        TypedQuery<AccessPoint> q = em.createNamedQuery(
+                AccessPoint.GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE,
                 AccessPoint.class).
-                setParameter(1, version.getId()).setParameter(2, type);
+                setParameter(AccessPoint.
+                            GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID,
+                            version.getId()).
+                setParameter(AccessPoint.
+                            GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE,
+                            type);
         List<AccessPoint> aps = q.getResultList();
         em.close();
         return aps;
@@ -180,11 +185,13 @@ public final class AccessPointUtils {
             final Version version, final String type) {
         EntityManager em = DBContext.getEntityManager();
         em.getTransaction().begin();
-        Query q = em.createQuery(
-                "delete from AccessPoint ap "
-                + "where ap.versionId = ?1 "
-                + "and ap.type = ?2").
-                setParameter(1, version.getId()).setParameter(2, type);
+        Query q = em.createNamedQuery(
+                AccessPoint.DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE).
+                setParameter(AccessPoint.
+                        DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID,
+                        version.getId()).
+                setParameter(AccessPoint.
+                        DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE, type);
         q.executeUpdate();
         em.getTransaction().commit();
         em.close();

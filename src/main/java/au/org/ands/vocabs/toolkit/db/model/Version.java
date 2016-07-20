@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -18,10 +19,20 @@ import au.org.ands.vocabs.toolkit.db.TaskUtils;
  */
 @Entity
 @Table(name = "versions")
+/* Rather than including the text of the query directly in the
+ * annotation, we use a constant defined in the class itself.
+ * This way, it can be found in the generated Javadoc
+ * in the "Constant Field Values" page. */
+@NamedQuery(
+        name = Version.GET_ALL_VERSIONS,
+        query = Version.GET_ALL_VERSIONS_QUERY)
 public class Version {
 
-    /** Key of the release date used in the data field. */
-    private static final String RELEASE_DATE_KEY = "release_date";
+    /** Name of getAllVersions query. */
+    public static final String GET_ALL_VERSIONS = "getAllVersions";
+    /** Queryof getAllVersions query. */
+    protected static final String GET_ALL_VERSIONS_QUERY =
+            "SELECT v FROM Version v";
 
     /** id. */
     private Integer id;
@@ -33,6 +44,9 @@ public class Version {
     private Integer vocabId;
     /** data. */
     private String data;
+
+    /** Key of the release date used in the data field. */
+    private static final String RELEASE_DATE_KEY = "release_date";
 
     /** Get the id.
      * @return The id

@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -14,13 +15,80 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "access_points")
-@NamedQuery(
-        name = AccessPoint.GET_ALL_ACCESSPOINTS,
-        query = "SELECT ap FROM AccessPoint ap")
+/* Rather than including the text of the queries directly in the
+ * annotations, we use constants defined in the class itself.
+ * This way, they can be found (fully expanded!) in the generated Javadoc
+ * in the "Constant Field Values" page. */
+@NamedQueries({
+    @NamedQuery(
+            name = AccessPoint.GET_ALL_ACCESSPOINTS,
+            query = AccessPoint.GET_ALL_ACCESSPOINTS_QUERY),
+    @NamedQuery(
+            name = AccessPoint.GET_ACCESSPOINTS_FOR_VERSION,
+            query = AccessPoint.GET_ACCESSPOINTS_FOR_VERSION_QUERY),
+    @NamedQuery(
+            name = AccessPoint.GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE,
+            query = AccessPoint.GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_QUERY),
+    @NamedQuery(
+            name = AccessPoint.DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE,
+            query = AccessPoint.DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_QUERY)
+})
 public class AccessPoint {
 
     /** Name of getAllAccessPoints query. */
     public static final String GET_ALL_ACCESSPOINTS = "getAllAccessPoints";
+    /** Query of getAllAccessPoints query. */
+    protected static final String GET_ALL_ACCESSPOINTS_QUERY =
+            "SELECT ap FROM AccessPoint ap";
+
+    /** Name of getAccessPointsForVersion query. */
+    public static final String GET_ACCESSPOINTS_FOR_VERSION =
+            "getAccessPointsForVersion";
+    /** Name of getAccessPointsForVersion query's versionId parameter. */
+    public static final String GET_ACCESSPOINTS_FOR_VERSION_VERSIONID =
+            "versionId";
+    /** Query of getAccessPointsForVersion query. */
+    protected static final String GET_ACCESSPOINTS_FOR_VERSION_QUERY =
+            "SELECT ap FROM AccessPoint ap WHERE ap.versionId = :"
+            + GET_ACCESSPOINTS_FOR_VERSION_VERSIONID;
+
+    /** Name of getAccessPointsForVersionAndType query. */
+    public static final String GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE =
+            "getAccessPointsForVersionAndType";
+    /** Name of getAccessPointsForVersionAndType query's versionId
+     *  parameter. */
+    public static final String GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID =
+            "versionId";
+    /** Name of getAccessPointsForVersionAndType query's type parameter. */
+    public static final String GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE =
+            "type";
+    /** Query of getAccessPointsForVersionAndType query. */
+    protected static final String GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_QUERY =
+            "SELECT ap FROM AccessPoint ap "
+            + "WHERE ap.versionId = :"
+            + GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID
+            + " AND ap.type = :"
+            + GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE;
+
+    /** Name of deleteAccessPointsForVersionAndType query. */
+    public static final String DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE =
+            "deleteAccessPointsForVersionAndType";
+    /** Name of deleteAccessPointsForVersionAndType query's versionId
+     *  parameter. */
+    public static final String
+        DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID =
+            "versionId";
+    /** Name of deleteAccessPointsForVersionAndType query's type parameter. */
+    public static final String DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE =
+            "type";
+    /** Query of deleteAccessPointsForVersionAndType query. */
+    protected static final String
+        DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_QUERY =
+            "DELETE FROM AccessPoint ap "
+            + "WHERE ap.versionId = :"
+            + DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID
+            + " AND ap.type = :"
+            + DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE;
 
     /** id. */
     private Integer id;

@@ -31,7 +31,7 @@ public final class VersionUtils {
      */
     public static List<Version> getAllVersions() {
         EntityManager em = DBContext.getEntityManager();
-        TypedQuery<Version> q = em.createQuery("select v from Version v",
+        TypedQuery<Version> q = em.createNamedQuery(Version.GET_ALL_VERSIONS,
                 Version.class);
         List<Version> v = q.getResultList();
         em.close();
