@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import au.org.ands.vocabs.toolkit.db.model.Task;
-import au.org.ands.vocabs.toolkit.db.model.Version;
-import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 
 /** Work with database tasks. */
@@ -57,30 +55,6 @@ public final class TaskUtils {
         em.close();
         return tasks;
     }
-
-
-    /** Get a vocabulary by ID.
-     * @param id vocabulary id
-     * @return The Vocabulary object
-     */
-    public static Vocabulary getVocabularyById(final int id) {
-        EntityManager em = DBContext.getEntityManager();
-        Vocabulary v = em.find(Vocabulary.class, id);
-        em.close();
-        return v;
-    }
-
-    /** Get a version by ID.
-     * @param id version id
-     * @return The Version object
-     */
-    public static Version getVersionById(final int id) {
-        EntityManager em = DBContext.getEntityManager();
-        Version v = em.find(Version.class, id);
-        em.close();
-        return v;
-    }
-
 
     /** Set the status and data fields for a task.
      * @param task The task being updated

@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
+import au.org.ands.vocabs.toolkit.db.VersionUtils;
+import au.org.ands.vocabs.toolkit.db.VocabularyUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
@@ -127,7 +129,7 @@ public final class ToolkitFileUtils {
                     + taskId);
             return null;
         }
-        Vocabulary vocab = TaskUtils.getVocabularyById(
+        Vocabulary vocab = VocabularyUtils.getVocabularyById(
                 task.getVocabularyId());
         if (vocab == null) {
             logger.error("getTaskInfo: getVocabularyById returned null; "
@@ -135,7 +137,7 @@ public final class ToolkitFileUtils {
                     + taskId + "; vocab id:" + task.getVocabularyId());
             return null;
         }
-        Version version = TaskUtils.getVersionById(task.getVersionId());
+        Version version = VersionUtils.getVersionById(task.getVersionId());
         if (version == null) {
             logger.error("getTaskInfo: getVersionById returned null; "
                     + "task id:"

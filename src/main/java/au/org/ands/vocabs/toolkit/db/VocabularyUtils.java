@@ -12,9 +12,9 @@ public final class VocabularyUtils {
     private VocabularyUtils() {
     }
 
-    /** Get vocabulary by vocabulary id.
-     * @param id vocabulary id
-     * @return the vocabulary
+    /** Get a Vocabulary by vocabulary id.
+     * @param id Vocabulary id.
+     * @return The Vocabulary.
      */
     public static Vocabulary getVocabularyById(final int id) {
         EntityManager em = DBContext.getEntityManager();
