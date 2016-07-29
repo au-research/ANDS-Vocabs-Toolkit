@@ -538,7 +538,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          * and subsequently set to false if a non-tree edge is found
          * during depth-first search.
          */
-        private boolean onlyTreeEdges;
+        private boolean onlyTreeEdges = true;
 
         /** Were only tree edges found during depth-first search?
          * @return True, if only tree edges were found during depth-first
@@ -801,8 +801,8 @@ public class JsonTreeTransformProvider extends TransformProvider {
                     // ... but only those without a broader concept to
                     // the set of topmost concepts.
                     if (propertyMap.get("broader") == null) {
-                        logger.debug("Adding to topmost concepts: "
-                                + concept.getKey());
+                        // logger.debug("Adding to topmost concepts: "
+                        //         + concept.getKey());
                         topmostConcepts.put(concept.getKey(), propertyMap);
                     }
                 }
