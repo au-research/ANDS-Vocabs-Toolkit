@@ -94,6 +94,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
     // Tests of class
     // au.org.ands.vocabs.toolkit.provider.transform.JsonTreeTransformProvider.
 
+    // Task numbers 3 and 4 generate magic number warnings.
+    //CHECKSTYLE:OFF: MagicNumber
     /** Server-side test of {@code JsonTreeTransformProvider}.
      * @throws DatabaseUnitException If a problem with DBUnit.
      * @throws HibernateException If a problem getting the underlying
@@ -144,7 +146,46 @@ public class AllArquillianTests extends ArquillianBaseTest {
                 + "au.org.ands.vocabs.toolkit.test.arquillian."
                 + "AllArquillianTests.testJsonTreeTransformProvider1/"
                 + "test-data1-concepts_tree.json");
+
+        // Polyhierarchy detection
+        taskInfo = ToolkitFileUtils.getTaskInfo(3);
+        Assert.assertNotNull(taskInfo, "Test data not loaded, task 3");
+        runner = new TaskRunner(taskInfo);
+        runner.runTask();
+        results = runner.getResults();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(results.get("status"), "success",
+                "JsonTreeTransformProvider failed on task 3");
+        Assert.assertFalse(results.containsKey("concepts_tree"),
+                "JsonTreeTransformProvider task 3 returned a concepts_tree "
+                + "value");
+        Assert.assertEquals(results.get("concepts_tree_not_provided"),
+                "No concepts tree provided, because there is a forward "
+                + "or cross edge.",
+                "JsonTreeTransformProvider task 3 returned wrong value for "
+                + "concepts_tree_not_provided");
+
+        // Cycle detection
+        taskInfo = ToolkitFileUtils.getTaskInfo(4);
+        Assert.assertNotNull(taskInfo, "Test data not loaded, task 4");
+        runner = new TaskRunner(taskInfo);
+        runner.runTask();
+        results = runner.getResults();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(results.get("status"), "success",
+                "JsonTreeTransformProvider failed on task 4");
+        Assert.assertFalse(results.containsKey("concepts_tree"),
+                "JsonTreeTransformProvider task 4 returned a concepts_tree "
+                + "value");
+        Assert.assertEquals(results.get("concepts_tree_not_provided"),
+                "No concepts tree provided, because there is a cycle.",
+                "JsonTreeTransformProvider task 4 returned wrong value for "
+                + "concepts_tree_not_provided");
+
     }
+    //CHECKSTYLE:ON: MagicNumber
 
 
     // Client-side tests go here. Server-side tests are above this line.

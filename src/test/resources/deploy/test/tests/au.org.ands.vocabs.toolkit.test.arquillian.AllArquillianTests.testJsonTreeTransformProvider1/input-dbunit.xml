@@ -48,4 +48,44 @@
                 }
               ]"
       />
+  <TASK
+      ID="3"
+      VOCABULARY_ID="1"
+      VERSION_ID="1"
+      PARAMS="[
+                {
+                  ''type'': ''UNHARVEST'',
+                  ''provider_type'': ''File''
+                },
+                {
+                  ''type'': ''HARVEST'',
+                  ''provider_type'': ''File'',
+                  ''file_path'': ''src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testJsonTreeTransformProvider1/test-data3.ttl''
+                },
+                {
+                  ''type'': ''TRANSFORM'',
+                  ''provider_type'': ''JsonTree''
+                }
+              ]"
+      />
+  <TASK
+      ID="4"
+      VOCABULARY_ID="1"
+      VERSION_ID="1"
+      PARAMS="[
+                {
+                  ''type'': ''UNHARVEST'',
+                  ''provider_type'': ''File''
+                },
+                {
+                  ''type'': ''HARVEST'',
+                  ''provider_type'': ''File'',
+                  ''file_path'': ''src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testJsonTreeTransformProvider1/test-data4.ttl''
+                },
+                {
+                  ''type'': ''TRANSFORM'',
+                  ''provider_type'': ''JsonTree''
+                }
+              ]"
+      />
 </dataset>
