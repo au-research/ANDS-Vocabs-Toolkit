@@ -8,12 +8,13 @@ import java.util.Properties;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.restlet.Download;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Populate the access_points table based on the content of the versions
  * table. This works on the "original" version of the versions table,
@@ -26,15 +27,16 @@ public final class PopulateAccessPoints {
 
     /** URL that is a prefix to all our SPARQL endpoints. */
     private static String sparqlPrefixProperty =
-            PROPS.getProperty("SesameImporter.sparqlPrefix") + "/";
+            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SPARQLPREFIX)
+            + "/";
 
     /** URL that is a prefix to Sesame endpoints. */
     private static String sesamePrefixProperty =
-            PROPS.getProperty("SesameImporter.serverUrl");
+            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SERVERURL);
 
     /** URL that is a prefix to download endpoints. */
     private static String downloadPrefixProperty =
-            PROPS.getProperty("Toolkit.downloadPrefix");
+            PROPS.getProperty(PropertyConstants.TOOLKIT_DOWNLOADPREFIX);
 
     /** Private constructor for a utility class. */
     private PopulateAccessPoints() {

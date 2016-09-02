@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
@@ -71,7 +72,7 @@ public class PropertyRewriterTransformProvider extends TransformProvider {
 
    /** The path to the metadata rewrite configuration file. */
    protected static final String METADATA_REWRITE_MAP_PATH =
-           PROPS.getProperty("Toolkit.metadataRewriteMapPath");
+           PROPS.getProperty(PropertyConstants.TOOLKIT_METADATAREWRITEMAPPATH);
 
    /** The configuration for property rewriting. */
    private HierarchicalINIConfiguration metadataRewriteConf;

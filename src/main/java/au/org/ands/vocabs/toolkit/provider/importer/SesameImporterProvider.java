@@ -37,16 +37,17 @@ import org.openrdf.sail.nativerdf.config.NativeStoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.AccessPointUtils;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 //CHECKSTYLE:ON: LineLength
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Sesame importer provider. */
 public class SesameImporterProvider extends ImporterProvider {
@@ -60,11 +61,11 @@ public class SesameImporterProvider extends ImporterProvider {
 
     /** URL to access the Sesame server. */
     private String sesameServer =
-            PROPS.getProperty("SesameImporter.serverUrl");
+            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SERVERURL);
 
     /** URL that is a prefix to all SPARQL endpoints. */
     private String sparqlPrefix =
-            PROPS.getProperty("SesameImporter.sparqlPrefix");
+            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SPARQLPREFIX);
 
     /** Force loading of HttpClientUtils, so that shutdown works
      * properly. Revisit this when using a later version of Tomcat,

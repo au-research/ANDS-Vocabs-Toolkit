@@ -22,6 +22,7 @@ import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Restlets for getting info about Toolkit supported services. */
@@ -94,11 +95,12 @@ public class GetInfo {
         Properties props = ToolkitProperties.getProperties();
         HashMap<String, String> result =
                 new HashMap<String, String>();
-        result.put("Toolkit.version", props.getProperty("Toolkit.version"));
+        result.put("Toolkit.version",
+                props.getProperty(PropertyConstants.TOOLKIT_VERSION));
         result.put("Toolkit.versionTimestamp",
-                props.getProperty("Toolkit.versionTimestamp"));
+                props.getProperty(PropertyConstants.TOOLKIT_VERSIONTIMESTAMP));
         result.put("Toolkit.buildDate",
-                props.getProperty("Toolkit.buildDate"));
+                props.getProperty(PropertyConstants.TOOLKIT_BUILDDATE));
         return result;
     }
 

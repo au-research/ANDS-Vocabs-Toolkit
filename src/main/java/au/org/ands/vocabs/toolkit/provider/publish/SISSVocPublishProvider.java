@@ -21,15 +21,16 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.AccessPointUtils;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** SISSVoc publish provider. */
 public class SISSVocPublishProvider extends PublishProvider {
@@ -46,21 +47,17 @@ public class SISSVocPublishProvider extends PublishProvider {
     /** Access to the Toolkit properties. */
     protected static final Properties PROPS = ToolkitProperties.getProperties();
 
-//    /** URL to access the Sesame server. */
-//    private String sissvocPath =
-//            PROPS.getProperty("SISSVocPublish.spec_path");
-
     /** The location of the spec file template. */
     private String sissvocSpecTemplatePath =
-            PROPS.getProperty("SISSVoc.specTemplate");
+            PROPS.getProperty(PropertyConstants.SISSVOC_SPECTEMPLATE);
 
     /** The directory in which to write generated spec files. */
     private String sissvocSpecOutputPath =
-            PROPS.getProperty("SISSVoc.specsPath");
+            PROPS.getProperty(PropertyConstants.SISSVOC_SPECSPATH);
 
     /** URL that is a prefix to all SISSVoc endpoints. */
     private String sissvocEndpointsPrefix =
-            PROPS.getProperty("SISSVoc.endpointsPrefix");
+            PROPS.getProperty(PropertyConstants.SISSVOC_ENDPOINTSPREFIX);
 
     /** Values to be substituted in the spec file template. */
     private final HashMap<String, String> specProperties =
@@ -122,25 +119,30 @@ public class SISSVocPublishProvider extends PublishProvider {
     private void addBasicSpecProperties(final TaskInfo taskInfo) {
         // Top-level of deployment path
         specProperties.put("DEPLOYPATH",
-                PROPS.getProperty("SISSVoc.variable.DEPLOYPATH",
+                PROPS.getProperty(
+                        PropertyConstants.SISSVOC_VARIABLE_DEPLOYPATH,
                         "/repository/api/lda"));
         // The name of the ANDS Vocabulary service
         specProperties.put("SERVICE_TITLE",
-                PROPS.getProperty("SISSVoc.variable.SERVICE_TITLE",
+                PROPS.getProperty(
+                        PropertyConstants.SISSVOC_VARIABLE_SERVICE_TITLE,
                         "ANDS Vocabularies LDA service"));
         // The name of the ANDS Vocabulary service owner
         specProperties.put("SERVICE_AUTHOR",
-                PROPS.getProperty("SISSVoc.variable.SERVICE_AUTHOR",
+                PROPS.getProperty(
+                        PropertyConstants.SISSVOC_VARIABLE_SERVICE_AUTHOR,
                         "ANDS Services"));
         // Contact email address for the ANDS Vocabulary service owner
         specProperties.put("SERVICE_AUTHOR_EMAIL",
-                PROPS.getProperty("SISSVoc.variable.SERVICE_AUTHOR_EMAIL",
+                PROPS.getProperty(
+                        PropertyConstants.SISSVOC_VARIABLE_SERVICE_AUTHOR_EMAIL,
                         "services@ands.org.au"));
         // Homepage of the ANDS Vocabulary service
         // ANDS home page for now; in future, could be
         // vocabs.ands.org.au itself.
         specProperties.put("SERVICE_HOMEPAGE",
-                PROPS.getProperty("SISSVoc.variable.SERVICE_HOMEPAGE",
+                PROPS.getProperty(
+                        PropertyConstants.SISSVOC_VARIABLE_SERVICE_HOMEPAGE,
                         "http://www.ands.org.au/"));
         // Vocabulary title
         specProperties.put("SERVICE_LABEL",
@@ -149,7 +151,8 @@ public class SISSVocPublishProvider extends PublishProvider {
         String repositoryId = ToolkitFileUtils.getSesameRepositoryId(taskInfo);
         // SPARQL endpoint to use for doing queries
         specProperties.put("SPARQL_ENDPOINT",
-                PROPS.getProperty("SISSVoc.variable.SPARQL_ENDPOINT_PREFIX",
+                PROPS.getProperty(
+                    PropertyConstants.SISSVOC_VARIABLE_SPARQL_ENDPOINT_PREFIX,
                         "http://localhost:8080/repository/"
                                 + "openrdf-sesame/repositories/")
                                 + repositoryId);
@@ -161,7 +164,8 @@ public class SISSVocPublishProvider extends PublishProvider {
         // Path to the XSL stylesheet that generates the HTML pages.
         // Path is relative to the SISSVoc webapp.
         specProperties.put("HTML_STYLESHEET",
-                PROPS.getProperty("SISSVoc.variable.HTML_STYLESHEET",
+                PROPS.getProperty(
+                        PropertyConstants.SISSVOC_VARIABLE_HTML_STYLESHEET,
                         "resources/default/transform/ands-ashtml-sissvoc.xsl"));
         // Empty string for now
         specProperties.put("NAMESPACES", "");

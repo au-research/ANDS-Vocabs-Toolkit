@@ -20,13 +20,14 @@ import org.openrdf.repository.manager.RepositoryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Utility methods for working on a Sesame repository.
@@ -42,7 +43,7 @@ public final class SesameTransformUtils {
 
     /** URL to access the Sesame server. */
     private static String sesameServer =
-            PROPS.getProperty("SesameImporter.serverUrl");
+            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SERVERURL);
 
     /** Force loading of HttpClientUtils, so that shutdown works
      * properly. Revisit this when using a later version of Tomcat,

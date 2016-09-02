@@ -21,12 +21,12 @@ import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Harvest provider for Sesame. */
 public class SesameHarvestProvider extends HarvestProvider {
@@ -84,8 +84,10 @@ public class SesameHarvestProvider extends HarvestProvider {
         }
 
         // Future work: support accessing via basic authentication.
-//        String username = PROPS.getProperty("PoolPartyHarvester.username");
-//        String password = PROPS.getProperty("PoolPartyHarvester.password");
+//        String username = PROPS.getProperty(
+//                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+//        String password = PROPS.getProperty(
+//                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
         logger.debug("Getting project from " + remoteBase
                 + ", repository id " + repositoryId);

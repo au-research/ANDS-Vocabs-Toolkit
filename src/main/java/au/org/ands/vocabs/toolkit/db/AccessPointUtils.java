@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.restlet.Download;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Work with database access points. */
@@ -40,7 +41,7 @@ public final class AccessPointUtils {
 
     /** URL that is a prefix to download endpoints. */
     private static String downloadPrefixProperty =
-            PROPS.getProperty("Toolkit.downloadPrefix");
+            PROPS.getProperty(PropertyConstants.TOOLKIT_DOWNLOADPREFIX);
 
     /** Mapping of file extensions to file formats. */
     public static final Hashtable<String, String>

@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import ch.qos.logback.classic.Level;
@@ -43,9 +44,12 @@ public class PoolPartyBackupProvider extends BackupProvider {
      * @return An ArrayList of all IDs as Strings.
      */
     public final ArrayList<String> getProjectIDs() {
-        String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
-        String username = PROPS.getProperty("PoolPartyHarvester.username");
-        String password = PROPS.getProperty("PoolPartyHarvester.password");
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+        String username = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+        String password = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
         logger.debug("Getting metadata from " + remoteUrl);
 
@@ -94,11 +98,15 @@ public class PoolPartyBackupProvider extends BackupProvider {
             final String ppProjectId,
             final String outputPath) {
         HashMap<String, String> result = new HashMap<String, String>();
-        String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
-        String username = PROPS.getProperty("PoolPartyHarvester.username");
-        String password = PROPS.getProperty("PoolPartyHarvester.password");
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+        String username = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+        String password = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
-        String format = PROPS.getProperty("PoolPartyHarvester.defaultFormat");
+        String format = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_DEFAULTFORMAT);
 
         List<String> exportModules = new ArrayList<String>();
 
