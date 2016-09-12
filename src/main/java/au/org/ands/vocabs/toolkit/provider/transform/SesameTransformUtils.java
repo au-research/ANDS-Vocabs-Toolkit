@@ -4,7 +4,6 @@ package au.org.ands.vocabs.toolkit.provider.transform;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.openrdf.model.Value;
 import org.openrdf.query.MalformedQueryException;
@@ -38,12 +37,9 @@ public final class SesameTransformUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
-
     /** URL to access the Sesame server. */
-    private static String sesameServer =
-            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SERVERURL);
+    private static String sesameServer = ToolkitProperties.getProperty(
+            PropertyConstants.SESAMEIMPORTER_SERVERURL);
 
     /** Force loading of HttpClientUtils, so that shutdown works
      * properly. Revisit this when using a later version of Tomcat,

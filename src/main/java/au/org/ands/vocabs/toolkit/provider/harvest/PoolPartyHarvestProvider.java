@@ -24,6 +24,7 @@ import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Harvest provider for PoolParty. */
 public class PoolPartyHarvestProvider extends HarvestProvider {
@@ -34,11 +35,11 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
     @Override
     public final String getInfo() {
-        String remoteUrl = PROPS.getProperty(
+        String remoteUrl = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
-        String username = PROPS.getProperty(
+        String username = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_USERNAME);
-        String password = PROPS.getProperty(
+        String password = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
         logger.debug("Getting metadata from " + remoteUrl);
@@ -81,21 +82,21 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             final boolean getMetadata,
             final boolean returnOutputPaths,
             final HashMap<String, String> results) {
-        String remoteUrl = PROPS.getProperty(
+        String remoteUrl = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
-        String username = PROPS.getProperty(
+        String username = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_USERNAME);
-        String password = PROPS.getProperty(
+        String password = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
-        String format = PROPS.getProperty(
+        String format = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTFORMAT);
 
 // Possible future work: support specifying particular modules.
 //        List<String> exportModules =
 //                info.getQueryParameters().get("exportModules");
         List<String> exportModules = new ArrayList<String>();
-        exportModules.add(PROPS.getProperty(
+        exportModules.add(ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTEXPORTMODULE));
         if (getMetadata) {
             exportModules.add("adms");

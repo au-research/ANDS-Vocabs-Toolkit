@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,10 +18,22 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.configuration.AbstractFileConfiguration;
+import org.apache.commons.configuration.ConfigurationConverter;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Utility class providing access to toolkit properties. */
+/** Utility class providing access to toolkit properties.
+ * Properties are <i>implemented</i> using Apache Commons Configuration,
+ * but <i>accessed</i> as though they were Java Properties.
+ * The reason for using Commons Configuration is to support its
+ * extra features. For now, the one extra feature taken advantage
+ * of is interpolation of variables. That is, a property value
+ * may include the value of another property using the
+ * <code>${...}</code> syntax.
+ */
 public final class ToolkitProperties {
 
     /** Base name of the main properties file, if provided inside the
@@ -50,10 +63,19 @@ public final class ToolkitProperties {
      */
     private static final String DUMP_PROPERTY = "dumpProperties";
 
-    /** Properties object. After initialization, contains all
+    /** All loaded properties. After initialization, contains all
      * properties loaded from
-     * the toolkit properties file and the version properties file. */
-    private static Properties props;
+     * the toolkit properties file and the version properties file.
+     * This is the "definitive" copy of the properties. The
+     * field {@link ToolkitProperties#propsAsProperties} is derived
+     * from this. */
+    private static AbstractFileConfiguration props;
+
+    /** A copy of all loaded properties, derived from
+     * {@link ToolkitProperties#props}. This field is used to provide
+     * a cached copy for quick access. */
+    private static Properties propsAsProperties;
+
 
     /** Logger for this class. */
     private static Logger logger;
@@ -67,20 +89,21 @@ public final class ToolkitProperties {
                 MethodHandles.lookup().lookupClass());
     }
 
-    /** Get the toolkit properties. (Forces initialization of the properties,
-     * if that has not already happened.)
-     * @return The properties.
+    /** Get all of the toolkit properties, as a Properties object.
+     * Forces initialization of the properties,
+     * if that has not already happened.
+     * @return The toolkit properties, as a Properties object.
      */
     public static Properties getProperties() {
         if (props == null) {
             initProperties();
         }
-        return props;
+        return propsAsProperties;
     }
 
     /** Get the value of a toolkit property.
-     * (Forces initialization of the properties,
-     * if that has not already happened.)
+     * Forces initialization of the properties,
+     * if that has not already happened.
      * @param propName The name of the property to fetch.
      * @return The value of the property.
      */
@@ -88,13 +111,13 @@ public final class ToolkitProperties {
         if (props == null) {
             initProperties();
         }
-        return props.getProperty(propName);
+        return props.getString(propName);
     }
 
     /** Get the value of a toolkit property. This version of the method
      * allows specifying a default value for the property, if one
-     * has not been specified. (Forces initialization of the properties,
-     * if that has not already happened.)
+     * has not been specified. Forces initialization of the properties,
+     * if that has not already happened.
      * @param propName The name of the property to fetch.
      * @param defaultValue A default value to use, if there is no
      * property with name propName.
@@ -105,7 +128,7 @@ public final class ToolkitProperties {
         if (props == null) {
             initProperties();
         }
-        return props.getProperty(propName, defaultValue);
+        return props.getString(propName, defaultValue);
     }
 
     /** Initialize the toolkit properties. First, load the user-specified
@@ -133,7 +156,11 @@ public final class ToolkitProperties {
         }
 
         // Initialize props here, before loading any values into it.
-        props = new Properties();
+        props = new PropertiesConfiguration();
+        // Don't allow the presence of a comma to create multiple
+        // instances of a property.
+        props.setListDelimiter((char) 0);
+
         // Get the ServletContext, if any. If running standalone code,
         // this will be null.
         ServletContext servletContext = null;
@@ -238,9 +265,14 @@ public final class ToolkitProperties {
         }
         try {
             // load a properties file
-            props.load(input);
-            props.load(input2);
-        } catch (IOException ex) {
+            props.load(new InputStreamReader(input));
+            props.load(new InputStreamReader(input2));
+            // Support interpolation of properties using ${...} syntax.
+            props = (AbstractFileConfiguration)
+                    props.interpolatedConfiguration();
+            // And now convert into Properties format for cached access.
+            propsAsProperties = ConfigurationConverter.getProperties(props);
+        } catch (ConfigurationException ex) {
             ex.printStackTrace();
         } finally {
             if (input != null) {
@@ -270,7 +302,7 @@ public final class ToolkitProperties {
      * property name contains the word "password", its value
      * is not displayed. */
     private static void dumpProperties() {
-        Enumeration<?> e = props.propertyNames();
+        Enumeration<?> e = getProperties().propertyNames();
 
         logger.info("All toolkit properties:");
         while (e.hasMoreElements()) {

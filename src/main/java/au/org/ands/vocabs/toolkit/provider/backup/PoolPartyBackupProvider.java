@@ -31,6 +31,7 @@ import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 import ch.qos.logback.classic.Level;
 
 /** Backup provider for PoolParty. */
@@ -44,11 +45,11 @@ public class PoolPartyBackupProvider extends BackupProvider {
      * @return An ArrayList of all IDs as Strings.
      */
     public final ArrayList<String> getProjectIDs() {
-        String remoteUrl = PROPS.getProperty(
+        String remoteUrl = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
-        String username = PROPS.getProperty(
+        String username = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_USERNAME);
-        String password = PROPS.getProperty(
+        String password = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
         logger.debug("Getting metadata from " + remoteUrl);
@@ -98,14 +99,14 @@ public class PoolPartyBackupProvider extends BackupProvider {
             final String ppProjectId,
             final String outputPath) {
         HashMap<String, String> result = new HashMap<String, String>();
-        String remoteUrl = PROPS.getProperty(
+        String remoteUrl = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
-        String username = PROPS.getProperty(
+        String username = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_USERNAME);
-        String password = PROPS.getProperty(
+        String password = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
-        String format = PROPS.getProperty(
+        String format = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTFORMAT);
 
         List<String> exportModules = new ArrayList<String>();

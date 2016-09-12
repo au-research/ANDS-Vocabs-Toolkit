@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
@@ -51,9 +50,6 @@ public class PropertyRewriterTransformProvider extends TransformProvider {
    private final Logger logger = LoggerFactory.getLogger(
            MethodHandles.lookup().lookupClass());
 
-   /** Access to the Toolkit properties. */
-   protected static final Properties PROPS = ToolkitProperties.getProperties();
-
    /** A map of metadata properties to look for and rewrite. */
    private static HashMap<URI, String> metadataToLookFor =
            new HashMap<URI, String>();
@@ -72,7 +68,8 @@ public class PropertyRewriterTransformProvider extends TransformProvider {
 
    /** The path to the metadata rewrite configuration file. */
    protected static final String METADATA_REWRITE_MAP_PATH =
-           PROPS.getProperty(PropertyConstants.TOOLKIT_METADATAREWRITEMAPPATH);
+           ToolkitProperties.getProperty(
+                   PropertyConstants.TOOLKIT_METADATAREWRITEMAPPATH);
 
    /** The configuration for property rewriting. */
    private HierarchicalINIConfiguration metadataRewriteConf;

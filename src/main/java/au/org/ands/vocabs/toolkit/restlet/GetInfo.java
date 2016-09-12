@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
@@ -92,15 +91,17 @@ public class GetInfo {
     @GET
     public final HashMap<String, String> getVersion() {
         logger.debug("called getVersion");
-        Properties props = ToolkitProperties.getProperties();
         HashMap<String, String> result =
                 new HashMap<String, String>();
         result.put("Toolkit.version",
-                props.getProperty(PropertyConstants.TOOLKIT_VERSION));
+                ToolkitProperties.getProperty(
+                        PropertyConstants.TOOLKIT_VERSION));
         result.put("Toolkit.versionTimestamp",
-                props.getProperty(PropertyConstants.TOOLKIT_VERSIONTIMESTAMP));
+                ToolkitProperties.getProperty(
+                        PropertyConstants.TOOLKIT_VERSIONTIMESTAMP));
         result.put("Toolkit.buildDate",
-                props.getProperty(PropertyConstants.TOOLKIT_BUILDDATE));
+                ToolkitProperties.getProperty(
+                        PropertyConstants.TOOLKIT_BUILDDATE));
         return result;
     }
 

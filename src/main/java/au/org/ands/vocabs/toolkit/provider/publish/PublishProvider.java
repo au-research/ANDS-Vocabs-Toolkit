@@ -1,18 +1,13 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.provider.publish;
 import java.util.HashMap;
-import java.util.Properties;
-
-import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
-import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
+
 /** Abstract class representing publish providers. */
 public abstract class PublishProvider {
-
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
 
     /** Return information about the provider.
      * @return The information.

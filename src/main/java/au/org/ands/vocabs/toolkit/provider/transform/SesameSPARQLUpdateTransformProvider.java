@@ -3,18 +3,16 @@ package au.org.ands.vocabs.toolkit.provider.transform;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
-import java.util.Properties;
 
 import org.openrdf.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
-import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Transform provider for running a SPARQL update on a Sesame repository. In
@@ -27,9 +25,6 @@ public class SesameSPARQLUpdateTransformProvider extends TransformProvider {
     /** Logger for this class. */
     private final Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
-
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
 
     @Override
     public final String getInfo() {

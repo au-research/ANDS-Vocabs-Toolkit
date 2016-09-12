@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -47,7 +46,6 @@ import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-//CHECKSTYLE:ON: LineLength
 
 /** Sesame importer provider. */
 public class SesameImporterProvider extends ImporterProvider {
@@ -56,16 +54,13 @@ public class SesameImporterProvider extends ImporterProvider {
     private final Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
-
     /** URL to access the Sesame server. */
-    private String sesameServer =
-            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SERVERURL);
+    private String sesameServer = ToolkitProperties.getProperty(
+            PropertyConstants.SESAMEIMPORTER_SERVERURL);
 
     /** URL that is a prefix to all SPARQL endpoints. */
-    private String sparqlPrefix =
-            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SPARQLPREFIX);
+    private String sparqlPrefix = ToolkitProperties.getProperty(
+            PropertyConstants.SESAMEIMPORTER_SPARQLPREFIX);
 
     /** Force loading of HttpClientUtils, so that shutdown works
      * properly. Revisit this when using a later version of Tomcat,

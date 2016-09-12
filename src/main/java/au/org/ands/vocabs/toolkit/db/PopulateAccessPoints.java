@@ -3,7 +3,6 @@ package au.org.ands.vocabs.toolkit.db;
 
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Properties;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -22,21 +21,21 @@ import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
  * This is to be used for upgrading a Release 16 database to Release 17. */
 public final class PopulateAccessPoints {
 
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
-
     /** URL that is a prefix to all our SPARQL endpoints. */
     private static String sparqlPrefixProperty =
-            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SPARQLPREFIX)
+            ToolkitProperties.getProperty(
+                    PropertyConstants.SESAMEIMPORTER_SPARQLPREFIX)
             + "/";
 
     /** URL that is a prefix to Sesame endpoints. */
     private static String sesamePrefixProperty =
-            PROPS.getProperty(PropertyConstants.SESAMEIMPORTER_SERVERURL);
+            ToolkitProperties.getProperty(
+                    PropertyConstants.SESAMEIMPORTER_SERVERURL);
 
     /** URL that is a prefix to download endpoints. */
     private static String downloadPrefixProperty =
-            PROPS.getProperty(PropertyConstants.TOOLKIT_DOWNLOADPREFIX);
+            ToolkitProperties.getProperty(
+                    PropertyConstants.TOOLKIT_DOWNLOADPREFIX);
 
     /** Private constructor for a utility class. */
     private PopulateAccessPoints() {

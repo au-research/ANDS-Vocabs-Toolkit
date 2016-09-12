@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
@@ -50,12 +49,10 @@ public class GetMetadataTransformProvider extends TransformProvider {
    private final Logger logger = LoggerFactory.getLogger(
            MethodHandles.lookup().lookupClass());
 
-   /** Access to the Toolkit properties. */
-   protected static final Properties PROPS = ToolkitProperties.getProperties();
-
    /** The path to the metadata rewrite configuration file. */
    protected static final String METADATA_REWRITE_MAP_PATH =
-           PROPS.getProperty(PropertyConstants.TOOLKIT_METADATAREWRITEMAPPATH);
+           ToolkitProperties.getProperty(
+                   PropertyConstants.TOOLKIT_METADATAREWRITEMAPPATH);
 
    /** A map of metadata properties to look for and extract. */
    private static HashMap<URI, String> metadataToLookFor =

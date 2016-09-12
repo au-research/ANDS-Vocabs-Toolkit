@@ -9,7 +9,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -36,12 +35,10 @@ public final class AccessPointUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
-
     /** URL that is a prefix to download endpoints. */
     private static String downloadPrefixProperty =
-            PROPS.getProperty(PropertyConstants.TOOLKIT_DOWNLOADPREFIX);
+            ToolkitProperties.getProperty(
+                    PropertyConstants.TOOLKIT_DOWNLOADPREFIX);
 
     /** Mapping of file extensions to file formats. */
     public static final Hashtable<String, String>

@@ -4,19 +4,14 @@ package au.org.ands.vocabs.toolkit.db;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Properties;
-
-import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
-import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 
 /** Dump the access_points table, in particular, unpacking the contents of the
  * portal_data and toolkit_data columns. */
 public final class DumpAccessPointsData {
-
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
 
     /** Private constructor for a utility class. */
     private DumpAccessPointsData() {

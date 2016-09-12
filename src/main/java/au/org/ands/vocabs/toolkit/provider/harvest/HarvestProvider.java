@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.openrdf.model.Model;
@@ -20,13 +19,12 @@ import org.openrdf.rio.UnsupportedRDFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 //import au.org.ands.vocabs.toolkit.harvester.HttpsHack;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.utils.ToolkitConfig;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
-import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Abstract class representing harvester providers. */
 public abstract class HarvestProvider {
@@ -37,10 +35,6 @@ public abstract class HarvestProvider {
     /** Logger for this class. */
     private final Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
-
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS =
-            ToolkitProperties.getProperties();
 
     /** Return information about the provider.
      * @return The information.

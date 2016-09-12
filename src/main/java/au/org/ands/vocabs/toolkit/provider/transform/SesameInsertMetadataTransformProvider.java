@@ -2,7 +2,6 @@
 package au.org.ands.vocabs.toolkit.provider.transform;
 
 import java.util.HashMap;
-import java.util.Properties;
 
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
-import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /**
  * Transform provider for inserting (version) metadata into a Sesame repository.
@@ -27,9 +25,6 @@ public class SesameInsertMetadataTransformProvider extends TransformProvider {
 //    /** Logger for this class. */
 //    private final Logger logger = LoggerFactory.getLogger(
 //            MethodHandles.lookup().lookupClass());
-
-    /** Access to the Toolkit properties. */
-    protected static final Properties PROPS = ToolkitProperties.getProperties();
 
     @Override
     public final String getInfo() {
