@@ -83,5 +83,9 @@
   <module name="SuppressionFilter">
     <property name="file" value="${samedir}/ands-checkstyle-suppress.xml"/>
   </module>
-  <module name="SuppressionCommentFilter"/>
+  <module name="SuppressionCommentFilter">
+    <property name="offCommentFormat" value="CHECKSTYLE\:OFF\: ([\w\|]+)"/>
+    <property name="onCommentFormat" value="CHECKSTYLE\:ON\: ([\w\|]+)"/>
+    <property name="checkFormat" value="$1"/>
+  </module>
 </module>
