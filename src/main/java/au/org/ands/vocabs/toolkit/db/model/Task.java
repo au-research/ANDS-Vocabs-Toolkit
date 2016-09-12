@@ -15,14 +15,20 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "task")
+/* Rather than including the text of the query directly in the
+ * annotation, we use a constant defined in the class itself.
+ * This way, it can be found in the generated Javadoc
+ * in the "Constant Field Values" page. */
 @NamedQuery(
         name = Task.GET_ALL_TASKS,
-        query = "SELECT t FROM Task t")
+        query = Task.GET_ALL_TASKS_QUERY)
 @XmlRootElement
 public class Task {
 
     /** Name of getAllTasks query. */
     public static final String GET_ALL_TASKS = "getAllTasks";
+    /** Query of getAllTasks query. */
+    protected static final String GET_ALL_TASKS_QUERY = "SELECT t FROM Task t";
 
     /** id. */
     private Integer id;

@@ -1,4 +1,8 @@
-Tomcat libraries needed only for compilation.
+Tomcat libraries needed for:
+* compilation
+* anything that needs ToolkitProperties:
+** rewrite_current.sh
+** (and probably any other script run from command-line)
 
 LICENSE: The licence that applies to Tomcat.
 servlet-api.jar: As taken from the Tomcat 7.0.61 binary distribution.

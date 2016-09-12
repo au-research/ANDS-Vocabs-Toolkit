@@ -6,22 +6,33 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 
 /**
- * Versions model class.
+ * Version model class.
  */
 @Entity
 @Table(name = "versions")
-public class Versions {
+/* Rather than including the text of the query directly in the
+ * annotation, we use a constant defined in the class itself.
+ * This way, it can be found in the generated Javadoc
+ * in the "Constant Field Values" page. */
+@NamedQuery(
+        name = Version.GET_ALL_VERSIONS,
+        query = Version.GET_ALL_VERSIONS_QUERY)
+public class Version {
 
-    /** Key of the release date used in the data field. */
-    private static final String RELEASE_DATE_KEY = "release_date";
+    /** Name of getAllVersions query. */
+    public static final String GET_ALL_VERSIONS = "getAllVersions";
+    /** Queryof getAllVersions query. */
+    protected static final String GET_ALL_VERSIONS_QUERY =
+            "SELECT v FROM Version v";
 
     /** id. */
     private Integer id;
@@ -33,6 +44,9 @@ public class Versions {
     private Integer vocabId;
     /** data. */
     private String data;
+
+    /** Key of the release date used in the data field. */
+    private static final String RELEASE_DATE_KEY = "release_date";
 
     /** Get the id.
      * @return The id
@@ -90,7 +104,7 @@ public class Versions {
         if (data == null || data.isEmpty()) {
             return null;
         }
-        JsonNode dataJson = TasksUtils.jsonStringToTree(data);
+        JsonNode dataJson = TaskUtils.jsonStringToTree(data);
         JsonNode releaseDate = dataJson.get(RELEASE_DATE_KEY);
         if (releaseDate == null) {
             return null;

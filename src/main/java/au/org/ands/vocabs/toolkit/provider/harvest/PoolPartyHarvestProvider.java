@@ -16,13 +16,14 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /** Harvest provider for PoolParty. */
 public class PoolPartyHarvestProvider extends HarvestProvider {
@@ -33,9 +34,12 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
     @Override
     public final String getInfo() {
-        String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
-        String username = PROPS.getProperty("PoolPartyHarvester.username");
-        String password = PROPS.getProperty("PoolPartyHarvester.password");
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+        String username = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+        String password = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
         logger.debug("Getting metadata from " + remoteUrl);
 
@@ -77,18 +81,22 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             final boolean getMetadata,
             final boolean returnOutputPaths,
             final HashMap<String, String> results) {
-        String remoteUrl = PROPS.getProperty("PoolPartyHarvester.remoteUrl");
-        String username = PROPS.getProperty("PoolPartyHarvester.username");
-        String password = PROPS.getProperty("PoolPartyHarvester.password");
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+        String username = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+        String password = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
 
-        String format = PROPS.getProperty("PoolPartyHarvester.defaultFormat");
+        String format = PROPS.getProperty(
+                PropertyConstants.POOLPARTYHARVESTER_DEFAULTFORMAT);
 
 // Possible future work: support specifying particular modules.
 //        List<String> exportModules =
 //                info.getQueryParameters().get("exportModules");
         List<String> exportModules = new ArrayList<String>();
         exportModules.add(PROPS.getProperty(
-                "PoolPartyHarvester.defaultExportModule"));
+                PropertyConstants.POOLPARTYHARVESTER_DEFAULTEXPORTMODULE));
         if (getMetadata) {
             exportModules.add("adms");
             exportModules.add("void");
@@ -159,7 +167,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             final HashMap<String, String> results) {
         if (subtask.get("project_id") == null
                 || subtask.get("project_id").textValue().isEmpty()) {
-            TasksUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
+            TaskUtils.updateMessageAndTaskStatus(logger, taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "No PoolParty id specified. Nothing to do.");
             return false;

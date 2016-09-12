@@ -23,13 +23,14 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import au.org.ands.vocabs.toolkit.db.model.AccessPoints;
-import au.org.ands.vocabs.toolkit.db.model.Versions;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
+import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.restlet.Download;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Work with database access points. */
-public final class AccessPointsUtils {
+public final class AccessPointUtils {
 
     /** Logger for this class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(
@@ -40,7 +41,7 @@ public final class AccessPointsUtils {
 
     /** URL that is a prefix to download endpoints. */
     private static String downloadPrefixProperty =
-            PROPS.getProperty("Toolkit.downloadPrefix");
+            PROPS.getProperty(PropertyConstants.TOOLKIT_DOWNLOADPREFIX);
 
     /** Mapping of file extensions to file formats. */
     public static final Hashtable<String, String>
@@ -110,18 +111,18 @@ public final class AccessPointsUtils {
 
 
     /** Private constructor for a utility class. */
-    private AccessPointsUtils() {
+    private AccessPointUtils() {
     }
 
     /** Get all access points.
      * @return A list of AccessPoints
      */
-    public static List<AccessPoints> getAllAccessPoints() {
+    public static List<AccessPoint> getAllAccessPoints() {
         EntityManager em = DBContext.getEntityManager();
-        TypedQuery<AccessPoints> query =
-                em.createNamedQuery(AccessPoints.GET_ALL_ACCESSPOINTS,
-                        AccessPoints.class);
-        List<AccessPoints> aps = query.getResultList();
+        TypedQuery<AccessPoint> query =
+                em.createNamedQuery(AccessPoint.GET_ALL_ACCESSPOINTS,
+                        AccessPoint.class);
+        List<AccessPoint> aps = query.getResultList();
         em.close();
         return aps;
     }
@@ -130,9 +131,9 @@ public final class AccessPointsUtils {
      * @param id access point id
      * @return the access point
      */
-    public static AccessPoints getAccessPointById(final int id) {
+    public static AccessPoint getAccessPointById(final int id) {
         EntityManager em = DBContext.getEntityManager();
-        AccessPoints ap = em.find(AccessPoints.class, id);
+        AccessPoint ap = em.find(AccessPoint.class, id);
         em.close();
         return ap;
     }
@@ -141,14 +142,16 @@ public final class AccessPointsUtils {
      * @param version The version.
      * @return The list of access points for this version.
      */
-    public static List<AccessPoints> getAccessPointsForVersion(
-            final Versions version) {
+    public static List<AccessPoint> getAccessPointsForVersion(
+            final Version version) {
         EntityManager em = DBContext.getEntityManager();
-        TypedQuery<AccessPoints> q = em.createQuery(
-                "select ap from AccessPoints ap where ap.versionId = ?1",
-                AccessPoints.class).
-                setParameter(1, version.getId());
-        List<AccessPoints> aps = q.getResultList();
+        TypedQuery<AccessPoint> q = em.createNamedQuery(
+                AccessPoint.GET_ACCESSPOINTS_FOR_VERSION,
+                AccessPoint.class).
+                setParameter(
+                        AccessPoint.GET_ACCESSPOINTS_FOR_VERSION_VERSIONID,
+                        version.getId());
+        List<AccessPoint> aps = q.getResultList();
         em.close();
         return aps;
     }
@@ -158,16 +161,19 @@ public final class AccessPointsUtils {
      * @param type The type of access point to look for.
      * @return The list of access points for this version.
      */
-    public static List<AccessPoints> getAccessPointsForVersionAndType(
-            final Versions version, final String type) {
+    public static List<AccessPoint> getAccessPointsForVersionAndType(
+            final Version version, final String type) {
         EntityManager em = DBContext.getEntityManager();
-        TypedQuery<AccessPoints> q = em.createQuery(
-                "select ap from AccessPoints ap "
-                + "where ap.versionId = ?1 "
-                + "and ap.type = ?2",
-                AccessPoints.class).
-                setParameter(1, version.getId()).setParameter(2, type);
-        List<AccessPoints> aps = q.getResultList();
+        TypedQuery<AccessPoint> q = em.createNamedQuery(
+                AccessPoint.GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE,
+                AccessPoint.class).
+                setParameter(AccessPoint.
+                            GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID,
+                            version.getId()).
+                setParameter(AccessPoint.
+                            GET_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE,
+                            type);
+        List<AccessPoint> aps = q.getResultList();
         em.close();
         return aps;
     }
@@ -177,14 +183,16 @@ public final class AccessPointsUtils {
      * @param type The type of access point to look for.
      */
     public static void deleteAccessPointsForVersionAndType(
-            final Versions version, final String type) {
+            final Version version, final String type) {
         EntityManager em = DBContext.getEntityManager();
         em.getTransaction().begin();
-        Query q = em.createQuery(
-                "delete from AccessPoints ap "
-                + "where ap.versionId = ?1 "
-                + "and ap.type = ?2").
-                setParameter(1, version.getId()).setParameter(2, type);
+        Query q = em.createNamedQuery(
+                AccessPoint.DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE).
+                setParameter(AccessPoint.
+                        DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_VERSIONID,
+                        version.getId()).
+                setParameter(AccessPoint.
+                        DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_TYPE, type);
         q.executeUpdate();
         em.getTransaction().commit();
         em.close();
@@ -195,12 +203,12 @@ public final class AccessPointsUtils {
      * @return the access point's format setting, if it has one,
      * or null otherwise.
      */
-    public static String getFormat(final AccessPoints ap) {
+    public static String getFormat(final AccessPoint ap) {
         if (!"file".equals(ap.getType())) {
             // Not the right type.
             return null;
         }
-        JsonNode dataJson = TasksUtils.jsonStringToTree(ap.getPortalData());
+        JsonNode dataJson = TaskUtils.jsonStringToTree(ap.getPortalData());
         JsonNode format = dataJson.get("format");
         if (format == null) {
             return null;
@@ -213,13 +221,13 @@ public final class AccessPointsUtils {
      * @param newFormat the access point's new format setting,
      * or null otherwise.
      */
-    public static void updateFormat(final AccessPoints ap,
+    public static void updateFormat(final AccessPoint ap,
             final String newFormat) {
         if (!"file".equals(ap.getType())) {
             // Not the right type.
             return;
         }
-        JsonNode dataJson = TasksUtils.jsonStringToTree(ap.getPortalData());
+        JsonNode dataJson = TaskUtils.jsonStringToTree(ap.getPortalData());
         JsonObjectBuilder jobPortal = Json.createObjectBuilder();
         Iterator<Entry<String, JsonNode>> dataJsonIterator =
                 dataJson.fields();
@@ -237,12 +245,12 @@ public final class AccessPointsUtils {
      * @return the access point's file setting, if it has one,
      * or null otherwise.
      */
-    public static String getToolkitPath(final AccessPoints ap) {
+    public static String getToolkitPath(final AccessPoint ap) {
         if (!"file".equals(ap.getType())) {
             // Not the right type.
             return null;
         }
-        JsonNode dataJson = TasksUtils.jsonStringToTree(ap.getToolkitData());
+        JsonNode dataJson = TaskUtils.jsonStringToTree(ap.getToolkitData());
         JsonNode path = dataJson.get("path");
         if (path == null) {
             return null;
@@ -255,13 +263,13 @@ public final class AccessPointsUtils {
      * @return the access point's portal uri setting, if it has one,
      * or null otherwise.
      */
-    public static String getPortalUri(final AccessPoints ap) {
-        if (!(AccessPoints.API_SPARQL_TYPE.equals(ap.getType())
-                || (AccessPoints.SISSVOC_TYPE.equals(ap.getType())))) {
+    public static String getPortalUri(final AccessPoint ap) {
+        if (!(AccessPoint.API_SPARQL_TYPE.equals(ap.getType())
+                || (AccessPoint.SISSVOC_TYPE.equals(ap.getType())))) {
             // Not the right type.
             return null;
         }
-        JsonNode dataJson = TasksUtils.jsonStringToTree(ap.getPortalData());
+        JsonNode dataJson = TaskUtils.jsonStringToTree(ap.getPortalData());
         JsonNode uri = dataJson.get("uri");
         if (uri == null) {
             return null;
@@ -274,12 +282,12 @@ public final class AccessPointsUtils {
      * @return the access point's Toolkit uri setting, if it has one,
      * or null otherwise.
      */
-    public static String getToolkitUri(final AccessPoints ap) {
-        if (!AccessPoints.SESAME_DOWNLOAD_TYPE.equals(ap.getType())) {
+    public static String getToolkitUri(final AccessPoint ap) {
+        if (!AccessPoint.SESAME_DOWNLOAD_TYPE.equals(ap.getType())) {
             // Not the right type.
             return null;
         }
-        JsonNode dataJson = TasksUtils.jsonStringToTree(ap.getToolkitData());
+        JsonNode dataJson = TaskUtils.jsonStringToTree(ap.getToolkitData());
         JsonNode uri = dataJson.get("uri");
         if (uri == null) {
             return null;
@@ -290,7 +298,7 @@ public final class AccessPointsUtils {
     /** Save a new access point to the database.
      * @param ap The access point to be saved.
      */
-    public static void saveAccessPoint(final AccessPoints ap) {
+    public static void saveAccessPoint(final AccessPoint ap) {
         EntityManager em = DBContext.getEntityManager();
         em.getTransaction().begin();
         em.persist(ap);
@@ -301,7 +309,7 @@ public final class AccessPointsUtils {
     /** Update an existing access point in the database.
      * @param ap The access point to be update.
      */
-    public static void updateAccessPoint(final AccessPoints ap) {
+    public static void updateAccessPoint(final AccessPoint ap) {
         EntityManager em = DBContext.getEntityManager();
         em.getTransaction().begin();
         em.merge(ap);
@@ -316,7 +324,7 @@ public final class AccessPointsUtils {
      * to deduce a format from the filename.
      * @param targetPath The path to the existing file.
      */
-    public static void createFileAccessPoint(final Versions version,
+    public static void createFileAccessPoint(final Version version,
             final String format,
             final Path targetPath) {
         String targetPathString;
@@ -328,9 +336,9 @@ public final class AccessPointsUtils {
             // Try toAbsolutePath() instead.
             targetPathString = targetPath.toAbsolutePath().toString();
         }
-        List<AccessPoints> aps = getAccessPointsForVersionAndType(
-                version, AccessPoints.FILE_TYPE);
-        for (AccessPoints ap : aps) {
+        List<AccessPoint> aps = getAccessPointsForVersionAndType(
+                version, AccessPoint.FILE_TYPE);
+        for (AccessPoint ap : aps) {
             if (targetPathString.equals(getToolkitPath(ap))) {
                 // Already exists. Check the format.
                 if (format != null && !format.equals(getFormat(ap))) {
@@ -341,9 +349,9 @@ public final class AccessPointsUtils {
             }
         }
         // No existing access point for this file, so create a new one.
-        AccessPoints ap = new AccessPoints();
+        AccessPoint ap = new AccessPoint();
         ap.setVersionId(version.getId());
-        ap.setType(AccessPoints.FILE_TYPE);
+        ap.setType(AccessPoint.FILE_TYPE);
         JsonObjectBuilder jobPortal = Json.createObjectBuilder();
         JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
         jobToolkit.add("path", targetPathString);
@@ -351,7 +359,7 @@ public final class AccessPointsUtils {
         ap.setToolkitData(jobToolkit.build().toString());
         ap.setPortalData("");
         // Persist what we have ...
-        AccessPointsUtils.saveAccessPoint(ap);
+        AccessPointUtils.saveAccessPoint(ap);
         // ... so that now we can get access to the
         // ID of the persisted object with ap.getId().
         String baseFilename = targetPath.getFileName().toString();
@@ -394,7 +402,7 @@ public final class AccessPointsUtils {
         jobPortal.add("format", deducedFormat);
         // portalData is now complete.
         ap.setPortalData(jobPortal.build().toString());
-        AccessPointsUtils.updateAccessPoint(ap);
+        AccessPointUtils.updateAccessPoint(ap);
     }
 
     /** Create an access point for a version, for a SPARQL endpoint.
@@ -404,28 +412,28 @@ public final class AccessPointsUtils {
      * @param source The source of the endpoint, either SYSTEM_SOURCE
      * or USER_SOURCE.
      */
-    public static void createApiSparqlAccessPoint(final Versions version,
+    public static void createApiSparqlAccessPoint(final Version version,
             final String portalUri,
             final String source) {
-        List<AccessPoints> aps = getAccessPointsForVersionAndType(
-                version, AccessPoints.API_SPARQL_TYPE);
-        for (AccessPoints ap : aps) {
+        List<AccessPoint> aps = getAccessPointsForVersionAndType(
+                version, AccessPoint.API_SPARQL_TYPE);
+        for (AccessPoint ap : aps) {
             if (portalUri.equals(getPortalUri(ap))) {
                 // Already exists. Don't bother checking the source.
                 return;
             }
         }
         // No existing access point for this file, so create a new one.
-        AccessPoints ap = new AccessPoints();
+        AccessPoint ap = new AccessPoint();
         ap.setVersionId(version.getId());
-        ap.setType(AccessPoints.API_SPARQL_TYPE);
+        ap.setType(AccessPoint.API_SPARQL_TYPE);
         JsonObjectBuilder jobPortal = Json.createObjectBuilder();
         JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
         jobPortal.add("uri", portalUri);
         jobPortal.add("source", source);
         ap.setPortalData(jobPortal.build().toString());
         ap.setToolkitData(jobToolkit.build().toString());
-        AccessPointsUtils.saveAccessPoint(ap);
+        AccessPointUtils.saveAccessPoint(ap);
     }
 
     /** Create an access point for a version, for a Sesame download.
@@ -434,26 +442,26 @@ public final class AccessPointsUtils {
      * @param toolkitUri The URI to put into the toolkitData.
      */
     public static void createSesameDownloadAccessPoint(
-            final Versions version,
+            final Version version,
             final String toolkitUri) {
-        List<AccessPoints> aps = getAccessPointsForVersionAndType(
-                version, AccessPoints.SESAME_DOWNLOAD_TYPE);
-        for (AccessPoints ap : aps) {
+        List<AccessPoint> aps = getAccessPointsForVersionAndType(
+                version, AccessPoint.SESAME_DOWNLOAD_TYPE);
+        for (AccessPoint ap : aps) {
             if (toolkitUri.equals(getToolkitUri(ap))) {
                 // Already exists.
                 return;
             }
         }
         // No existing access point for this file, so create a new one.
-        AccessPoints ap = new AccessPoints();
+        AccessPoint ap = new AccessPoint();
         ap.setVersionId(version.getId());
-        ap.setType(AccessPoints.SESAME_DOWNLOAD_TYPE);
+        ap.setType(AccessPoint.SESAME_DOWNLOAD_TYPE);
         ap.setPortalData("");
         JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
         jobToolkit.add("uri", toolkitUri);
         ap.setToolkitData(jobToolkit.build().toString());
         // Persist what we have ...
-        AccessPointsUtils.saveAccessPoint(ap);
+        AccessPointUtils.saveAccessPoint(ap);
         // ... so that now we can get access to the
         // ID of the persisted object with ap.getId().
         JsonObjectBuilder jobPortal = Json.createObjectBuilder();
@@ -462,7 +470,7 @@ public final class AccessPointsUtils {
                 + "/"
                 + Download.downloadFilename(ap, ""));
         ap.setPortalData(jobPortal.build().toString());
-        AccessPointsUtils.updateAccessPoint(ap);
+        AccessPointUtils.updateAccessPoint(ap);
     }
 
     /** Create a sissvoc access point for a version.
@@ -472,28 +480,28 @@ public final class AccessPointsUtils {
      * @param source The source of the endpoint, either SYSTEM_SOURCE
      * or USER_SOURCE.
      */
-    public static void createSissvocAccessPoint(final Versions version,
+    public static void createSissvocAccessPoint(final Version version,
             final String portalUri,
             final String source) {
-        List<AccessPoints> aps = getAccessPointsForVersionAndType(
-                version, AccessPoints.SISSVOC_TYPE);
-        for (AccessPoints ap : aps) {
+        List<AccessPoint> aps = getAccessPointsForVersionAndType(
+                version, AccessPoint.SISSVOC_TYPE);
+        for (AccessPoint ap : aps) {
             if (portalUri.equals(getPortalUri(ap))) {
                 // Already exists. Don't bother checking the source.
                 return;
             }
         }
         // No existing access point for this file, so create a new one.
-        AccessPoints ap = new AccessPoints();
+        AccessPoint ap = new AccessPoint();
         ap.setVersionId(version.getId());
-        ap.setType(AccessPoints.SISSVOC_TYPE);
+        ap.setType(AccessPoint.SISSVOC_TYPE);
         JsonObjectBuilder jobPortal = Json.createObjectBuilder();
         JsonObjectBuilder jobToolkit = Json.createObjectBuilder();
         jobPortal.add("uri", portalUri);
         jobPortal.add("source", source);
         ap.setPortalData(jobPortal.build().toString());
         ap.setToolkitData(jobToolkit.build().toString());
-        AccessPointsUtils.saveAccessPoint(ap);
+        AccessPointUtils.saveAccessPoint(ap);
     }
 
 }

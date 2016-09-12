@@ -3,22 +3,22 @@ package au.org.ands.vocabs.toolkit.db;
 
 import javax.persistence.EntityManager;
 
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 
 /** Work with database vocabularies. */
-public final class VocabulariesUtils {
+public final class VocabularyUtils {
 
     /** Private constructor for a utility class. */
-    private VocabulariesUtils() {
+    private VocabularyUtils() {
     }
 
-    /** Get vocabulary by vocabulary id.
-     * @param id vocabulary id
-     * @return the vocabulary
+    /** Get a Vocabulary by vocabulary id.
+     * @param id Vocabulary id.
+     * @return The Vocabulary.
      */
-    public static Vocabularies getVocabularyById(final int id) {
+    public static Vocabulary getVocabularyById(final int id) {
         EntityManager em = DBContext.getEntityManager();
-        Vocabularies v = em.find(Vocabularies.class, id);
+        Vocabulary v = em.find(Vocabulary.class, id);
         em.close();
         return v;
     }

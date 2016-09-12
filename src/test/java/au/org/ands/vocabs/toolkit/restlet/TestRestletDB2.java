@@ -12,8 +12,8 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.VocabulariesUtils;
-import au.org.ands.vocabs.toolkit.db.model.Vocabularies;
+import au.org.ands.vocabs.toolkit.db.VocabularyUtils;
+import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 
 /** Testing restlet. */
 @Path("testingDB2")
@@ -33,7 +33,7 @@ public class TestRestletDB2 {
 
         // Get the vocabulary object
         // Read the existing entries and log
-        Vocabularies v = VocabulariesUtils.getVocabularyById(vocabId);
+        Vocabulary v = VocabularyUtils.getVocabularyById(vocabId);
         if (v == null) {
             logger.info("Vocab not found; id: " + vocabId);
             return "Vocab not found";

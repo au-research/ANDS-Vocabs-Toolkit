@@ -27,7 +27,7 @@ import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.TasksUtils;
+import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
@@ -91,7 +91,7 @@ public class JsonListTransformProvider extends TransformProvider {
             HashMap<String, HashMap<String, Object>> conceptMap =
                     conceptHandler.getConceptMap();
             FileUtils.writeStringToFile(out,
-                    TasksUtils.mapToJSONString(conceptMap));
+                    TaskUtils.mapToJSONString(conceptMap));
         } catch (IOException ex) {
             results.put(TaskStatus.EXCEPTION,
                     "Exception in JsonListTransform while Parsing RDF");
