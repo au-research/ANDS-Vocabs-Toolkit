@@ -282,6 +282,10 @@
         <jvmarg
           value="-DPROPS_FILE=WEB-INF/classes/toolkit-h2.properties" />
         <jvmarg
+          value="-DPROPS_FILE_CLIENT_MODE=conf/toolkit-h2.properties" />
+        <jvmarg
+          value="-DVERSION_PROPS_FILE=conf/version.properties" />
+        <jvmarg
           value="-DdumpClasspath" />
         <jvmarg
           value="-DdumpProperties" />
@@ -347,6 +351,10 @@
       >
         <jvmarg value=
           "-DPROPS_FILE=WEB-INF/classes/toolkit-h2-bamboo.properties" />
+        <jvmarg
+          value="-DPROPS_FILE_CLIENT_MODE=conf/toolkit-h2-bamboo.properties" />
+        <jvmarg
+          value="-DVERSION_PROPS_FILE=conf/version.properties" />
         <jvmarg
           value="-DdumpClasspath" />
         <jvmarg

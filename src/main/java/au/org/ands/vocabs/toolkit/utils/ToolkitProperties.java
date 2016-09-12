@@ -48,7 +48,10 @@ public final class ToolkitProperties {
 
     /** Base name of the version properties file.
      * This file must be in the directory {@code WEB-INF/classes} of the
-     * deployed webapp. */
+     * deployed webapp. For Arquillian testing, the location of the
+     * file in "client" mode (outside the servlet container)
+     * can be overridden by setting the
+     * {@code VERSION_PROPS_FILE} system property. */
     private static final String VERSION_PROPS_FILE = "version.properties";
 
     /** Name of a system property, which, if specified, will cause
@@ -131,6 +134,9 @@ public final class ToolkitProperties {
         return props.getString(propName, defaultValue);
     }
 
+    // On a rainy day, refactor this so that the suppression is
+    // no longer required.
+    //CHECKSTYLE:OFF: MethodLength
     /** Initialize the toolkit properties. First, load the user-specified
      * properties file, "toolkit.properties", then the version properties
      * file, "version.properties". To find "toolkit.properties", priority
@@ -146,6 +152,13 @@ public final class ToolkitProperties {
      * loads files relative to {@code WEB-INF/classes}; when running standalone
      * code, the class loader loads files relative to the current working
      * directory when the JVM was started.)
+     * Specifically to support testing in Arquillian, in which this code
+     * is executed <i>both</i> inside and outside a servlet container,
+     * a system property {@code PROPS_FILE_CLIENT_MODE} is supported, e.g.
+     * using
+     * {@code -DPROPS_FILE_CLIENT_MODE=conf/toolkit-h2.properties},
+     * whose value overrides that of {@code PROPS_FILE} when
+     * this code is run outside a servlet container.
      */
     private static void initProperties() {
         logger.debug("In ToolkitProperties.initProperties()");
@@ -199,6 +212,18 @@ public final class ToolkitProperties {
                     // No servlet context, so no resolution against
                     // a path. In this case, doesn't _have_ to be an
                     // absolute path, but easier if it is.
+
+                    // Support Arquillian testing, in which we need to
+                    // get the properties file from two quite different
+                    // places.
+                    String propsFileClientMode =
+                            System.getProperty("PROPS_FILE_CLIENT_MODE");
+                    if (propsFileClientMode != null) {
+                        logger.debug("Overriding properties file "
+                                + "for client mode");
+                        propsFile = propsFileClientMode;
+                    }
+
                     logger.debug("Getting properties from a file, "
                             + "without servlet context");
                     input = new FileInputStream(propsFile);
@@ -257,8 +282,36 @@ public final class ToolkitProperties {
         if (input == null) {
             throw new RuntimeException("Can't find Toolkit properties file.");
         }
-        InputStream input2 = MethodHandles.lookup().lookupClass().
-                getClassLoader().getResourceAsStream(VERSION_PROPS_FILE);
+
+        // Now fetch the version properties file.
+        String versionPropsFile = VERSION_PROPS_FILE;
+        InputStream input2 = null;
+        if (servletContext == null) {
+            // For Arquillian testing, support VERSION_PROPS_FILE system
+            // property to override for client mode (outside the servlet
+            // container).
+            String versionPropsFileClientMode =
+                    System.getProperty("VERSION_PROPS_FILE");
+            if (versionPropsFileClientMode != null) {
+                logger.debug("Overriding version properties file for "
+                        + "client mode.");
+                versionPropsFile = versionPropsFileClientMode;
+                try {
+                    input2 = new FileInputStream(versionPropsFile);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(
+                            "Error attempting to open version "
+                            + "properties file with the path specified as a "
+                            + "system property.");
+                }
+            }
+        }
+
+        if (input2 == null) {
+            // The "normal" way to load the version properties file.
+            input2 = MethodHandles.lookup().lookupClass().
+                    getClassLoader().getResourceAsStream(versionPropsFile);
+        }
         if (input2 == null) {
             throw new RuntimeException("Can't find Toolkit version "
                     + "properties file.");
@@ -297,6 +350,7 @@ public final class ToolkitProperties {
             dumpProperties();
         }
     }
+    //CHECKSTYLE:ON: MethodLength
 
     /** Dump all the properties using INFO-level logging. If a
      * property name contains the word "password", its value
