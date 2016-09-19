@@ -33,7 +33,7 @@ public final class ToolkitNetUtils {
         return client;
     }
 
-    /** Get the shared Client resource that does not follow redirects..
+    /** Get the shared Client resource that does not follow redirects.
      * @return The shared Client resource.
      */
     public static Client getClientNoRedirects() {
