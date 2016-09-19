@@ -30,7 +30,7 @@ public class TestRestlets {
     @Path("clearDB")
     @Produces(MediaType.TEXT_PLAIN)
     @GET
-    public final String getMessage() throws Exception {
+    public final String clearDB() throws Exception {
         Logger logger = LoggerFactory.getLogger(
                 MethodHandles.lookup().lookupClass());
         logger.info("Clearing the database.");
