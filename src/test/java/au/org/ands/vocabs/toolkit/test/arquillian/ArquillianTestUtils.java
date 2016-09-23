@@ -6,10 +6,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
@@ -18,7 +26,9 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ReplacementDataSet;
+import org.dbunit.dataset.xml.FlatDtdWriter;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.h2.H2Connection;
@@ -71,7 +81,8 @@ public final class ArquillianTestUtils {
         return inputStream;
     }
 
-    /** Clear the database.
+    /** Clear the database. Tables are truncated, and sequence values
+     * for auto-incrementing columns are reset.
      * @throws DatabaseUnitException If a problem with DBUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
@@ -92,7 +103,43 @@ public final class ArquillianTestUtils {
                             "test/dbunit-toolkit-export-choice.dtd"))
                     .build(getResourceAsInputStream("test/blank-dbunit.xml"));
 
+            // Delete the contents of the tables referred to in
+            // the dataset.
             DatabaseOperation.DELETE_ALL.execute(connection, dataset);
+
+            // Now reset the sequences used for auto-increment columns.
+            // As DbUnit does not provide direct support for this,
+            // this is H2-specific!
+            // Inspired by: http://stackoverflow.com/questions/8523423
+            // Get the names of the tables referred to in the dataset
+            // used for blanking ...
+            String[] tableNames = dataset.getTableNames();
+            // ... and convert that into a string of the form:
+            // "'TABLE_1', 'TABLE_2', 'TABLE_3'"
+            String tableNamesForQuery =
+                    Arrays.asList(tableNames).stream()
+                    .map(i -> "'" + i.toString() + "'")
+                    .collect(Collectors.joining(", "));
+
+            // This query gets the names of the sequences used by
+            // the tables in the dataset.
+            String getSequencesQuery =
+                    "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.COLUMNS "
+                    + "WHERE TABLE_SCHEMA='PUBLIC' AND TABLE_NAME IN ("
+                    + tableNamesForQuery
+                    + ") AND SEQUENCE_NAME IS NOT NULL";
+
+            Set<String> sequences = new HashSet<String>();
+            try (Statement s = conn.createStatement();
+                    ResultSet rs = s.executeQuery(getSequencesQuery)) {
+                while (rs.next()) {
+                    sequences.add(rs.getString(1));
+                }
+                for (String seq : sequences) {
+                    s.executeUpdate("ALTER SEQUENCE "
+                            + seq + " RESTART WITH 1");
+                }
+            }
             // Force commit at the JDBC level, as closing the EntityManager
             // does a rollback!
             conn.commit();
@@ -141,6 +188,34 @@ public final class ArquillianTestUtils {
         em.close();
     }
 
+    /** Export the DBUnit database schema as a DTD.
+     * @param dtdExportFilename The name of the file into which the
+     *      DTD export is to go.
+     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws SQLException If DBUnit has a problem performing
+     *           performing JDBC operations.
+     * @throws IOException If a problem opening or closing the output file.
+     */
+    public static void extractDBUnitDTD(final String dtdExportFilename) throws
+        DatabaseUnitException, SQLException, IOException {
+        EntityManager em = DBContext.getEntityManager();
+        try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
+
+            IDatabaseConnection connection = new H2Connection(conn, null);
+            IDataSet dataSet = connection.createDataSet();
+            Writer out =
+                    new OutputStreamWriter(new FileOutputStream(
+                            dtdExportFilename));
+            FlatDtdWriter datasetWriter = new FlatDtdWriter(out);
+            datasetWriter.setContentModel(FlatDtdWriter.CHOICE);
+            // You could also use the sequence model, which is the default:
+            // datasetWriter.setContentModel(FlatDtdWriter.SEQUENCE);
+            datasetWriter.write(dataSet);
+            out.close();
+        }
+        em.close();
+    }
+
     /** Do a full export of the database in DBUnit format.
      * @param exportFilename The name of the file into which the
      *      export is to go.
@@ -165,13 +240,8 @@ public final class ArquillianTestUtils {
 
     /** Client-side clearing of the database.
      * @param baseURL The base URL to use to connect to the Toolkit.
-     * @throws DatabaseUnitException If a problem with DBUnit.
-     * @throws IOException If a problem getting test data for DBUnit.
-     * @throws SQLException If DBUnit has a problem performing
-     *           performing JDBC operations.
      */
-    public static void clientClearDatabase(final URL baseURL) throws
-        DatabaseUnitException, IOException, SQLException {
+    public static void clientClearDatabase(final URL baseURL) {
         logger.info("In clientClearDatabase()");
         Response response = NetClientUtils.doGet(baseURL,
                 "testing/clearDB");
@@ -181,6 +251,69 @@ public final class ArquillianTestUtils {
                 "clientClearDatabase response status");
         response.close();
     }
+
+    /** Client-side loading of the database.
+     * @param baseURL The base URL to use to connect to the Toolkit.
+     * @param testName The name of the test method. Used to generate
+     *      the filename of the file to load.
+     */
+    public static void clientLoadDbUnitTestFile(final URL baseURL,
+            final String testName) {
+        logger.info("In clientLoadDbUnitTestFile()");
+        Response response = NetClientUtils.doGetWithAdditionalComponents(
+                baseURL, "testing/loadDB",
+                webTarget -> webTarget.queryParam("testName", testName));
+
+        Assert.assertEquals(response.getStatusInfo().getFamily(),
+                Family.SUCCESSFUL,
+                "clientLoadDbUnitTestFile response status");
+        response.close();
+    }
+
+    /** Get the current contents of a database table.
+     * @param tableName The name of the database table to be fetched.
+     * @return The current contents of the database table.
+     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws HibernateException If a problem getting the underlying
+     *          JDBC connection.
+     * @throws SQLException If DBUnit has a problem performing
+     *           performing JDBC operations.
+     */
+    public static ITable getDatabaseTableCurrentContents(
+            final String tableName) throws
+            DatabaseUnitException, HibernateException, SQLException {
+        EntityManager em = DBContext.getEntityManager();
+        ITable currentTable;
+        try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
+            IDatabaseConnection connection = new H2Connection(conn, null);
+            IDataSet databaseDataSet = connection.createDataSet();
+            currentTable = databaseDataSet.getTable(tableName);
+        }
+        em.close();
+        return currentTable;
+    }
+
+    /** Get the contents of a dataset in a file containing expected
+     * database contents.
+     * @param filename The filename of the file containing the expected
+     *      database contents.
+     * @return The contents of the database table.
+     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws IOException If reading the DTD fails.
+     */
+    public static IDataSet getDatabaseTableExpectedContents(
+            final String filename) throws
+            DatabaseUnitException, IOException {
+        FlatXmlDataSet xmlDataset = new FlatXmlDataSetBuilder()
+                .setMetaDataSetFromDtd(getResourceAsInputStream(
+                        "test/dbunit-toolkit-export-choice.dtd"))
+                .build(getResourceAsInputStream(
+                        filename));
+        ReplacementDataSet dataset = new ReplacementDataSet(xmlDataset);
+        dataset.addReplacementSubstring("''", "\"");
+        return dataset;
+    }
+
 
     /** Compare two files containing JSON, asserting that they contain
      * the same content.
