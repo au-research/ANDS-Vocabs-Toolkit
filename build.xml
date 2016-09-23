@@ -162,7 +162,7 @@
 
   <target name="-store-version-string" depends="-timestamp" if="Toolkit.version">
     <!-- store the new  version string in the correct property file -->
-    <echo message="version=${version}" />
+    <echo message="version=${Toolkit.version}" />
     <propertyfile file="${conf}/version.properties">
       <entry key="Toolkit.version" value="${Toolkit.version}" />
       <entry key="Toolkit.versionTimestamp" value="${Toolkit.versionTimestamp}" />
