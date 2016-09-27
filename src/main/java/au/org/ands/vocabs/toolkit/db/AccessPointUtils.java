@@ -304,7 +304,7 @@ public final class AccessPointUtils {
     }
 
     /** Update an existing access point in the database.
-     * @param ap The access point to be update.
+     * @param ap The access point to be updated.
      */
     public static void updateAccessPoint(final AccessPoint ap) {
         EntityManager em = DBContext.getEntityManager();
