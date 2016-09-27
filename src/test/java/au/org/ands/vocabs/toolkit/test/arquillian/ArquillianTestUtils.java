@@ -188,6 +188,50 @@ public final class ArquillianTestUtils {
         em.close();
     }
 
+    /** Load a DbUnit test file into the database as an update.
+     * The file is loaded as a {@code FlatXmlDataSet}.
+     * To make it more convenient to enter JSON data, the dataset is
+     * wrapped as a {@code ReplacementDataSet}, and all instances
+     * of '' (two contiguous apostrophes) are replaced with "
+     * (one double quote).
+     * The data is loaded in as an update.
+     * @param testName The name of the test method. Used to generate
+     *      the path to the file to load.
+     * @param filename The name of the file to be loaded.
+     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws HibernateException If a problem getting the underlying
+     *          JDBC connection.
+     * @throws IOException If a problem getting test data for DBUnit.
+     * @throws SQLException If DBUnit has a problem performing
+     *           performing JDBC operations.
+     */
+    public static void loadDbUnitTestFileAsUpdate(final String testName,
+            final String filename) throws
+        DatabaseUnitException, HibernateException, IOException, SQLException {
+        EntityManager em = DBContext.getEntityManager();
+        try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
+
+            IDatabaseConnection connection = new H2Connection(conn, null);
+
+            FlatXmlDataSet xmlDataset = new FlatXmlDataSetBuilder()
+                    .setMetaDataSetFromDtd(getResourceAsInputStream(
+                            "test/dbunit-toolkit-export-choice.dtd"))
+                    .build(getResourceAsInputStream(
+                            "test/tests/au.org.ands.vocabs.toolkit."
+                            + "test.arquillian.AllArquillianTests."
+                            + testName
+                            + "/" + filename));
+            ReplacementDataSet dataset = new ReplacementDataSet(xmlDataset);
+            dataset.addReplacementSubstring("''", "\"");
+            logger.info("doing update");
+            DatabaseOperation.UPDATE.execute(connection, dataset);
+            // Force commit at the JDBC level, as closing the EntityManager
+            // does a rollback!
+            conn.commit();
+        }
+        em.close();
+    }
+
     /** Export the DBUnit database schema as a DTD.
      * @param dtdExportFilename The name of the file into which the
      *      DTD export is to go.
@@ -269,6 +313,28 @@ public final class ArquillianTestUtils {
                 "clientLoadDbUnitTestFile response status");
         response.close();
     }
+
+    /** Client-side loading of the database as an update.
+     * @param baseURL The base URL to use to connect to the Toolkit.
+     * @param testName The name of the test method. Used to generate
+     *      the path to the file to load.
+     * @param filename The name of the file to be loaded.
+     */
+    public static void clientLoadDbUnitTestFileAsUpdate(final URL baseURL,
+            final String testName, final String filename) {
+        logger.info("In clientLoadDbUnitTestFileAsUpdate()");
+        Response response = NetClientUtils.doGetWithAdditionalComponents(
+                baseURL, "testing/loadDBAsUpdate",
+                webTarget ->
+                    webTarget.queryParam("testName", testName)
+                    .queryParam("filename", filename));
+
+        Assert.assertEquals(response.getStatusInfo().getFamily(),
+                Family.SUCCESSFUL,
+                "clientLoadDbUnitTestFileAsUpdate response status");
+        response.close();
+    }
+
 
     /** Get the current contents of a database table.
      * @param tableName The name of the database table to be fetched.

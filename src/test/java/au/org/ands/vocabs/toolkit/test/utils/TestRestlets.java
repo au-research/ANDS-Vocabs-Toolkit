@@ -57,4 +57,25 @@ public class TestRestlets {
         return "OK";
     }
 
+    /** Load data into the database as an update.
+     * @param testName The name of the test method. Used to generate
+     *      the path to the file to load.
+     * @param filename The name of the file to be loaded.
+     * @throws Exception If there is a problem with the database.
+     * @return The string "OK".
+     */
+    @Path("loadDBAsUpdate")
+    @Produces(MediaType.TEXT_PLAIN)
+    @GET
+    public final String loadDBAsUpdate(
+            @QueryParam("testName") final String testName,
+            @QueryParam("filename") final String filename)
+            throws Exception {
+        Logger logger = LoggerFactory.getLogger(
+                MethodHandles.lookup().lookupClass());
+        logger.info("Loading the database as an update.");
+        ArquillianTestUtils.loadDbUnitTestFileAsUpdate(testName, filename);
+        return "OK";
+    }
+
 }
