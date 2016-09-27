@@ -196,7 +196,7 @@ public final class ArquillianTestUtils {
      *           performing JDBC operations.
      * @throws IOException If a problem opening or closing the output file.
      */
-    public static void extractDBUnitDTD(final String dtdExportFilename) throws
+    public static void exportDBUnitDTD(final String dtdExportFilename) throws
         DatabaseUnitException, SQLException, IOException {
         EntityManager em = DBContext.getEntityManager();
         try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
