@@ -25,6 +25,12 @@ import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 /** Work with database tasks. */
 public final class TaskUtils {
 
+    /** The name of a property which may be present in a subtask,
+     * which specifies if an error in the subtask should cause
+     * the failure of the task.
+     */
+    private static final String FAIL_ON_ERROR = "fail_on_error";
+
     /** Logger for this class. */
     private static Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
@@ -171,6 +177,29 @@ public final class TaskUtils {
             return null;
         }
         return (ArrayNode) root;
+    }
+
+    /** Does a subtask contain a setting for the parameter
+     * {@code fail_on_error}, that can be interpreted as a Boolean value?
+     * If so, return that value. Otherwise, return the value
+     * {@code defaultValue}.
+     * @param subtask The subtask to be examined, in JSON format.
+     * @param defaultValue The value to be returned, if the subtask does
+     *      not contain a setting for {@code fail_on_error}.
+     * @return The value of the subtask's {@code fail_on_error} setting,
+     *      if it has one that makes sense as a boolean value;
+     *      otherwise, {@code defaultValue}.
+     */
+    public static boolean isSubtaskFailOnError(
+            final JsonNode subtask, final boolean defaultValue) {
+        JsonNode node = subtask.get(FAIL_ON_ERROR);
+        if (node == null) {
+            // No value specified.
+            return defaultValue;
+        }
+        // Try to interpret the value as Boolean. Fall back
+        // to defaultValue, if that doesn't work.
+        return node.asBoolean(defaultValue);
     }
 
 }
