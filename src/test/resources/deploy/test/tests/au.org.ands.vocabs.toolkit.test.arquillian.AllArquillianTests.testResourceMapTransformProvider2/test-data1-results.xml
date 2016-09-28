@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../dbunit-toolkit-export-choice.dtd" >
+<dataset>
+  <RESOURCE_MAP ID="1" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="http://vocab.owner.org/def/vocab1/1" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="2" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/5" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="3" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="http://some.other.org/def/vocab1/1" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="4" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/5" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="5" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="https://second.owned.com/def/vocab2/1" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="6" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="https://second.owned.com/def/vocab2/5" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="7" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="http://vocab.owner.org/def/vocab1/2" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="8" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/6" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="9" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="http://some.other.org/def/vocab1/2" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="10" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/6" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="11" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="https://second.owned.com/def/vocab2/2" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="12" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="https://second.owned.com/def/vocab2/6" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="13" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="http://vocab.owner.org/def/vocab1/3" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="14" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/7" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="15" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="http://some.other.org/def/vocab1/3" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="16" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/7" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="17" ACCESS_POINT_ID="4" DEPRECATED="false" IRI="https://second.owned.com/def/vocab2/3" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="18" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="https://second.owned.com/def/vocab2/7" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="19" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/9" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2002/07/owl#deprecated"/>
+  <RESOURCE_MAP ID="20" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/9" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2002/07/owl#deprecated"/>
+  <RESOURCE_MAP ID="21" ACCESS_POINT_ID="4" DEPRECATED="true" IRI="https://second.owned.com/def/vocab2/9" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2002/07/owl#deprecated"/>
+</dataset>

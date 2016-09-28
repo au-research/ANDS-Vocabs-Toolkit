@@ -1,0 +1,2 @@
+WAR files to be deployed to the embedded Tomcat instance
+during Arquillian testing.

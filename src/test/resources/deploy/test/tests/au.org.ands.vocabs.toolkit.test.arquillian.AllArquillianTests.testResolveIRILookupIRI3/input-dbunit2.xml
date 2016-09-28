@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../dbunit-toolkit-export-choice.dtd" >
+<dataset>
+  <VERSIONS
+      ID="2"
+      VOCAB_ID="2"
+      TITLE="v1"
+      STATUS="superseded"
+      />
+</dataset>

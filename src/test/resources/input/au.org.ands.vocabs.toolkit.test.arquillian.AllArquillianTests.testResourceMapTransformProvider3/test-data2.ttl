@@ -1,0 +1,86 @@
+# Test of resources of all SKOS types,
+# and of deprecation, where there are
+# two owned vocabularies.
+
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix my1:   <http://vocab.owner.org/def/vocab1/> .
+@prefix my2:   <https://second.owned.com/def/vocab2/> .
+@prefix my3:   <http://third.another.edu/def/vocab3/> .
+@prefix other: <http://some.other.org/def/vocab1/> .
+
+# A resource of each "interesting" type, not deprecated.
+my1:1 a skos:ConceptScheme .
+my1:2 a skos:Collection .
+my1:3 a skos:Concept .
+my2:1 a skos:ConceptScheme .
+my2:2 a skos:Collection .
+my2:3 a skos:Concept .
+my3:1 a skos:ConceptScheme .
+my3:2 a skos:Collection .
+my3:3 a skos:Concept .
+
+# A resource of some other type, not deprecated.
+my1:4 a owl:Class .
+my2:4 a owl:Class .
+my3:4 a owl:Class .
+
+# A resource of each "interesting" type, and deprecated.
+my1:5 a skos:ConceptScheme ;
+  owl:deprecated true .
+my1:6 a skos:Collection ;
+  owl:deprecated true .
+my1:7 a skos:Concept ;
+  owl:deprecated true .
+my2:5 a skos:ConceptScheme ;
+  owl:deprecated true .
+my2:6 a skos:Collection ;
+  owl:deprecated true .
+my2:7 a skos:Concept ;
+  owl:deprecated true .
+my3:5 a skos:ConceptScheme ;
+  owl:deprecated true .
+my3:6 a skos:Collection ;
+  owl:deprecated true .
+my3:7 a skos:Concept ;
+  owl:deprecated true .
+
+# A resource of a non-interesting type, deprecated.
+my1:8 a owl:Class ;
+  owl:deprecated true .
+my2:8 a owl:Class ;
+  owl:deprecated true .
+my3:8 a owl:Class ;
+  owl:deprecated true .
+
+# A resource of no _explicit_ type, but deprecated.
+my1:9 owl:deprecated true .
+my2:9 owl:deprecated true .
+my3:9 owl:deprecated true .
+
+# And now, all of the above, but not "owned"
+# by the owner of this vocabulary.
+
+# A resource of each "interesting" type, not deprecated.
+other:1 a skos:ConceptScheme .
+other:2 a skos:Collection .
+other:3 a skos:Concept .
+
+# A resource of some other type, not deprecated.
+other:4 a owl:Class .
+
+# A resource of each "interesting" type, and deprecated.
+other:5 a skos:ConceptScheme ;
+  owl:deprecated true .
+other:6 a skos:Collection ;
+  owl:deprecated true .
+other:7 a skos:Concept ;
+  owl:deprecated true .
+
+# A resource of a non-interesting type, deprecated.
+other:8 a owl:Class ;
+  owl:deprecated true .
+
+# A resource of no _explicit_ type, but deprecated.
+other:9 owl:deprecated true .
+

@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../dbunit-toolkit-export-choice.dtd" >
+<dataset>
+  <VOCABULARIES
+      ID="1"
+      OWNER="ands"
+      TITLE="testResourceMapTransformProvider2"
+      SLUG="testresourcemaptransformprovider2"
+      />
+  <VERSIONS
+      ID="1"
+      VOCAB_ID="1"
+      TITLE="v1" />
+  <ACCESS_POINTS/>
+  <RESOURCE_OWNER_HOSTS
+      ID="1"
+      START_DATE="2016-09-16"
+      END_DATE="9999-12-01"
+      OWNER="ands"
+      HOST="vocab.owner.org"
+      />
+  <RESOURCE_OWNER_HOSTS
+      ID="2"
+      START_DATE="2016-09-16"
+      END_DATE="9999-12-01"
+      OWNER="ands"
+      HOST="second.owned.com"
+      />
+  <TASK
+      ID="1"
+      VOCABULARY_ID="1"
+      VERSION_ID="1"
+      PARAMS="[
+                {
+                  ''type'': ''HARVEST'',
+                  ''provider_type'': ''File'',
+                  ''file_path'': ''src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testResourceMapTransformProvider2/test-data1.ttl''
+                },
+                {
+                  ''type'': ''IMPORT'',
+                  ''provider_type'': ''Sesame''
+                },
+                {
+                  ''type'': ''PUBLISH'',
+                  ''provider_type'': ''SISSVoc''
+                },
+                {
+                  ''type'': ''TRANSFORM'',
+                  ''provider_type'': ''ResourceMap''
+                }
+              ]"
+      />
+</dataset>

@@ -274,6 +274,9 @@ svoc:LandingPage a api:ItemEndpoint
 
 
 ## 0. This is the basic "tell me what you know about the resource identified by this URI" request.
+# ANDS: This endpoint's uriTemplate is referred to in the Vocab Toolkit's
+# IRI resolution service. See:
+#   au.org.ands.vocabs.toolkit.db.ResourceMapEntryUtils#RESOURCE_ENDPOINT.
 svoc:URIEndpoint a api:ItemEndpoint
 		; rdfs:comment "Describe this resource"
 ##############################################################

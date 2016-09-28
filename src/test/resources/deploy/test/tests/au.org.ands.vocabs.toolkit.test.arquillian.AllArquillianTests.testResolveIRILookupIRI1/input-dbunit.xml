@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../dbunit-toolkit-export-choice.dtd" >
+<dataset>
+  <VOCABULARIES
+      ID="1"
+      OWNER="ands"
+      TITLE="testResourceMapTransformProvider1"
+      SLUG="testresourcemaptransformprovider1"
+      STATUS="current"
+      />
+  <VERSIONS
+      ID="1"
+      VOCAB_ID="1"
+      TITLE="v1"
+      STATUS="current"
+      />
+  <RESOURCE_OWNER_HOSTS
+      ID="1"
+      START_DATE="2016-09-16"
+      END_DATE="9999-12-01"
+      OWNER="ands"
+      HOST="vocab.owner.org"
+      />
+
+  <ACCESS_POINTS ID="5" PORTAL_DATA="{&quot;uri&quot;:&quot;http://localhost:8125/ANDS-Vocabs-Toolkit/download/5/test-data1.ttl&quot;,&quot;format&quot;:&quot;TTL&quot;}" TOOLKIT_DATA="{&quot;path&quot;:&quot;ands_vocabs/vocabs/ands/testresourcemaptransformprovider1/v1/harvest_data/test-data1.ttl&quot;}" TYPE="file" VERSION_ID="1"/>
+  <ACCESS_POINTS ID="6" PORTAL_DATA="{&quot;uri&quot;:&quot;http://testing-host.org.au/repository/api/sparql/ands_testresourcemaptransformprovider1_v1&quot;,&quot;source&quot;:&quot;system&quot;}" TOOLKIT_DATA="{}" TYPE="apiSparql" VERSION_ID="1"/>
+  <ACCESS_POINTS ID="7" PORTAL_DATA="{&quot;uri&quot;:&quot;http://localhost:8125/ANDS-Vocabs-Toolkit/download/7/ands_testresourcemaptransformprovider1_v1.&quot;}" TOOLKIT_DATA="{&quot;uri&quot;:&quot;http://localhost:8125/openrdf-sesame/repositories/ands_testresourcemaptransformprovider1_v1&quot;}" TYPE="sesameDownload" VERSION_ID="1"/>
+  <ACCESS_POINTS ID="8" PORTAL_DATA="{&quot;uri&quot;:&quot;http://testing-host.org.au/repository/api/lda/ands/testresourcemaptransformprovider1/v1&quot;,&quot;source&quot;:&quot;system&quot;}" TOOLKIT_DATA="{}" TYPE="sissvoc" VERSION_ID="1"/>
+
+  <RESOURCE_MAP ID="1" ACCESS_POINT_ID="8" DEPRECATED="false" IRI="http://vocab.owner.org/def/vocab1/1" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="2" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/5" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="3" ACCESS_POINT_ID="8" DEPRECATED="false" IRI="http://some.other.org/def/vocab1/1" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="4" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/5" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+  <RESOURCE_MAP ID="5" ACCESS_POINT_ID="8" DEPRECATED="false" IRI="http://vocab.owner.org/def/vocab1/2" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="6" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/6" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="7" ACCESS_POINT_ID="8" DEPRECATED="false" IRI="http://some.other.org/def/vocab1/2" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="8" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/6" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Collection"/>
+  <RESOURCE_MAP ID="9" ACCESS_POINT_ID="8" DEPRECATED="false" IRI="http://vocab.owner.org/def/vocab1/3" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="10" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/7" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="11" ACCESS_POINT_ID="8" DEPRECATED="false" IRI="http://some.other.org/def/vocab1/3" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="12" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/7" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2004/02/skos/core#Concept"/>
+  <RESOURCE_MAP ID="13" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://vocab.owner.org/def/vocab1/9" OWNED="true" RESOURCE_TYPE="http://www.w3.org/2002/07/owl#deprecated"/>
+  <RESOURCE_MAP ID="14" ACCESS_POINT_ID="8" DEPRECATED="true" IRI="http://some.other.org/def/vocab1/9" OWNED="false" RESOURCE_TYPE="http://www.w3.org/2002/07/owl#deprecated"/>
+
+</dataset>
