@@ -200,6 +200,8 @@ public class ResourceMapTransformProvider extends TransformProvider {
                 ResourceOwnerHostUtils.getResourceOwnerHostMapEntriesForOwner(
                         owner);
 
+        // Possible future change: support indexing of "everything",
+        // i.e., even when the owner has no associated hosts.
         if (resourceOwnerHosts.size() == 0) {
             // This owner has no hosts associated with it. So there
             // is nothing more to be done.
@@ -238,9 +240,6 @@ public class ResourceMapTransformProvider extends TransformProvider {
                     taskInfo);
             repository = manager.getRepository(repositoryID);
             if (repository == null) {
-                logger.error("ResourceMapTransformProvider.transform(): "
-                        + "no such repository: "
-                        + repositoryID);
                 TaskUtils.updateMessageAndTaskStatus(logger,
                         taskInfo.getTask(),
                         results, TaskStatus.ERROR,
@@ -251,6 +250,7 @@ public class ResourceMapTransformProvider extends TransformProvider {
                         FAIL_ON_ERROR_DEFAULT);
             }
         } catch (RepositoryConfigException | RepositoryException e) {
+            // Log separately so as to get stacktrace.
             logger.error("Exception in ResourceMapTransformProvider."
                     + "transform() opening repository", e);
             TaskUtils.updateMessageAndTaskStatus(logger,
@@ -343,15 +343,12 @@ public class ResourceMapTransformProvider extends TransformProvider {
      */
     private void logNotExactlyOneSissvocAccessPoint(final TaskInfo taskInfo,
             final HashMap<String, String> results) {
-        logger.error("ResourceMapTransformProvider.transform(): "
-                + "not exactly one sissvoc access point for version: "
-                + taskInfo.getVersion());
         TaskUtils.updateMessageAndTaskStatus(logger,
                 taskInfo.getTask(),
                 results, TaskStatus.ERROR,
                 "ResourceMapTransformProvider.transform(): "
                 + "not exactly one sissvoc access point for version: "
-                + taskInfo.getVersion());
+                + taskInfo.getVersion().getId());
     }
 
     /** Log the fact that there are no hosts associated with the
@@ -361,15 +358,12 @@ public class ResourceMapTransformProvider extends TransformProvider {
      */
     private void logNoHosts(final TaskInfo taskInfo,
             final HashMap<String, String> results) {
-        logger.debug("ResourceMapTransformProvider.transform(): "
-                + "no hosts associated with this owner: "
-                + taskInfo.getVersion());
         TaskUtils.updateMessageAndTaskStatus(logger,
                 taskInfo.getTask(),
                 results, TaskStatus.SUCCESS,
                 "ResourceMapTransformProvider.transform(): "
                 + "no hosts associated with this owner: "
-                + taskInfo.getVersion());
+                + taskInfo.getVocabulary().getOwner());
     }
 
     @Override
@@ -378,15 +372,12 @@ public class ResourceMapTransformProvider extends TransformProvider {
             final HashMap<String, String> results) {
         Integer accessPointId = getAccessPointId(taskInfo);
         if (accessPointId == null) {
-            logger.error("ResourceMapTransformProvider.untransform(): "
-                    + "not exactly one sissvoc access point for version: "
-                    + taskInfo.getVersion());
             TaskUtils.updateMessageAndTaskStatus(logger,
                     taskInfo.getTask(),
                     results, TaskStatus.ERROR,
                     "ResourceMapTransformProvider.untransform(): "
                     + "not exactly one sissvoc access point for version: "
-                    + taskInfo.getVersion());
+                    + taskInfo.getVersion().getId());
             // Return failure (i.e., false) in this case,
             // if fail_on_error is set to true.
             return !TaskUtils.isSubtaskFailOnError(subtask,
