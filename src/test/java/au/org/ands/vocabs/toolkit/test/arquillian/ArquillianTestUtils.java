@@ -83,11 +83,11 @@ public final class ArquillianTestUtils {
 
     /** Clear the database. Tables are truncated, and sequence values
      * for auto-incrementing columns are reset.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws IOException If a problem getting test data for DBUnit.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws IOException If a problem getting test data for DbUnit.
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     public static void clearDatabase() throws
@@ -155,11 +155,11 @@ public final class ArquillianTestUtils {
      * (one double quote).
      * @param testName The name of the test method. Used to generate
      *      the filename of the file to load.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws IOException If a problem getting test data for DBUnit.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws IOException If a problem getting test data for DbUnit.
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     public static void loadDbUnitTestFile(final String testName) throws
@@ -198,11 +198,11 @@ public final class ArquillianTestUtils {
      * @param testName The name of the test method. Used to generate
      *      the path to the file to load.
      * @param filename The name of the file to be loaded.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws IOException If a problem getting test data for DBUnit.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws IOException If a problem getting test data for DbUnit.
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     public static void loadDbUnitTestFileAsUpdate(final String testName,
@@ -232,15 +232,15 @@ public final class ArquillianTestUtils {
         em.close();
     }
 
-    /** Export the DBUnit database schema as a DTD.
+    /** Export the DbUnit database schema as a DTD.
      * @param dtdExportFilename The name of the file into which the
      *      DTD export is to go.
-     * @throws DatabaseUnitException If a problem with DBUnit.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws DatabaseUnitException If a problem with DbUnit.
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      * @throws IOException If a problem opening or closing the output file.
      */
-    public static void exportDBUnitDTD(final String dtdExportFilename) throws
+    public static void exportDbUnitDTD(final String dtdExportFilename) throws
         DatabaseUnitException, SQLException, IOException {
         EntityManager em = DBContext.getEntityManager();
         try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
@@ -260,17 +260,17 @@ public final class ArquillianTestUtils {
         em.close();
     }
 
-    /** Do a full export of the database in DBUnit format.
+    /** Do a full export of the database in DbUnit format.
      * @param exportFilename The name of the file into which the
      *      export is to go.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
      * @throws IOException If a problem writing the export.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
-    public static void exportFullDBData(final String exportFilename) throws
+    public static void exportFullDbUnitData(final String exportFilename) throws
         DatabaseUnitException, HibernateException, IOException, SQLException {
         EntityManager em = DBContext.getEntityManager();
         try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
@@ -339,10 +339,10 @@ public final class ArquillianTestUtils {
     /** Get the current contents of a database table.
      * @param tableName The name of the database table to be fetched.
      * @return The current contents of the database table.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     public static ITable getDatabaseTableCurrentContents(
@@ -364,7 +364,7 @@ public final class ArquillianTestUtils {
      * @param filename The filename of the file containing the expected
      *      database contents.
      * @return The contents of the database table.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws IOException If reading the DTD fails.
      */
     public static IDataSet getDatabaseTableExpectedContents(

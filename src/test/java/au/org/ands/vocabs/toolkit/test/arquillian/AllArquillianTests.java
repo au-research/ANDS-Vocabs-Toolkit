@@ -172,12 +172,12 @@ public class AllArquillianTests extends ArquillianBaseTest {
     // Task numbers 3 and 4 generate magic number warnings.
     //CHECKSTYLE:OFF: MagicNumber
     /** Server-side test of {@code JsonTreeTransformProvider}.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws IOException If a problem getting test data for DBUnit,
+     * @throws IOException If a problem getting test data for DbUnit,
      *          or reading JSON from the correct and test output files.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     @Test
@@ -268,12 +268,12 @@ public class AllArquillianTests extends ArquillianBaseTest {
     //     provider.transform.ResourceMapTransformProvider.
 
     /** Server-side test 1 of {@code ResourceMapTransformProvider}.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws IOException If a problem getting test data for DBUnit,
+     * @throws IOException If a problem getting test data for DbUnit,
      *          or reading JSON from the correct and test output files.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     @Test
@@ -295,7 +295,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
         Assert.assertEquals(results.get("status"), "success",
                 "ResourceMapTransformProvider failed on task 1");
         // If a dump is required, uncomment the next line.
-        // ArquillianTestUtils.exportFullDBData("trmtp1.xml");
+        // ArquillianTestUtils.exportFullDbUnitData("trmtp1.xml");
 
         // Get current contents of resource_map table.
         ITable actualTable = ArquillianTestUtils.
@@ -335,12 +335,12 @@ public class AllArquillianTests extends ArquillianBaseTest {
     }
 
     /** Server-side test 2 of {@code ResourceMapTransformProvider}.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws IOException If a problem getting test data for DBUnit,
+     * @throws IOException If a problem getting test data for DbUnit,
      *          or reading JSON from the correct and test output files.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     @Test
@@ -362,7 +362,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
         Assert.assertEquals(results.get("status"), "success",
                 "ResourceMapTransformProvider failed on task 1");
         // If a dump is required, uncomment the next line.
-        // ArquillianTestUtils.exportFullDBData("trmtp2.xml");
+        // ArquillianTestUtils.exportFullDbUnitData("trmtp2.xml");
 
         // Get current contents of resource_map table.
         ITable actualTable = ArquillianTestUtils.
@@ -392,12 +392,12 @@ public class AllArquillianTests extends ArquillianBaseTest {
      * there is some overlap in ownership of hosts. There is also a
      * test of multiple definitions of a concept within the same
      * vocabulary.
-     * @throws DatabaseUnitException If a problem with DBUnit.
+     * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
      *          JDBC connection.
-     * @throws IOException If a problem getting test data for DBUnit,
+     * @throws IOException If a problem getting test data for DbUnit,
      *          or reading JSON from the correct and test output files.
-     * @throws SQLException If DBUnit has a problem performing
+     * @throws SQLException If DbUnit has a problem performing
      *           performing JDBC operations.
      */
     @Test
@@ -428,7 +428,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
         Assert.assertEquals(results.get("status"), "success",
                 "ResourceMapTransformProvider failed on task 2");
         // If a dump is required, uncomment the next line.
-        // ArquillianTestUtils.exportFullDBData("trmtp3.xml");
+        // ArquillianTestUtils.exportFullDbUnitData("trmtp3.xml");
 
         // Get current contents of resource_map table.
         ITable actualTable = ArquillianTestUtils.
