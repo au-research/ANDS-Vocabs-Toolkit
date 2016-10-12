@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.test.arquillian.ArquillianTestUtils;
 
-/** Restlets that support testing. */
+/** REST web services that support testing. */
 @Path("testing")
-public class TestRestlets {
+public class TestREST {
 
     /** Servlet context. */
     @Context

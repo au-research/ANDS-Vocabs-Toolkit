@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import java.lang.invoke.MethodHandles;
 
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import au.org.ands.vocabs.toolkit.db.VocabularyUtils;
 import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 
-/** Testing restlet. */
+/** Testing REST web service. */
 @Path("testingDB2")
-public class TestRestletDB2 {
+public class TestRESTDB2 {
 
     /** The logger. */
     private Logger logger = LoggerFactory.getLogger(
@@ -29,7 +29,7 @@ public class TestRestletDB2 {
     @Produces(MediaType.TEXT_PLAIN)
     @GET
     public final String getMessage(@QueryParam("vocab_id") final int vocabId) {
-        logger.info("Running TestRestletDB2.getMessage().");
+        logger.info("Running TestRESTDB2.getMessage().");
 
         // Get the vocabulary object
         // Read the existing entries and log

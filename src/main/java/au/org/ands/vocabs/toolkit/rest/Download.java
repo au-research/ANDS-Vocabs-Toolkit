@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 
-/** Restlet for downloading a vocabulary. */
+/** REST web services for downloading a vocabulary. */
 @Path("download")
 public class Download {
 

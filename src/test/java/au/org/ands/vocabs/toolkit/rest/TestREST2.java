@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -11,9 +11,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-/** Testing restlet. */
+/** Testing REST web service. */
 @Path("testing2")
-public class TestRestlet2 {
+public class TestREST2 {
 
     /** getMessage.
      * @return the message. */

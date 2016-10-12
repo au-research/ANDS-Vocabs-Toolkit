@@ -1,6 +1,6 @@
 /** See the file "LICENSE" for the full license governing this code. */
 
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import au.org.ands.vocabs.toolkit.db.ResourceMapEntryUtils;
 import au.org.ands.vocabs.toolkit.db.model.ResourceMapEntry;
 
-/** Restlets for resolution of concept IRIs. */
+/** REST web services for resolution of concept IRIs. */
 @Path("resolve")
 public class ResolveIRI {
 

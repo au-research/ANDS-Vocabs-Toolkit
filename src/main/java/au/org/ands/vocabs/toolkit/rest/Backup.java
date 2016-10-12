@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.provider.backup.PoolPartyBackupProvider;
 
-/** Restlets for doing backups. */
+/** REST web services for doing backups. */
 @Path("doBackup")
 public class Backup {
 

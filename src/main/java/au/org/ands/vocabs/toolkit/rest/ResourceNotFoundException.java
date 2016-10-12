@@ -1,12 +1,12 @@
 /** See the file "LICENSE" for the full license governing this code. */
 
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-/** Response generation support for restlets, when HTTP status 404
+/** Response generation support for REST web services, when HTTP status 404
  * (Not Found) is required.
  * See <a
  * href="https://jersey.java.net/documentation/latest/representations.html"

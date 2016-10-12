@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
-import au.org.ands.vocabs.toolkit.restlet.ResolveIRI;
+import au.org.ands.vocabs.toolkit.rest.ResolveIRI;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
 import au.org.ands.vocabs.toolkit.test.utils.NetClientUtils;
@@ -458,8 +458,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
 
     // Client-side tests go here. Server-side tests are above this line.
 
-    // Tests of restlets defined in
-    //   au.org.ands.vocabs.toolkit.restlet.GetInfo.
+    // Tests of REST web services defined in
+    //   au.org.ands.vocabs.toolkit.rest.GetInfo.
 
     /** The base URL of the deployed webapp under test.
      * Injected by Arquillian.
@@ -493,7 +493,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
     }
 
     /** Client-side test 1 of the global IRI resolver function,
-     * {@link au.org.ands.vocabs.toolkit.restlet.ResolveIRI#lookupIRI}.
+     * {@link au.org.ands.vocabs.toolkit.rest.ResolveIRI#lookupIRI}.
      * Lookup data is based on the correct result
      * of {@link #testResourceMapTransformProvider1()}.
      */
@@ -577,7 +577,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
     }
 
     /** Client-side test 2 of the global IRI resolver function,
-     * {@link au.org.ands.vocabs.toolkit.restlet.ResolveIRI#lookupIRI}.
+     * {@link au.org.ands.vocabs.toolkit.rest.ResolveIRI#lookupIRI}.
      * Lookup data is based on the correct result
      * of {@link #testResourceMapTransformProvider2()}.
      */
@@ -634,7 +634,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
     }
 
     /** Client-side test 3 of the global IRI resolver function,
-     * {@link au.org.ands.vocabs.toolkit.restlet.ResolveIRI#lookupIRI}.
+     * {@link au.org.ands.vocabs.toolkit.rest.ResolveIRI#lookupIRI}.
      * Lookup data is based on the correct result
      * of {@link #testResourceMapTransformProvider3()}.
      */

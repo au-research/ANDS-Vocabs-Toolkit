@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 //Disable LineLength check just for Eclipse-maintained imports.
 //CHECKSTYLE:OFF: LineLength
@@ -22,7 +22,7 @@ import au.org.ands.vocabs.toolkit.provider.transform.GetMetadataTransformProvide
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 //CHECKSTYLE:ON: LineLength
 
-/** Restlets for getting vocabulary metadata. */
+/** REST web services for getting vocabulary metadata. */
 @Path("getMetadata")
 public class GetMetadata {
 

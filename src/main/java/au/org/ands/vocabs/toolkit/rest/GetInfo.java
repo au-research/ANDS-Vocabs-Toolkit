@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
-/** Restlets for getting info about Toolkit supported services. */
+/** REST web services for getting info about Toolkit supported services. */
 @Path("getInfo")
 public class GetInfo {
 

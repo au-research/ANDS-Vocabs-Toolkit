@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Enumeration;
@@ -17,9 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
-/** Testing restlet. */
+/** Testing REST web service. */
 @Path("testing")
-public class TestRestlet1 {
+public class TestREST1 {
 
     /** Servlet context. */
     @Context
@@ -32,7 +32,7 @@ public class TestRestlet1 {
     public final String getMessage() {
         Logger logger = LoggerFactory.getLogger(
                 MethodHandles.lookup().lookupClass());
-        logger.info("Running TestRestlet1.getMessage().");
+        logger.info("Running TestREST1.getMessage().");
         logger.info("My path is: " + context.getRealPath("."));
         testProperties(logger);
 

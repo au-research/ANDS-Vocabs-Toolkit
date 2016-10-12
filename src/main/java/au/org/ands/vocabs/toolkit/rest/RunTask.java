@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.toolkit.restlet;
+package au.org.ands.vocabs.toolkit.rest;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 
-/** Restlets for running Toolkit supported tasks. */
+/** REST web services for running Toolkit supported tasks. */
 @Path("runTask")
 public class RunTask {
 

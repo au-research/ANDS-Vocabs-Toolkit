@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.db.model.Version;
-import au.org.ands.vocabs.toolkit.restlet.Download;
+import au.org.ands.vocabs.toolkit.rest.Download;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
