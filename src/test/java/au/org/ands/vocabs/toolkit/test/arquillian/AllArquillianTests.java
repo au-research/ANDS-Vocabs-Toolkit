@@ -492,6 +492,9 @@ public class AllArquillianTests extends ArquillianBaseTest {
         // Assert.fail("Test of failing in testSystemHealthCheck");
     }
 
+    // Tests of REST web services defined in
+    //   au.org.ands.vocabs.toolkit.rest.ResolveIRI.
+
     /** Client-side test 1 of the global IRI resolver function,
      * {@link au.org.ands.vocabs.toolkit.rest.ResolveIRI#lookupIRI}.
      * Lookup data is based on the correct result
