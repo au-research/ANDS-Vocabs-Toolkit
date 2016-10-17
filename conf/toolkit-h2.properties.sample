@@ -1,0 +1,114 @@
+## Build and runtime-specific system variables for ANDS Vocab Toolkit App.
+
+# Testing parameters
+
+# Tomcat for Sesame
+# Tomcat Port
+test.Tomcat.port=8125
+# Directory to use for Tomcat work area. Beware: any existing directory
+# of this name will be wiped during test!
+# NB: This directory is excluded from Eclipse's view of the project
+# so as to skip validation errors on the content. (See .project's
+# filteredResources element.)
+test.Tomcat.directory=tomcattest
+# Sesame context path
+test.Tomcat.sesame.context=openrdf-sesame
+# path to Sesame WAR
+test.Tomcat.sesame.war=wartest/openrdf-sesame-2.8.3/openrdf-sesame.war
+
+# Full path needed by H2. For example, replace these instances
+# of PUT-SOMETHING-HERE with the full path to the top-level
+# of this checkout of the repository.
+javax.persistence.jdbc.url=jdbc:h2:/PUT-SOMETHING-HERE/h2db/testh2db;AUTO_SERVER=TRUE
+# As above, but logging all queries:
+#javax.persistence.jdbc.url=jdbc:h2:/PUT-SOMETHING-HERE/h2db/testh2db;AUTO_SERVER=TRUE;TRACE_LEVEL_FILE=2
+
+javax.persistence.jdbc.user=test
+javax.persistence.jdbc.password=test
+
+# Initialize schema, wiping out anything already there.
+javax.persistence.schema-generation.database.action=drop-and-create
+
+hibernate.connection.driver_class=org.h2.Driver
+
+# Cope with the database server dropping connections after a timeout.
+# This is the most basic setting; customize as per instructions at:
+#   http://www.mchange.com/projects/c3p0/
+hibernate.c3p0.testConnectionOnCheckout=true
+# Future work:
+# Add this to the Tomcat JVM command line after c3p0 libraries
+# are upgraded to version 0.9.5 or later, then tune the debugging
+# so c3p0/MLog logging also goes through LogBack.
+#  -Dcom.mchange.v2.log.MLog=com.mchange.v2.log.slf4j.Slf4jMLog
+# This is needed (at least with MySQL) to ensure that changes made
+# to the database externally (i.e., by the portal) are immediately
+# visible to JPA queries.
+hibernate.connection.isolation=2
+
+## FILE STORAGE
+
+# The top level directory storing all Toolkit data
+Toolkit.storagePath = ./ands_vocabs
+
+# The directory in which all vocabulary data will be stored
+Toolkit.vocabsPath = ./ands_vocabs/vocabs
+
+# The directory in which all SISSVoc spec files will be stored
+SISSVoc.specsPath = ./ands_vocabs/specs
+
+# The directory in which temporary files will be stored
+Toolkit.tempPath = ./ands_vocabs/temp
+
+# The file containing the rewrites to be done to vocabulary metadata
+Toolkit.metadataRewriteMapPath = ./ands_vocabs/conf/metadatarewritemap.conf
+
+## DOWNLOADS
+
+# Prefix to all public-facing URLs to downloads from the Toolkit.
+Toolkit.downloadPrefix = http://localhost:${test.Tomcat.port}/ANDS-Vocabs-Toolkit/download/
+
+### POOLPARTY
+
+# Replace these instances of PUT-SOMETHING-HERE with the
+# hostname of the PoolParty server to use, and a suitable
+# username and password to access project data.
+PoolPartyHarvester.remoteUrl = https://PUT-SOMETHING-HERE/PoolParty/api/projects/
+PoolPartyHarvester.username = PUT-SOMETHING-HERE
+PoolPartyHarvester.password = PUT-SOMETHING-HERE
+PoolPartyHarvester.defaultFormat = TriG
+PoolPartyHarvester.defaultExportModule = concepts
+
+# local OpenRDF Sesame server
+SesameImporter.serverUrl = http://localhost:${test.Tomcat.port}/${test.Tomcat.sesame.context}/
+
+# You don't (yet) need to replace the following two instances of
+# PUT-SOMETHING-HERE. For now, they can be left alone.
+
+# Prefix to all SPARQL endpoints provided by OpenRDF Sesame
+SesameImporter.sparqlPrefix = http://PUT-SOMETHING-HERE/repository/api/sparql
+
+# Prefix to all SISSVoc endpoints
+SISSVoc.endpointsPrefix = http://PUT-SOMETHING-HERE/repository/api/lda
+
+# SISSVoc spec file template
+SISSVoc.specTemplate = conf/ANDS-ELDAConfig-template.ttl.sample
+# SISSVoc spec file template variables
+# Top-level of deployment path. Should begin with a slash, but not end with one.
+SISSVoc.variable.DEPLOYPATH = /repository/api/lda
+# The name of the Vocabulary service
+SISSVoc.variable.SERVICE_TITLE = ANDS Vocabularies LDA service
+# The name of the Vocabulary service owner
+SISSVoc.variable.SERVICE_AUTHOR = ANDS Services
+# Contact email address for the Vocabulary service owner
+SISSVoc.variable.SERVICE_AUTHOR_EMAIL = services@ands.org.au
+# URL of the homepage of the Vocabulary service
+# ANDS home page for now; in future, could be
+# vocabs.ands.org.au itself.
+SISSVoc.variable.SERVICE_HOMEPAGE = http://www.ands.org.au/
+# URL prefix of SPARQL endpoint to use for doing queries. Should end with a slash.
+SISSVoc.variable.SPARQL_ENDPOINT_PREFIX = http://localhost:${test.Tomcat.port}/${test.Tomcat.sesame.context}/repositories/
+# Path to the XSL stylesheet that generates the HTML pages.
+# Path is relative to the SISSVoc webapp.
+SISSVoc.variable.HTML_STYLESHEET = resources/default/transform/ands-ashtml-sissvoc.xsl
+jersey.config.server.tracing.type = ALL
+jersey.config.server.tracing.threshold = VERBOSE
