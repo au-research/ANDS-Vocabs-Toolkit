@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -145,7 +146,7 @@ public class PoolPartyBackupProvider extends BackupProvider {
             String responseData = response.readEntity(String.class);
             Date date = new Date();
             SimpleDateFormat dateFormat = new SimpleDateFormat(
-                    "yyyy-MM-dd'T'HH:mm:ss");
+                    "yyyy-MM-dd'T'HH:mm:ss", Locale.ROOT);
             String fileName = dateFormat.format(date) + "-backup";
             String filePath = ToolkitFileUtils.saveFile(
                     outputPath,

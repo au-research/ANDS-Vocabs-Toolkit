@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -309,7 +310,7 @@ public class TaskRunner {
      */
     public final void addTimestamp(final HashMap<String, String> resultsMap) {
         final SimpleDateFormat dateFormat =
-                new SimpleDateFormat(TIMESTAMP_FORMAT);
+                new SimpleDateFormat(TIMESTAMP_FORMAT, Locale.ROOT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         // In case you need to undo the conversion in some other part
