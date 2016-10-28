@@ -70,6 +70,7 @@
     <module name="FinalParameters"/>
     <module name="TodoComment"/>
     <module name="UpperEll"/>
+    <module name="SuppressWarningsHolder"/>
   </module>
   <module name="JavadocPackage"/>
   <module name="NewlineAtEndOfFile"/>
@@ -88,4 +89,5 @@
     <property name="onCommentFormat" value="CHECKSTYLE\:ON\: ([\w\|]+)"/>
     <property name="checkFormat" value="$1"/>
   </module>
+  <module name="SuppressWarningsFilter"/>
 </module>
