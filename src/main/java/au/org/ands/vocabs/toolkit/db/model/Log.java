@@ -12,8 +12,12 @@ import javax.persistence.Table;
  * Log model class.
  */
 @Entity
-@Table(name = "log")
+@Table(name = Log.TABLE_NAME)
 public class Log {
+
+    /** The name of the underlying database table.
+     * Use this in the class's {@code @Table} annotation. */
+    public static final String TABLE_NAME = "log";
 
     /** id. */
     private Integer id;

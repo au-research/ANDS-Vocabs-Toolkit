@@ -20,7 +20,7 @@ import au.org.ands.vocabs.toolkit.db.TemporalUtils;
  * Resource owner host model class.
  */
 @Entity
-@Table(name = "resource_owner_hosts")
+@Table(name = ResourceOwnerHost.TABLE_NAME)
 /* Rather than including the text of the queries directly in the
  * annotations, we use constants defined in the class itself.
  * This way, they can be found (fully expanded!) in the generated Javadoc
@@ -36,6 +36,10 @@ import au.org.ands.vocabs.toolkit.db.TemporalUtils;
                 DELETE_RESOURCEOWNERHOSTBYID_QUERY),
 })
 public class ResourceOwnerHost {
+
+    /** The name of the underlying database table.
+     * Use this in the class's {@code @Table} annotation. */
+    public static final String TABLE_NAME = "resource_owner_hosts";
 
     /** Name of getResourceOwnerHostsForOwner query. */
     public static final String GET_RESOURCEOWNERHOSTS_FOR_OWNER =

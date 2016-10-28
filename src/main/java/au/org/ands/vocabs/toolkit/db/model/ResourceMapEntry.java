@@ -14,7 +14,7 @@ import javax.persistence.Table;
  * Resource map entry model class.
  */
 @Entity
-@Table(name = "resource_map")
+@Table(name = ResourceMapEntry.TABLE_NAME)
 /* Rather than including the text of the queries directly in the
  * annotations, we use constants defined in the class itself.
  * This way, they can be found (fully expanded!) in the generated Javadoc
@@ -35,6 +35,10 @@ import javax.persistence.Table;
                 DELETE_RESOURCEMAPENTRIES_FOR_ACCESSPOINT_QUERY)
 })
 public class ResourceMapEntry {
+
+    /** The name of the underlying database table.
+     * Use this in the class's {@code @Table} annotation. */
+    public static final String TABLE_NAME = "resource_map";
 
     /** Name of getResourceMapEntriesForIRI query. */
     public static final String GET_RESOURCEMAPENTRIES_FOR_IRI =

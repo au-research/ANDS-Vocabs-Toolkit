@@ -12,8 +12,12 @@ import javax.persistence.Table;
  * Related model class.
  */
 @Entity
-@Table(name = "related")
+@Table(name = Related.TABLE_NAME)
 public class Related {
+
+    /** The name of the underlying database table.
+     * Use this in the class's {@code @Table} annotation. */
+    public static final String TABLE_NAME = "related";
 
     /** id. */
     private Integer id;

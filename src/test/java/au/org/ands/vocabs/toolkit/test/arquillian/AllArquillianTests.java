@@ -40,6 +40,7 @@ import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.rest.ResolveIRI;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
+import au.org.ands.vocabs.toolkit.test.utils.DbUnitConstants;
 import au.org.ands.vocabs.toolkit.test.utils.NetClientUtils;
 import au.org.ands.vocabs.toolkit.test.utils.TestPropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ApplicationContextListener;
@@ -298,7 +299,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
 
         // Get current contents of resource_map table.
         ITable actualTable = ArquillianTestUtils.
-                getDatabaseTableCurrentContents("RESOURCE_MAP");
+                getDatabaseTableCurrentContents(
+                        DbUnitConstants.RESOURCEMAPENTRY_TABLE_NAME);
         // And take out the id and access_point_id columns before
         // doing a comparison.
         ITable filteredActualTable = DefaultColumnFilter.excludedColumnsTable(
@@ -310,7 +312,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
                         + "test.arquillian.AllArquillianTests."
                         + "testResourceMapTransformProvider1/"
                         + "test-data1-results.xml");
-        ITable expectedTable = expectedDataSet.getTable("RESOURCE_MAP");
+        ITable expectedTable = expectedDataSet.getTable(
+                DbUnitConstants.RESOURCEMAPENTRY_TABLE_NAME);
         ITable filteredExpectedTable = DefaultColumnFilter.excludedColumnsTable(
                 expectedTable, new String[]{"ID", "ACCESS_POINT_ID"});
         Assertion.assertEquals(new SortedTable(filteredExpectedTable),
@@ -328,7 +331,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
                 "ResourceMapTransformProvider failed on task 2");
         // Get current contents of resource_map table again.
         actualTable = ArquillianTestUtils.
-                getDatabaseTableCurrentContents("RESOURCE_MAP");
+                getDatabaseTableCurrentContents(
+                        DbUnitConstants.RESOURCEMAPENTRY_TABLE_NAME);
         Assert.assertEquals(actualTable.getRowCount(), 0,
                 "Empty resource_map table after UNTRANSFORM");
     }
@@ -365,7 +369,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
 
         // Get current contents of resource_map table.
         ITable actualTable = ArquillianTestUtils.
-                getDatabaseTableCurrentContents("RESOURCE_MAP");
+                getDatabaseTableCurrentContents(
+                        DbUnitConstants.RESOURCEMAPENTRY_TABLE_NAME);
         // And take out the id and access_point_id columns before
         // doing a comparison.
         ITable filteredActualTable = DefaultColumnFilter.excludedColumnsTable(
@@ -377,7 +382,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
                         + "test.arquillian.AllArquillianTests."
                         + "testResourceMapTransformProvider2/"
                         + "test-data1-results.xml");
-        ITable expectedTable = expectedDataSet.getTable("RESOURCE_MAP");
+        ITable expectedTable = expectedDataSet.getTable(
+                DbUnitConstants.RESOURCEMAPENTRY_TABLE_NAME);
         ITable filteredExpectedTable = DefaultColumnFilter.excludedColumnsTable(
                 expectedTable, new String[]{"ID", "ACCESS_POINT_ID"});
         Assertion.assertEquals(new SortedTable(filteredExpectedTable),
@@ -431,7 +437,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
 
         // Get current contents of resource_map table.
         ITable actualTable = ArquillianTestUtils.
-                getDatabaseTableCurrentContents("RESOURCE_MAP");
+                getDatabaseTableCurrentContents(
+                        DbUnitConstants.RESOURCEMAPENTRY_TABLE_NAME);
         // And take out the id column before
         // doing a comparison. Cf. the other tests, in which we also
         // take out the access_point_id column. This time, we have
@@ -447,7 +454,8 @@ public class AllArquillianTests extends ArquillianBaseTest {
                         + "test.arquillian.AllArquillianTests."
                         + "testResourceMapTransformProvider3/"
                         + "test-data1-results.xml");
-        ITable expectedTable = expectedDataSet.getTable("RESOURCE_MAP");
+        ITable expectedTable = expectedDataSet.getTable(
+                DbUnitConstants.RESOURCEMAPENTRY_TABLE_NAME);
         ITable filteredExpectedTable = DefaultColumnFilter.excludedColumnsTable(
                 expectedTable, new String[]{"ID"});
         Assertion.assertEquals(new SortedTable(filteredExpectedTable),

@@ -14,7 +14,7 @@ import javax.persistence.Table;
  * Access Point model class.
  */
 @Entity
-@Table(name = "access_points")
+@Table(name = AccessPoint.TABLE_NAME)
 /* Rather than including the text of the queries directly in the
  * annotations, we use constants defined in the class itself.
  * This way, they can be found (fully expanded!) in the generated Javadoc
@@ -34,6 +34,10 @@ import javax.persistence.Table;
             query = AccessPoint.DELETE_ACCESSPOINTS_FOR_VERSION_AND_TYPE_QUERY)
 })
 public class AccessPoint {
+
+    /** The name of the underlying database table.
+     * Use this in the class's {@code @Table} annotation. */
+    public static final String TABLE_NAME = "access_points";
 
     /** Name of getAllAccessPoints query. */
     public static final String GET_ALL_ACCESSPOINTS = "getAllAccessPoints";

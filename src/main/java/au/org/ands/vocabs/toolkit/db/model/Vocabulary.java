@@ -16,8 +16,12 @@ import javax.persistence.TemporalType;
  * Vocabulary model class.
  */
 @Entity
-@Table(name = "vocabularies")
+@Table(name = Vocabulary.TABLE_NAME)
 public class Vocabulary {
+
+    /** The name of the underlying database table.
+     * Use this in the class's {@code @Table} annotation. */
+    public static final String TABLE_NAME = "vocabularies";
 
     /** id. */
     private Integer id;

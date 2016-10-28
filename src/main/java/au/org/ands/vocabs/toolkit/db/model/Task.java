@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Task model class.
  */
 @Entity
-@Table(name = "task")
+@Table(name = Task.TABLE_NAME)
 /* Rather than including the text of the query directly in the
  * annotation, we use a constant defined in the class itself.
  * This way, it can be found in the generated Javadoc
@@ -24,6 +24,10 @@ import javax.xml.bind.annotation.XmlRootElement;
         query = Task.GET_ALL_TASKS_QUERY)
 @XmlRootElement
 public class Task {
+
+    /** The name of the underlying database table.
+     * Use this in the class's {@code @Table} annotation. */
+    public static final String TABLE_NAME = "task";
 
     /** Name of getAllTasks query. */
     public static final String GET_ALL_TASKS = "getAllTasks";
