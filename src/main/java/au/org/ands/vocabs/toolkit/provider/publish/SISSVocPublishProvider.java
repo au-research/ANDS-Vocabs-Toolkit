@@ -4,6 +4,7 @@ package au.org.ands.vocabs.toolkit.provider.publish;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -213,7 +214,8 @@ public class SISSVocPublishProvider extends PublishProvider {
         File templateFile = new File(sissvocSpecTemplatePath);
         String specTemplate;
         try {
-            specTemplate = FileUtils.readFileToString(templateFile);
+            specTemplate = FileUtils.readFileToString(templateFile,
+                    StandardCharsets.UTF_8);
         } catch (IOException e) {
             results.put(TaskStatus.EXCEPTION,
                     "SISSVoc writeSpecFile: can't open template file");
@@ -229,7 +231,8 @@ public class SISSVocPublishProvider extends PublishProvider {
                 resolve(ToolkitFileUtils.getSesameRepositoryId(taskInfo)
                         + ".ttl").toString());
         try {
-            FileUtils.writeStringToFile(specFile, customSpec);
+            FileUtils.writeStringToFile(specFile, customSpec,
+                    StandardCharsets.UTF_8);
         } catch (IOException e) {
             results.put(TaskStatus.EXCEPTION,
                     "SISSVoc writeSpecFile: can't write spec file");

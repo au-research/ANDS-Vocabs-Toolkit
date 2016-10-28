@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -86,7 +87,8 @@ public class JsonListTransformProvider extends TransformProvider {
             HashMap<String, HashMap<String, Object>> conceptMap =
                     conceptHandler.getConceptMap();
             FileUtils.writeStringToFile(out,
-                    TaskUtils.mapToJSONString(conceptMap));
+                    TaskUtils.mapToJSONString(conceptMap),
+                    StandardCharsets.UTF_8);
         } catch (IOException ex) {
             results.put(TaskStatus.EXCEPTION,
                     "Exception in JsonListTransform while Parsing RDF");

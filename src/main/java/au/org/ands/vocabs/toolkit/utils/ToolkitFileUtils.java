@@ -4,11 +4,12 @@ package au.org.ands.vocabs.toolkit.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -99,11 +100,15 @@ public final class ToolkitFileUtils {
                         format.toLowerCase(Locale.ROOT));
         String filePath = dirName
                 + File.separator + fileName + fileExtension;
-        FileWriter writer = null;
+        OutputStreamWriter writer = null;
         try {
             requireDirectory(dirName);
             File oFile = new File(filePath);
-            writer = new FileWriter(oFile);
+            // See, e.g.,
+            // http://stackoverflow.com/questions/9852978/
+            //        write-a-file-in-utf-8-using-filewriter-java
+            writer = new OutputStreamWriter(new FileOutputStream(oFile),
+                    StandardCharsets.UTF_8);
             writer.write(data);
             writer.close();
         } catch (IOException e) {

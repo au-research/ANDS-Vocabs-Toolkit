@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -227,7 +228,8 @@ public class JsonTreeTransformProvider extends TransformProvider {
                 File out = new File(resultFileNameTree);
                 results.put("concepts_tree", resultFileNameTree);
                 FileUtils.writeStringToFile(out,
-                        TaskUtils.collectionToJSONString(conceptTree));
+                        TaskUtils.collectionToJSONString(conceptTree),
+                        StandardCharsets.UTF_8);
             } else {
                 String reason;
                 if (conceptHandler.isCycle()) {

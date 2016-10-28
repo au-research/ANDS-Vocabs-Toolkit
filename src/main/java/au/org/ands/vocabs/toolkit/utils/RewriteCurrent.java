@@ -4,6 +4,7 @@ package au.org.ands.vocabs.toolkit.utils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,9 +16,9 @@ import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.org.ands.vocabs.toolkit.db.DBContext;
-
 import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+
+import au.org.ands.vocabs.toolkit.db.DBContext;
 
 /** Support program as part of the redirection of SPARQL and SISSVoc
  *  URLs containing "current" as the version identifier. Use this
@@ -68,7 +69,8 @@ public final class RewriteCurrent {
             Connection conn = em.unwrap(SessionImpl.class).connection();
             PreparedStatement stmt = conn.prepareStatement(QUERY_STRING);
             BufferedReader input =
-                    new BufferedReader(new InputStreamReader(System.in));
+                    new BufferedReader(new InputStreamReader(System.in,
+                            StandardCharsets.UTF_8));
             String vocabularySlug;
             String rewrittenSlug;
             vocabularySlug = input.readLine();

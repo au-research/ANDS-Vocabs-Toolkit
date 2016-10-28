@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
@@ -318,15 +319,17 @@ public final class ToolkitProperties {
         }
         try {
             // load a properties file
-            props.load(new InputStreamReader(input));
-            props.load(new InputStreamReader(input2));
+            props.load(new InputStreamReader(input,
+                    StandardCharsets.UTF_8));
+            props.load(new InputStreamReader(input2,
+                    StandardCharsets.UTF_8));
             // Support interpolation of properties using ${...} syntax.
             props = (AbstractFileConfiguration)
                     props.interpolatedConfiguration();
             // And now convert into Properties format for cached access.
             propsAsProperties = ConfigurationConverter.getProperties(props);
-        } catch (ConfigurationException ex) {
-            ex.printStackTrace();
+        } catch (ConfigurationException ce) {
+            logger.error("Exception while loading property file", ce);
         } finally {
             if (input != null) {
                 try {
