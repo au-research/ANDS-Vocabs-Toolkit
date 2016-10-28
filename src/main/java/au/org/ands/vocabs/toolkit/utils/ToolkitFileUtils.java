@@ -100,27 +100,19 @@ public final class ToolkitFileUtils {
                         format.toLowerCase(Locale.ROOT));
         String filePath = dirName
                 + File.separator + fileName + fileExtension;
-        OutputStreamWriter writer = null;
-        try {
-            requireDirectory(dirName);
-            File oFile = new File(filePath);
-            // See, e.g.,
-            // http://stackoverflow.com/questions/9852978/
-            //        write-a-file-in-utf-8-using-filewriter-java
-            writer = new OutputStreamWriter(new FileOutputStream(oFile),
-                    StandardCharsets.UTF_8);
+        requireDirectory(dirName);
+        File oFile = new File(filePath);
+        // See, e.g.,
+        // http://stackoverflow.com/questions/9852978/
+        //        write-a-file-in-utf-8-using-filewriter-java
+        try (OutputStreamWriter writer =
+                new OutputStreamWriter(new FileOutputStream(oFile),
+                        StandardCharsets.UTF_8)) {
             writer.write(data);
             writer.close();
         } catch (IOException e) {
+            logger.error("Exception in ToolkitFileUtils.saveFile(): ", e);
             return "Exception: " + e.toString();
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    return "Exception: " + e.toString();
-                }
-            }
         }
         return filePath;
     }
