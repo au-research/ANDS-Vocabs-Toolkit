@@ -28,6 +28,11 @@
     resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
     classpath="libdev/checkstyle-6.19/checkstyle-6.19-all.jar" />
 
+  <taskdef
+      name="forbiddenapis"
+      classname="de.thetaphi.forbiddenapis.ant.AntTask"
+      classpath="libdev/forbidden-apis-2.2/forbiddenapis-2.2.jar" />
+
   <taskdef resource="testngtasks"
     classpath="libdev/testng-6.9.10/testng-6.9.10.jar" />
 
@@ -237,6 +242,25 @@
                  out="checkstyle_report.html"
                  style="checkstyle.xsl"/> -->
 
+  </target>
+
+  <!-- For now, we don't fail the build on failing this!
+       For a rainy day: come back to this, and remove
+       as many of the reported violations as possible.
+  -->
+  <target name="forbidden-checks" depends="compile-main">
+    <forbiddenapis
+        classpathref="compile-main.classpath"
+        dir="${build}"
+        targetVersion="${target}">
+      <bundledsignatures name="jdk-unsafe"/>
+      <bundledsignatures name="jdk-deprecated"/>
+      <bundledsignatures name="jdk-internal"/>
+      <bundledsignatures name="jdk-non-portable"/>
+      <bundledsignatures name="jdk-system-out"/>
+      <bundledsignatures name="jdk-reflection"/>
+      <bundledsignatures name="commons-io-unsafe-2.4"/>
+    </forbiddenapis>
   </target>
 
   <property name="resources-test-input" value="src/test/resources/deploy" />
