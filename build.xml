@@ -228,6 +228,7 @@
            "samedir" property is an Eclipse-CS thing. -->
       <property key="samedir" value="." />
       <fileset dir="src/main" includes="**/*.java"/>
+      <fileset dir="src/test" includes="**/*.java"/>
     </checkstyle>
 
     <!-- Possible future work: if generating a report, make a pretty

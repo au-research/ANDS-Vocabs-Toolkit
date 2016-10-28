@@ -468,7 +468,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
      * TestNG has to be made happy by saying
      * {@code @Test(dataProvider = Arquillian.ARQUILLIAN_DATA_PROVIDER)}.
      */
-    private @ArquillianResource URL baseURL;
+    @ArquillianResource private URL baseURL;
 
     /** Client-side test of the system health check function.
      */
