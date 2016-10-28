@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -94,7 +95,8 @@ public final class ToolkitFileUtils {
     public static String saveFile(final String dirName, final String fileName,
             final String format, final String data) {
         String fileExtension =
-                ToolkitConfig.FORMAT_TO_FILEEXT_MAP.get(format.toLowerCase());
+                ToolkitConfig.FORMAT_TO_FILEEXT_MAP.get(
+                        format.toLowerCase(Locale.ROOT));
         String filePath = dirName
                 + File.separator + fileName + fileExtension;
         FileWriter writer = null;
@@ -301,7 +303,7 @@ public final class ToolkitFileUtils {
                 UriComponent.encode(aString.
                 replaceAll("\\p{Punct}", "-").
                 replaceAll("\\s", "-").
-                toLowerCase(),
+                toLowerCase(Locale.ROOT),
                 UriComponent.Type.PATH_SEGMENT).
                 replaceAll("%", "-").
                 replaceAll("-+", "-"),
@@ -426,7 +428,7 @@ public final class ToolkitFileUtils {
         File[] files = dir.listFiles();
 
         for (File source : files) {
-            if (!source.getName().toLowerCase().endsWith(".zip")) {
+            if (!source.getName().toLowerCase(Locale.ROOT).endsWith(".zip")) {
                 logger.debug("compressBackupFolder compressing and "
                         + "deleting file: "
                         + source.toString());
