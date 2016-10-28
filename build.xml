@@ -26,7 +26,7 @@
 
   <taskdef
     resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-    classpath="libdev/checkstyle-6.14.1/checkstyle-6.14.1-all.jar" />
+    classpath="libdev/checkstyle-6.19/checkstyle-6.19-all.jar" />
 
   <taskdef resource="testngtasks"
     classpath="libdev/testng-6.9.10/testng-6.9.10.jar" />
