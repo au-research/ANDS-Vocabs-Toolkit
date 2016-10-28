@@ -46,6 +46,7 @@ import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
+//CHECKSTYLE:ON: LineLength
 
 /** Sesame importer provider. */
 public class SesameImporterProvider extends ImporterProvider {

@@ -136,7 +136,6 @@ public final class ToolkitProperties {
 
     // On a rainy day, refactor this so that the suppression is
     // no longer required.
-    //CHECKSTYLE:OFF: MethodLength
     /** Initialize the toolkit properties. First, load the user-specified
      * properties file, "toolkit.properties", then the version properties
      * file, "version.properties". To find "toolkit.properties", priority
@@ -160,6 +159,7 @@ public final class ToolkitProperties {
      * whose value overrides that of {@code PROPS_FILE} when
      * this code is run outside a servlet container.
      */
+    @SuppressWarnings("checkstyle:MethodLength")
     private static void initProperties() {
         logger.debug("In ToolkitProperties.initProperties()");
         if (System.getProperty(DUMP_CLASSPATH) != null) {
@@ -350,7 +350,6 @@ public final class ToolkitProperties {
             dumpProperties();
         }
     }
-    //CHECKSTYLE:ON: MethodLength
 
     /** Dump all the properties using INFO-level logging. If a
      * property name contains the word "password", its value

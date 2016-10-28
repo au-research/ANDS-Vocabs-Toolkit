@@ -170,7 +170,6 @@ public class AllArquillianTests extends ArquillianBaseTest {
     // au.org.ands.vocabs.toolkit.provider.transform.JsonTreeTransformProvider.
 
     // Task numbers 3 and 4 generate magic number warnings.
-    //CHECKSTYLE:OFF: MagicNumber
     /** Server-side test of {@code JsonTreeTransformProvider}.
      * @throws DatabaseUnitException If a problem with DbUnit.
      * @throws HibernateException If a problem getting the underlying
@@ -181,6 +180,7 @@ public class AllArquillianTests extends ArquillianBaseTest {
      *           performing JDBC operations.
      */
     @Test
+    @SuppressWarnings("checkstyle:MagicNumber")
     public final void testJsonTreeTransformProvider1() throws
         DatabaseUnitException, HibernateException, IOException, SQLException {
         logger.info("In testJsonTreeTransformProvider1()");
@@ -261,7 +261,6 @@ public class AllArquillianTests extends ArquillianBaseTest {
                 + "concepts_tree_not_provided");
 
     }
-    //CHECKSTYLE:ON: MagicNumber
 
     // Tests of class
     // au.org.ands.vocabs.toolkit.
