@@ -148,15 +148,7 @@ public class TaskRunner {
         status = taskType + "ING";
         TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Harvest in progress");
-        try {
-            provider = HarvestProviderUtils.getProvider(providerName);
-        } catch (ClassNotFoundException
-                | InstantiationException
-                | IllegalAccessException e) {
-            logger.error("runHarvest exception: ", e);
-            results.put(TaskStatus.EXCEPTION, e.toString());
-            return false;
-        }
+        provider = HarvestProviderUtils.getProvider(providerName);
 
         if (provider == null) {
             status = TaskStatus.ERROR;
@@ -187,15 +179,7 @@ public class TaskRunner {
         status = "TRANSFORMING";
         TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Transform in progress");
-         try {
-            provider = TransformProviderUtils.getProvider(providerName);
-        } catch (ClassNotFoundException
-                | InstantiationException
-                | IllegalAccessException e) {
-            logger.error("runTransform exception: ", e);
-            results.put(TaskStatus.EXCEPTION, e.toString());
-            return false;
-        }
+        provider = TransformProviderUtils.getProvider(providerName);
 
         if (provider == null) {
             status = TaskStatus.ERROR;
@@ -226,15 +210,7 @@ public class TaskRunner {
         status = taskType + "ING";
         TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Import in progress");
-         try {
-            provider = ImporterProviderUtils.getProvider(providerName);
-        } catch (ClassNotFoundException
-                | InstantiationException
-                | IllegalAccessException e) {
-            logger.error("runImport exception: ", e);
-            results.put(TaskStatus.EXCEPTION, e.toString());
-            return false;
-        }
+         provider = ImporterProviderUtils.getProvider(providerName);
 
         if (provider == null) {
             status = TaskStatus.ERROR;
@@ -265,15 +241,7 @@ public class TaskRunner {
         status = taskType + "ING";
         TaskUtils.updateMessageAndTaskStatus(logger, task, results,
                 status, "Publish in progress");
-         try {
-            provider = PublishProviderUtils.getProvider(providerName);
-        } catch (ClassNotFoundException
-                | InstantiationException
-                | IllegalAccessException e) {
-            logger.error("runPublish exception: ", e);
-            results.put(TaskStatus.EXCEPTION, e.toString());
-            return false;
-        }
+        provider = PublishProviderUtils.getProvider(providerName);
 
         if (provider == null) {
             status = TaskStatus.ERROR;

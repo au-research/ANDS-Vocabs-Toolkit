@@ -37,6 +37,11 @@ import org.testng.annotations.Test;
 
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
+import au.org.ands.vocabs.toolkit.provider.backup.BackupProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.publish.PublishProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.transform.TransformProviderUtils;
 import au.org.ands.vocabs.toolkit.rest.ResolveIRI;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
@@ -152,6 +157,21 @@ public class AllArquillianTests extends ArquillianBaseTest {
     }
 
     // Server-side tests go here. Client-side tests later on.
+
+    // Tests of the various au.org.ands.vocabs.provider...ProviderUtils classes.
+
+    /** Server-side test of the various {@code ...ProviderUtils} classes
+     * that they do not leak an exception on an invalid provider name. */
+    @Test
+    public final void testProviderUtilsGetProviderNoException() {
+        logger.info("In testProviderUtilsGetProviderNoException()");
+        final String provider = "NoSuchProvider";
+        Assert.assertNull(BackupProviderUtils.getProvider(provider));
+        Assert.assertNull(HarvestProviderUtils.getProvider(provider));
+        Assert.assertNull(ImporterProviderUtils.getProvider(provider));
+        Assert.assertNull(PublishProviderUtils.getProvider(provider));
+        Assert.assertNull(TransformProviderUtils.getProvider(provider));
+    }
 
     // Tests of class au.org.ands.vocabs.toolkit.db.TasksUtils.
 

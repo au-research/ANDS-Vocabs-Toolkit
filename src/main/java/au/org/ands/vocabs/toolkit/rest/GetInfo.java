@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.Task;
+import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
+import au.org.ands.vocabs.toolkit.provider.importer.ImporterProvider;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
@@ -44,13 +46,14 @@ public class GetInfo {
     @GET
     public final String getInfoPoolParty() {
         logger.debug("called getInfoPoolParty");
-        try {
-            return HarvestProviderUtils.getProvider("PoolParty").getInfo();
-        } catch (ClassNotFoundException | InstantiationException
-                | IllegalAccessException e) {
-            logger.error("Exception happened: ", e);
+        HarvestProvider provider =
+                HarvestProviderUtils.getProvider("PoolParty");
+        if (provider == null) {
+            logger.error("getInfoPoolParty() unable to get "
+                    + "PoolParty harvester provider");
             return "{\"exception\":\"Can't get PoolParty provider.\"}";
         }
+        return provider.getInfo();
     }
 
     /** Get the list of Sesame repositories.
@@ -60,15 +63,14 @@ public class GetInfo {
     @GET
     public final Collection<?> getInfoSesame() {
         logger.debug("called getInfoSesame");
-        try {
-            return ImporterProviderUtils.getProvider("Sesame").getInfo();
-        } catch (ClassNotFoundException | InstantiationException
-                | IllegalAccessException e) {
-            logger.error("Exception happened: ", e);
-            // e.printStackTrace();
-//            return "{\"exception\":\"Can't get Sesame provider.\"}";
+        ImporterProvider provider =
+                ImporterProviderUtils.getProvider("Sesame");
+        if (provider == null) {
+            logger.error("getInfoSesame() unable to get "
+                    + "Sesame importer provider");
             return new ArrayList<String>();
         }
+        return provider.getInfo();
     }
 
     /** Get a complete list of tasks.

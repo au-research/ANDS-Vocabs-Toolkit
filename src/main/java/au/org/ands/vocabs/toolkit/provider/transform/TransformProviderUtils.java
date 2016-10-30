@@ -1,6 +1,7 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.provider.transform;
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.InvocationTargetException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,25 +19,37 @@ public final class TransformProviderUtils {
 
     /** Get the provider based on the name providerType.
      * @param providerType The name of the provider type.
-     * @return The provider.
-     * @throws ClassNotFoundException If there is no such class
-     * @throws InstantiationException If instantiation failed
-     * @throws IllegalAccessException If instantiation failed
+     * @return The provider, or null if there is an error during
+     *      instantiation.
      */
-    public static TransformProvider getProvider(final String providerType)
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+    public static TransformProvider getProvider(final String providerType) {
         String s = "au.org.ands.vocabs.toolkit.provider.transform."
                 + providerType
                 + "TransformProvider";
-
-        Class<?> c = Class.forName(s);
-        TransformProvider provider =  (TransformProvider) c.newInstance();
+        Class<?> c;
+        try {
+            c = Class.forName(s);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("TransformProviderUtils.getProvider(): "
+                    + "no such provider: " + providerType);
+            return null;
+        }
+        TransformProvider provider = null;
+        try {
+            provider = (TransformProvider) c.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
+            LOGGER.error("TransformProviderUtils.getProvider(): "
+                    + "can't instantiate provider class for provider type: "
+                    + providerType, e);
+            return null;
+        }
         if (!(provider instanceof TransformProvider)) {
-            LOGGER.error("getProvider bad class:"
+            LOGGER.error("TransformProviderUtils.getProvider() bad class:"
                     + provider.getClass().getName()
-                    + ". Class not of type Provider");
-            provider = null;
+                    + ". Class not of type TransformProvider");
+            return null;
         }
         return provider;
     }

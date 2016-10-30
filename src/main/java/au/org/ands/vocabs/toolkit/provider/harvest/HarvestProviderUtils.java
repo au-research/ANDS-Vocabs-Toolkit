@@ -1,6 +1,7 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.provider.harvest;
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.InvocationTargetException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,25 +19,37 @@ public final class HarvestProviderUtils {
 
     /** Get the provider based on the name providerType.
      * @param providerType The name of the provider type.
-     * @return The provider.
-     * @throws ClassNotFoundException If there is no such class
-     * @throws InstantiationException If instantiation failed
-     * @throws IllegalAccessException If instantiation failed
+     * @return The provider, or null if there is an error during
+     *      instantiation.
      */
-    public static HarvestProvider getProvider(final String providerType)
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+    public static HarvestProvider getProvider(final String providerType) {
         String s = "au.org.ands.vocabs.toolkit.provider.harvest."
                 + providerType
                 + "HarvestProvider";
-
-        Class<?> c = Class.forName(s);
-        HarvestProvider provider =  (HarvestProvider) c.newInstance();
+        Class<?> c;
+        try {
+            c = Class.forName(s);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("HarvestProviderUtils.getProvider(): "
+                    + "no such provider: " + providerType);
+            return null;
+        }
+        HarvestProvider provider = null;
+        try {
+            provider = (HarvestProvider) c.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
+            LOGGER.error("HarvestProviderUtils.getProvider(): "
+                    + "can't instantiate provider class for provider type: "
+                    + providerType, e);
+            return null;
+        }
         if (!(provider instanceof HarvestProvider)) {
-            LOGGER.error("getProvider bad class:"
+            LOGGER.error("HarvestProviderUtils.getProvider() bad class:"
                     + provider.getClass().getName()
-                    + ". Class not of type Provider");
-            provider = null;
+                    + ". Class not of type HarvestProvider");
+            return null;
         }
         return provider;
     }
