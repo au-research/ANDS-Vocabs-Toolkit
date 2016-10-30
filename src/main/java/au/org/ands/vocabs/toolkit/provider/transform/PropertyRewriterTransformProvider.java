@@ -184,7 +184,7 @@ public class PropertyRewriterTransformProvider extends TransformProvider {
     }
 
     /** RDF Handler to rewrite properties. */
-    class ConceptHandler extends RDFHandlerBase {
+    private static class ConceptHandler extends RDFHandlerBase {
 
         /** The configuration for metadata replacement. */
         private HierarchicalINIConfiguration metadataRewriteConf;

@@ -106,7 +106,7 @@ public class SolrIndexTransformProvider extends TransformProvider {
     }
 
     /** RDF Handler to extract prefLabels and concept count. */
-    class ConceptHandler extends RDFHandlerBase {
+    private static class ConceptHandler extends RDFHandlerBase {
         /** Number of prefLabel properties. */
         private int countedPrefLabels = 0;
         /** space separated String of all labels. */

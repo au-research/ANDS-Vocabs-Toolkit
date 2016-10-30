@@ -275,9 +275,14 @@ public class JsonTreeTransformProvider extends TransformProvider {
      * on the IRI.
      * The purpose of this class is to facilitate sorting of
      * the result of this transform based on prefLabels.
+     * The class itself is labelled {@code private} to prevent inadvertent
+     * instance creation. Various getter methods of this class are
+     * therefore also annotated with {@code @SuppressWarnings("unused")},
+     * because otherwise a warning is generated for them. These getter
+     * methods <i>are</i> used: they are invoked during JSON generation.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    static class Concept implements Comparable<Concept> {
+    private static class Concept implements Comparable<Concept> {
 
         /** The IRI of the concept. */
         private String iri;
@@ -323,6 +328,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
         /** Get the prefLabel.
          * @return The value of the prefLabel.
          */
+        @SuppressWarnings("unused")
         public String getPrefLabel() {
             return prefLabel;
         }
@@ -337,6 +343,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
         /** Get the definition.
          * @return The value of the definition.
          */
+        @SuppressWarnings("unused")
         public String getDefinition() {
             return definition;
         }
@@ -351,6 +358,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
         /** Get the notation.
          * @return The value of the notation.
          */
+        @SuppressWarnings("unused")
         public String getNotation() {
             return notation;
         }
@@ -370,6 +378,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          * serialization into JSON.
          * @return The Set of narrower concepts.
          */
+        @SuppressWarnings("unused")
         public TreeSet<Concept> getNarrower() {
             return narrower;
         }
