@@ -106,7 +106,6 @@
     </javac>
   </target>
 
-
   <target name="compile-test" depends="compile-main">
     <mkdir dir="${build-test}" />
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build-test}" includeantruntime="false" source="${source}" target="${target}">
@@ -238,7 +237,6 @@
     </javadoc>
   </target>
 
-
   <target name="checkstyle"
           description="Generates a report of code convention violations.">
 
@@ -286,6 +284,26 @@
     </forbiddenapis>
   </target>
 
+  <!-- Have a separate target for this, as the "forbiddenapis"
+       task only allows for one directory of classes to
+       check, and the task fails on error. So this is the
+       only way to see the results for test code.
+  -->
+  <target name="forbidden-checks-test" depends="compile-test">
+    <forbiddenapis
+        classpathref="compile-test.classpath"
+        dir="${build-test}"
+        targetVersion="${target}">
+      <bundledsignatures name="jdk-unsafe"/>
+      <bundledsignatures name="jdk-deprecated"/>
+      <bundledsignatures name="jdk-internal"/>
+      <bundledsignatures name="jdk-non-portable"/>
+      <bundledsignatures name="jdk-system-out"/>
+      <bundledsignatures name="jdk-reflection"/>
+      <bundledsignatures name="commons-io-unsafe-2.4"/>
+    </forbiddenapis>
+  </target>
+
   <property name="resources-test-input" value="src/test/resources/deploy" />
 
   <path id="testng.classpath">
@@ -319,7 +337,6 @@
     <pathelement path="${conf-test}" />
     <pathelement path="${resources-test-input}" />
   </path>
-
 
   <target name="testng" depends="compile-test">
     <jacoco:coverage
