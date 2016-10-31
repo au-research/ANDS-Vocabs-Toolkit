@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -249,7 +250,7 @@ public final class ArquillianTestUtils {
             IDataSet dataSet = connection.createDataSet();
             Writer out =
                     new OutputStreamWriter(new FileOutputStream(
-                            dtdExportFilename));
+                            dtdExportFilename), StandardCharsets.UTF_8);
             FlatDtdWriter datasetWriter = new FlatDtdWriter(out);
             datasetWriter.setContentModel(FlatDtdWriter.CHOICE);
             // You could also use the sequence model, which is the default:
