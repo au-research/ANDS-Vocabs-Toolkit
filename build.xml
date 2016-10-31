@@ -84,7 +84,7 @@
     </javac>
   </target>
 
-  <target name="compile-main-errorprone">
+  <target name="compile-errorprone">
     <delete dir="${build}-errorprone" />
     <mkdir dir="${build}-errorprone" />
     <javac
