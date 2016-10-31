@@ -98,7 +98,7 @@
         >
       <src path="src/main/java" />
       <src path="src/test/java" />
-      <classpath refid="compile-main.classpath" />
+      <classpath refid="compile-test.classpath" />
       <compilerclasspath>
         <pathelement
             location="libdev/error-prone-2.0.13/error_prone_ant-2.0.13.jar"/>
