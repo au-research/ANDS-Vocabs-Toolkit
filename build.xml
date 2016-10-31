@@ -84,6 +84,29 @@
     </javac>
   </target>
 
+  <target name="compile-main-errorprone">
+    <delete dir="${build}-errorprone" />
+    <mkdir dir="${build}-errorprone" />
+    <javac
+        debug="true"
+        debuglevel="${debuglevel}"
+        destdir="${build}-errorprone"
+        includeantruntime="false"
+        source="${source}"
+        target="${target}"
+        compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"
+        >
+      <src path="src/main/java" />
+      <src path="src/test/java" />
+      <classpath refid="compile-main.classpath" />
+      <compilerclasspath>
+        <pathelement
+            location="libdev/error-prone-2.0.13/error_prone_ant-2.0.13.jar"/>
+      </compilerclasspath>
+    </javac>
+  </target>
+
+
   <target name="compile-test" depends="compile-main">
     <mkdir dir="${build-test}" />
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build-test}" includeantruntime="false" source="${source}" target="${target}">
