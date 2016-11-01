@@ -32,5 +32,8 @@
   <!-- <logger name="au.org.ands.vocabs" level="INFO" /> -->
   <!-- logger name="org.dbunit" level="ERROR" /-->
   <logger name="org.dbunit" level="INFO" />
+  <!-- Uncomment for lots of Mean Bean output.
+  <logger name="org.meanbean" level="DEBUG" />
+  -->
 
 </configuration>

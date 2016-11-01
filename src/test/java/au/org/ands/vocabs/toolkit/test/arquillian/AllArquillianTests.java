@@ -8,6 +8,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,6 +29,9 @@ import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.hibernate.HibernateException;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.meanbean.test.BeanTester;
+import org.meanbean.util.RandomValueGenerator;
+import org.meanbean.util.SimpleRandomValueGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -36,7 +40,12 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
+import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
+import au.org.ands.vocabs.toolkit.db.model.ResourceMapEntry;
+import au.org.ands.vocabs.toolkit.db.model.ResourceOwnerHost;
 import au.org.ands.vocabs.toolkit.db.model.Task;
+import au.org.ands.vocabs.toolkit.db.model.Version;
+import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
 import au.org.ands.vocabs.toolkit.provider.backup.BackupProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.harvest.HarvestProviderUtils;
 import au.org.ands.vocabs.toolkit.provider.importer.ImporterProviderUtils;
@@ -45,6 +54,7 @@ import au.org.ands.vocabs.toolkit.provider.transform.TransformProviderUtils;
 import au.org.ands.vocabs.toolkit.rest.ResolveIRI;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskRunner;
+import au.org.ands.vocabs.toolkit.test.factory.LocalDateTimeFactory;
 import au.org.ands.vocabs.toolkit.test.utils.DbUnitConstants;
 import au.org.ands.vocabs.toolkit.test.utils.NetClientUtils;
 import au.org.ands.vocabs.toolkit.test.utils.TestPropertyConstants;
@@ -157,6 +167,52 @@ public class AllArquillianTests extends ArquillianBaseTest {
     }
 
     // Server-side tests go here. Client-side tests later on.
+
+    // Tests of database model entity bean classes.
+
+    /** Test of the various database model entity bean classes
+     * using Mean Bean. */
+    @Test
+    public final void testDbModelEntityBeans() {
+        logger.info("In testDbModelEntityBeans()");
+        new BeanTester().testBean(AccessPoint.class);
+        new BeanTester().testBean(ResourceMapEntry.class);
+        // Special treatment of ResourceOwnerHost, as it has
+        // fields of type LocalDateTime.
+        BeanTester rohBeanTester = new BeanTester();
+        RandomValueGenerator randomValueGenerator =
+                new SimpleRandomValueGenerator();
+        LocalDateTimeFactory localDateTimeFactory =
+                new LocalDateTimeFactory(randomValueGenerator);
+        rohBeanTester.getFactoryCollection().addFactory(
+                LocalDateTime.class, localDateTimeFactory);
+        rohBeanTester.testBean(ResourceOwnerHost.class);
+        new BeanTester().testBean(Task.class);
+        new BeanTester().testBean(Version.class);
+        new BeanTester().testBean(Vocabulary.class);
+    }
+
+    /** Test of {@link Version#getReleaseDate()}. */
+    @Test
+    public final void testVersionGetReleaseDate() {
+        logger.info("In testVersionGetReleaseDate()");
+        Version v = new Version();
+        // Null returned if data is null.
+        v.setData(null);
+        Assert.assertNull(v.getReleaseDate(), "Null data");
+        // Null returned if data is an empty string.
+        v.setData("");
+        Assert.assertNull(v.getReleaseDate(), "Data is empty string");
+        // Null returned if data is an object, but there is no release date
+        // defined.
+        v.setData("{ }");
+        Assert.assertNull(v.getReleaseDate(), "Data has no release date");
+        // And, at last, test with a release date defined.
+        v.setData("{ \"" + Version.RELEASE_DATE_KEY + "\": \"testValue\"}");
+        Assert.assertEquals(v.getReleaseDate(), "testValue",
+                "Data has release date");
+    }
+
 
     // Tests of the various au.org.ands.vocabs.provider...ProviderUtils classes.
 

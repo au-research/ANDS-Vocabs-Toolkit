@@ -49,8 +49,10 @@ public class Version {
     /** data. */
     private String data;
 
-    /** Key of the release date used in the data field. */
-    private static final String RELEASE_DATE_KEY = "release_date";
+    /** Key of the release date used in the data field.
+     * This is marked {@code public} <i>only</i> so that it can be used
+     * in tests. */
+    public static final String RELEASE_DATE_KEY = "release_date";
 
     /** Get the id.
      * @return The id
