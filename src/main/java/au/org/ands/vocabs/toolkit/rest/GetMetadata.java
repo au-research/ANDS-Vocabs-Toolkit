@@ -1,8 +1,6 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.rest;
 
-//Disable LineLength check just for Eclipse-maintained imports.
-//CHECKSTYLE:OFF: LineLength
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 
@@ -20,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import au.org.ands.vocabs.toolkit.provider.harvest.PoolPartyHarvestProvider;
 import au.org.ands.vocabs.toolkit.provider.transform.GetMetadataTransformProvider;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
-//CHECKSTYLE:ON: LineLength
 
 /** REST web services for getting vocabulary metadata. */
 @Path("getMetadata")

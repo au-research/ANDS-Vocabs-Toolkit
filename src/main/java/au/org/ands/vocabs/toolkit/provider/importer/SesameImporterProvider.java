@@ -1,8 +1,6 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.provider.importer;
 
-// Disable LineLength check just for Eclipse-maintained imports.
-//CHECKSTYLE:OFF: LineLength
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -46,7 +44,6 @@ import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
-//CHECKSTYLE:ON: LineLength
 
 /** Sesame importer provider. */
 public class SesameImporterProvider extends ImporterProvider {
