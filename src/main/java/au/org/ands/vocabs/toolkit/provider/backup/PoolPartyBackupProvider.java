@@ -126,8 +126,7 @@ public class PoolPartyBackupProvider extends BackupProvider {
         exportModules.add("void");
         exportModules.add("adms");
         exportModules.add("candidateConcepts");
-        // sparqlLists is not currently supported, despite 5.5 release notes.
-        // exportModules.add("sparqlLists");
+        exportModules.add("lists");
         exportModules.add("deprecatedConcepts");
         exportModules.add("skosnotes");
         exportModules.add("linkedData");
