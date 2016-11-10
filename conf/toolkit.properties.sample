@@ -52,9 +52,10 @@ Toolkit.downloadPrefix = [URL probably ending with /download/]
 
 ## POOLPARTY
 
-PoolPartyHarvester.remoteUrl = [pool party api url]
-PoolPartyHarvester.username = [pool party username]
-PoolPartyHarvester.password = [pool party user password]
+# PoolParty.remoteUrl should be a URL ending with "/PoolParty/".
+PoolParty.remoteUrl = [pool party api url]
+PoolParty.username = [pool party username]
+PoolParty.password = [pool party user password]
 PoolPartyHarvester.defaultFormat = TriG
 PoolPartyHarvester.defaultExportModule = concepts
 

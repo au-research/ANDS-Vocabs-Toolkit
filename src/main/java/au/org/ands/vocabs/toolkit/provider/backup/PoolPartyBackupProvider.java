@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PoolPartyUtils;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
@@ -47,16 +48,17 @@ public class PoolPartyBackupProvider extends BackupProvider {
      */
     public final ArrayList<String> getProjectIDs() {
         String remoteUrl = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+                PropertyConstants.POOLPARTY_REMOTEURL);
         String username = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+                PropertyConstants.POOLPARTY_USERNAME);
         String password = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
+                PropertyConstants.POOLPARTY_PASSWORD);
 
         logger.debug("Getting metadata from " + remoteUrl);
 
         Client client = ToolkitNetUtils.getClient();
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl)
+                .path(PoolPartyUtils.API_PROJECTS);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
         target.register(feature);
@@ -101,29 +103,40 @@ public class PoolPartyBackupProvider extends BackupProvider {
             final String outputPath) {
         HashMap<String, String> result = new HashMap<String, String>();
         String remoteUrl = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+                PropertyConstants.POOLPARTY_REMOTEURL);
         String username = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+                PropertyConstants.POOLPARTY_USERNAME);
         String password = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
+                PropertyConstants.POOLPARTY_PASSWORD);
 
         String format = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTFORMAT);
 
         List<String> exportModules = new ArrayList<String>();
 
+        // The following list of export modules comes from:
+        // https://help.poolparty.biz/doc/developer-guide/
+        //   basic-advanced-server-apis/poolparty-api-guide/
+        //   general-remarks-concerning-poolparty-api/
+        //   poolparty-project-modules
         exportModules.add("concepts");
         exportModules.add("workflow");
         exportModules.add("history");
-        exportModules.add("freeConcepts");
+        exportModules.add("suggestedConcepts");
         exportModules.add("void");
         exportModules.add("adms");
-        exportModules.add("void");
+        exportModules.add("candidateConcepts");
+        // sparqlLists is not currently supported, despite 5.5 release notes.
+        // exportModules.add("sparqlLists");
+        exportModules.add("deprecatedConcepts");
+        exportModules.add("skosnotes");
+        exportModules.add("linkedData");
 
         logger.debug("Getting project from " + remoteUrl);
 
         Client client = ToolkitNetUtils.getClient();
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl).
+                path(PoolPartyUtils.API_PROJECTS);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
         WebTarget thisTarget = target.register(feature)

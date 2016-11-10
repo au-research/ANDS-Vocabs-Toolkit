@@ -1,7 +1,11 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.provider.harvest;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,15 +16,19 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import au.org.ands.vocabs.editor.admin.model.PoolPartyProject;
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
+import au.org.ands.vocabs.toolkit.provider.transform.GetMetadataTransformProvider;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
+import au.org.ands.vocabs.toolkit.utils.PoolPartyUtils;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
@@ -36,16 +44,17 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
     @Override
     public final String getInfo() {
         String remoteUrl = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+                PropertyConstants.POOLPARTY_REMOTEURL);
         String username = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+                PropertyConstants.POOLPARTY_USERNAME);
         String password = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
+                PropertyConstants.POOLPARTY_PASSWORD);
 
         logger.debug("Getting metadata from " + remoteUrl);
 
         Client client = ToolkitNetUtils.getClient();
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl).
+                path(PoolPartyUtils.API_PROJECTS);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
         target.register(feature);
@@ -67,6 +76,34 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         return response.readEntity(String.class);
     }
 
+    /** Template for a SPARQL CONSTRUCT Query to get the full names of users
+     * mentioned in a PoolParty project. Each such piece of information
+     * is returned as two triples, of the form
+     * {@code ?agent a dcterms:Agent; foaf:name ?fullname}.
+     * Why use FOAF? (a) To follow the examples given at
+     * <a href=
+     * "http://wiki.dublincore.org/index.php/User_Guide/Publishing_Metadata">
+     * http://wiki.dublincore.org/index.php/User_Guide/Publishing_Metadata</a>.
+     * (b) In fact, the ADMS graph also uses {@code foaf:name}
+     * for this purpose.
+     */
+    private static final String GET_USER_FULLNAMES_TEMPLATE =
+        "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n"
+      + "PREFIX dcterms: <http://purl.org/dc/terms/>\n"
+      + "CONSTRUCT { ?agent a dcterms:Agent; foaf:name ?fullname }\n"
+      + "FROM #THESAURUS#\n"
+      + "FROM #METADATA/void#\n"
+      + "FROM NAMED #THESAURUS/users#\n"
+      + "WHERE {\n"
+      + "  {\n"
+      + "    ?s ?p ?agent\n"
+      + "    FILTER (STRSTARTS(STR(?p), \"http://purl.org/dc/terms/\"))\n"
+      + "  }\n"
+      + "  GRAPH #THESAURUS/users# {\n"
+      + "    ?agent <http://schema.semantic-web.at/users/username> ?fullname\n"
+      + "  }\n"
+      + "}\n";
+
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param ppProjectId The PoolParty project id.
@@ -83,11 +120,11 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             final boolean returnOutputPaths,
             final HashMap<String, String> results) {
         String remoteUrl = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_REMOTEURL);
+                PropertyConstants.POOLPARTY_REMOTEURL);
         String username = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_USERNAME);
+                PropertyConstants.POOLPARTY_USERNAME);
         String password = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_PASSWORD);
+                PropertyConstants.POOLPARTY_PASSWORD);
 
         String format = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTFORMAT);
@@ -98,6 +135,8 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         List<String> exportModules = new ArrayList<String>();
         exportModules.add(ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTEXPORTMODULE));
+        // Separation of deprecated concepts happened in PoolParty 5.5.
+        exportModules.add("deprecatedConcepts");
         if (getMetadata) {
             exportModules.add("adms");
             exportModules.add("void");
@@ -106,7 +145,8 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         logger.debug("Getting project from " + remoteUrl);
 
         Client client = ToolkitNetUtils.getClient();
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl).
+                path(PoolPartyUtils.API_PROJECTS);
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(username, password);
         WebTarget plainTarget = target.register(feature)
@@ -152,6 +192,55 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             // Clean up Response object.
             response.close();
         }
+
+        // In order to get content contained in the users named graph,
+        // we have to do a SPARQL query. But to do that, we need
+        // to use an API call, for which the URL contains the
+        // project's "uriSupplement". But to get that, we have
+        // to use the API call to get the top-level metadata of
+        // _all_ projects! And then we do a search in the result
+        // to find this particular project.
+        PoolPartyProject[] poolPartyProjects =
+                PoolPartyUtils.getPoolPartyProjects();
+        // We get back an unsorted array, so a linear search is called for.
+        int projectsLength = poolPartyProjects.length;
+        int projectIndex = 0;
+        boolean found = false;
+        while (projectIndex < projectsLength) {
+            if (ppProjectId.equals(poolPartyProjects[projectIndex].getId())) {
+                // Found it.
+                found = true;
+                break;
+            }
+            projectIndex++;
+        }
+        if (!found) {
+            logger.error("getHarvestFiles was unable to get project metadata, "
+                    + "even after an export! "
+                    + "This should not happen!");
+            return false;
+        }
+        String usersGraphContents = PoolPartyUtils.runQuery(
+                poolPartyProjects[projectIndex],
+                GET_USER_FULLNAMES_TEMPLATE,
+                GetMetadataTransformProvider.USERS_GRAPH_FORMAT.
+                    getDefaultMIMEType());
+        File usersGraphFile = new File(
+                Paths.get(outputPath).
+                resolve(GetMetadataTransformProvider.USERS_GRAPH_FILE).
+                toString());
+        try {
+            FileUtils.writeStringToFile(usersGraphFile, usersGraphContents,
+                    StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            results.put(TaskStatus.EXCEPTION,
+                    "PoolPartyHarvester: can't write user details file.");
+            logger.error("PoolPartyHarvester getHarvestFiles: "
+                    + "can't write user details file.",
+                    e);
+            return false;
+        }
+
         return true;
     }
 
@@ -195,6 +284,5 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
                 true, false, result);
         return result;
     }
-
 
 }

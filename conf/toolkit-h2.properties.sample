@@ -72,9 +72,9 @@ Toolkit.downloadPrefix = http://localhost:${test.Tomcat.port}/ANDS-Vocabs-Toolki
 # Replace these instances of PUT-SOMETHING-HERE with the
 # hostname of the PoolParty server to use, and a suitable
 # username and password to access project data.
-PoolPartyHarvester.remoteUrl = https://PUT-SOMETHING-HERE/PoolParty/api/projects/
-PoolPartyHarvester.username = PUT-SOMETHING-HERE
-PoolPartyHarvester.password = PUT-SOMETHING-HERE
+PoolParty.remoteUrl = https://PUT-SOMETHING-HERE/PoolParty/
+PoolParty.username = PUT-SOMETHING-HERE
+PoolParty.password = PUT-SOMETHING-HERE
 PoolPartyHarvester.defaultFormat = TriG
 PoolPartyHarvester.defaultExportModule = concepts
 

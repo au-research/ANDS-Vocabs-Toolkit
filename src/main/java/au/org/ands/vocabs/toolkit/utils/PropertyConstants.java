@@ -46,21 +46,24 @@ public final class PropertyConstants {
 //  public static final String TOOLKIT_ =
 //          "Toolkit.";
 
+    /* Properties related to PoolParty in general. */
+
+    /** PoolParty remote URL. The value of the property
+     * should end with {@code /PoolParty/}. */
+    public static final String POOLPARTY_REMOTEURL =
+            "PoolParty.remoteUrl";
+
+    /** PoolParty username. */
+    public static final String POOLPARTY_USERNAME =
+            "PoolParty.username";
+
+    /** PoolParty password. */
+    public static final String POOLPARTY_PASSWORD =
+            "PoolParty.password";
+
     /* Properties for providers. */
 
     /* Harvesters. */
-
-    /** PoolParty harvester remote URL. */
-    public static final String POOLPARTYHARVESTER_REMOTEURL =
-            "PoolPartyHarvester.remoteUrl";
-
-    /** PoolParty harvester username. */
-    public static final String POOLPARTYHARVESTER_USERNAME =
-            "PoolPartyHarvester.username";
-
-    /** PoolParty harvester password. */
-    public static final String POOLPARTYHARVESTER_PASSWORD =
-            "PoolPartyHarvester.password";
 
     /** PoolParty harvester default format. */
     public static final String POOLPARTYHARVESTER_DEFAULTFORMAT =
