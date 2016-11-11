@@ -109,8 +109,11 @@ public class PoolPartyBackupProvider extends BackupProvider {
         String password = ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTY_PASSWORD);
 
-        String format = ToolkitProperties.getProperty(
-                PropertyConstants.POOLPARTYHARVESTER_DEFAULTFORMAT);
+        // Has to be either TriG or TriX.
+        // We could do this as a Toolkit property (as we used to,
+        // though incorrectly piggy-backing the PP harvester setting),
+        // but there does not yet appear to be a gain.
+        String format = "TriG";
 
         List<String> exportModules = new ArrayList<String>();
 
@@ -119,6 +122,7 @@ public class PoolPartyBackupProvider extends BackupProvider {
         //   basic-advanced-server-apis/poolparty-api-guide/
         //   general-remarks-concerning-poolparty-api/
         //   poolparty-project-modules
+        // If the list on the web page changes, change the following ...
         exportModules.add("concepts");
         exportModules.add("workflow");
         exportModules.add("history");
