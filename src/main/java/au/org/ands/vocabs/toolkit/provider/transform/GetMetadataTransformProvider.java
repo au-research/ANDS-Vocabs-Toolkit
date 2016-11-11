@@ -160,7 +160,7 @@ public class GetMetadataTransformProvider extends TransformProvider {
         try (DirectoryStream<Path> stream =
                 Files.newDirectoryStream(dir)) {
             for (Path entry: stream) {
-                if (entry.getFileName().equals(USERS_GRAPH_FILE)) {
+                if (entry.getFileName().toString().equals(USERS_GRAPH_FILE)) {
                     // Don't parse the users graph file for metadata.
                     continue;
                 }
