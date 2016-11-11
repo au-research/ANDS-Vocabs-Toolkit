@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +111,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param ppProjectId The PoolParty project id.
-     * @param outputPath The directory in which to store output files.
+     * @param outputDir The directory in which to store output files.
      * @param getMetadata Whether or not to get ADMS and VOID metadata
      * @param returnOutputPaths Whether or not to store the full path
      * of each harvested file in the results map.
@@ -115,7 +119,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
      * @return True, iff the harvest succeeded.
      */
     public final boolean getHarvestFiles(final String ppProjectId,
-            final String outputPath,
+            final String outputDir,
             final boolean getMetadata,
             final boolean returnOutputPaths,
             final HashMap<String, String> results) {
@@ -135,14 +139,26 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         List<String> exportModules = new ArrayList<String>();
         exportModules.add(ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTEXPORTMODULE));
-        // Separation of deprecated concepts happened in PoolParty 5.5.
+        // Separation of deprecated concepts into a separate export module
+        // happened in PoolParty 5.5.
         exportModules.add("deprecatedConcepts");
         if (getMetadata) {
             exportModules.add("adms");
             exportModules.add("void");
         }
 
+        if (getMetadata) {
+            // When fetching metadata, don't leave anything left over from
+            // a previous fetch. The significance of/need for this was
+            // found when changing the Toolkit property
+            // PoolPartyHarvester.defaultFormat: the old files corresponding
+            // to the previous setting were left.
+            FileUtils.deleteQuietly(new File(outputDir));
+        }
+
         logger.debug("Getting project from " + remoteUrl);
+        results.put("poolparty_url", remoteUrl);
+        results.put("poolparty_project_id", ppProjectId);
 
         Client client = ToolkitNetUtils.getClient();
         WebTarget target = client.target(remoteUrl).
@@ -154,9 +170,10 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
                 .path("export")
                 .queryParam("format", format);
 
+        // Convenience access to outputDir as a Path.
+        Path outputDirPath = Paths.get(outputDir);
+
         for (String exportModule : exportModules) {
-            results.put("poolparty_url", remoteUrl);
-            results.put("poolparty_project_id", ppProjectId);
             WebTarget thisTarget = plainTarget.queryParam("exportModules",
                     exportModule);
 
@@ -181,10 +198,16 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
 
             String responseData = response.readEntity(String.class);
 
-            String filePath = ToolkitFileUtils.saveFile(
-                    outputPath,
-                    exportModule,
-                    format, responseData);
+            if (!deleteExistingHarvestsOfExportModule(outputDir,
+                    outputDirPath, exportModule)) {
+                results.put(TaskStatus.ERROR,
+                        "Something is wrong: unable to glob path: "
+                                + outputDir);
+                return false;
+            }
+
+            String filePath = ToolkitFileUtils.saveFile(outputDir,
+                    exportModule, format, responseData);
             if (returnOutputPaths) {
                 results.put(exportModule, filePath);
             }
@@ -225,8 +248,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
                 GET_USER_FULLNAMES_TEMPLATE,
                 GetMetadataTransformProvider.USERS_GRAPH_FORMAT.
                     getDefaultMIMEType());
-        File usersGraphFile = new File(
-                Paths.get(outputPath).
+        File usersGraphFile = new File(outputDirPath.
                 resolve(GetMetadataTransformProvider.USERS_GRAPH_FILE).
                 toString());
         try {
@@ -241,6 +263,39 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             return false;
         }
 
+        return true;
+    }
+
+    /** Glob on "exportModule.*" and delete all matching files.
+     * When harvesting, don't leave anything left over from
+     * a previous fetch of this module.
+     * The significance of/need for this was
+     * found when changing the Toolkit property
+     * PoolPartyHarvester.defaultFormat: any old files corresponding
+     * to the previous setting were left.
+     * @param outputDir The directory in which output files are stored.
+     * @param outputDirPath outputDir as a Path.
+     * @param exportModule The name of the exportModule to clean.
+     * @return True if deletion was successful; false if there was
+     *      an exception.
+     */
+    private boolean deleteExistingHarvestsOfExportModule(
+            final String outputDir,
+            final Path outputDirPath,
+            final String exportModule) {
+        try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(
+                outputDirPath, exportModule + ".*")) {
+            dirStream.forEach(path -> {
+                    logger.debug("Deleting:" + path);
+                    FileUtils.deleteQuietly(path.toFile());
+                });
+        } catch (NoSuchFileException e) {
+            // The directory does not exist yet; no problem.
+        } catch (IOException e1) {
+            logger.error("Something is wrong: unable to glob path: "
+                    + outputDir, e1);
+            return false;
+        }
         return true;
     }
 
