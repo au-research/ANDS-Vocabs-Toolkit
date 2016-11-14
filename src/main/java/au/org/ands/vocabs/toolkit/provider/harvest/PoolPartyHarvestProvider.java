@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
@@ -34,6 +35,7 @@ import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
 import au.org.ands.vocabs.toolkit.utils.PoolPartyUtils;
 import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
+import au.org.ands.vocabs.toolkit.utils.RDFUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitNetUtils;
 import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
@@ -108,6 +110,17 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
       + "  }\n"
       + "}\n";
 
+    /** Template for a SPARQL CONSTRUCT Query to get the deprecated
+     * concepts of a PoolParty project.
+     */
+    private static final String GET_DEPRECATED_CONCEPTS_TEMPLATE =
+        "CONSTRUCT { ?s ?p ?o }\n"
+      + "FROM #THESAURUS/deprecated#\n"
+      + "WHERE {\n"
+      + "  ?s ?p ?o"
+      + "  FILTER (?p != rdf:type)\n"
+      + "}\n";
+
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
      * @param ppProjectId The PoolParty project id.
@@ -139,9 +152,6 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
         List<String> exportModules = new ArrayList<String>();
         exportModules.add(ToolkitProperties.getProperty(
                 PropertyConstants.POOLPARTYHARVESTER_DEFAULTEXPORTMODULE));
-        // Separation of deprecated concepts into a separate export module
-        // happened in PoolParty 5.5.
-        exportModules.add("deprecatedConcepts");
         if (getMetadata) {
             exportModules.add("adms");
             exportModules.add("void");
@@ -243,27 +253,70 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
                     + "This should not happen!");
             return false;
         }
-        String usersGraphContents = PoolPartyUtils.runQuery(
+        // If not only fetching metadata, get deprecated concepts.
+        if (!getMetadata) {
+            if (!fetchDataUsingQuery(outputDirPath,
+                    poolPartyProjects[projectIndex],
+                    GET_DEPRECATED_CONCEPTS_TEMPLATE,
+                    "deprecated." + format.toLowerCase(Locale.ROOT),
+                    RDFUtils.getRDFFormatForName(format).
+                          getDefaultMIMEType(),
+                    results)) {
+                return false;
+            }
+        }
+        // Get data from users graph.
+        if (!fetchDataUsingQuery(outputDirPath,
                 poolPartyProjects[projectIndex],
                 GET_USER_FULLNAMES_TEMPLATE,
+                GetMetadataTransformProvider.USERS_GRAPH_FILE,
                 GetMetadataTransformProvider.USERS_GRAPH_FORMAT.
-                    getDefaultMIMEType());
-        File usersGraphFile = new File(outputDirPath.
-                resolve(GetMetadataTransformProvider.USERS_GRAPH_FILE).
-                toString());
-        try {
-            FileUtils.writeStringToFile(usersGraphFile, usersGraphContents,
-                    StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            results.put(TaskStatus.EXCEPTION,
-                    "PoolPartyHarvester: can't write user details file.");
-            logger.error("PoolPartyHarvester getHarvestFiles: "
-                    + "can't write user details file.",
-                    e);
+                    getDefaultMIMEType(),
+                results)) {
             return false;
         }
 
         return true;
+    }
+
+    /** Fetch data from a PoolParty project using a SPARQL query,
+     * and save the results to a file.
+     * @param outputDirPath The Path to the output directory to use.
+     * @param poolPartyProject The PoolParty project to run the query
+     *      against.
+     * @param queryTemplate The template of the SPARQL query to run.
+     * @param outputFile The base name of the output file to use.
+     * @param outputFileMimeType The MIME type to send as the
+     *      requested response type.
+     * @param results HashMap representing the result of the harvest.
+     * @return True, iff the fetch succeeded.
+     */
+    private boolean fetchDataUsingQuery(final Path outputDirPath,
+            final PoolPartyProject poolPartyProject,
+            final String queryTemplate,
+            final String outputFile,
+            final String outputFileMimeType,
+            final HashMap<String, String> results) {
+        String usersGraphContents = PoolPartyUtils.runQuery(
+                poolPartyProject,
+                queryTemplate,
+                outputFileMimeType);
+        File usersGraphFile = new File(outputDirPath.
+                resolve(outputFile).
+                toString());
+        try {
+            FileUtils.writeStringToFile(usersGraphFile, usersGraphContents,
+                    StandardCharsets.UTF_8);
+            return true;
+        } catch (IOException e) {
+            results.put(TaskStatus.EXCEPTION,
+                    "PoolPartyHarvester: can't write result of fetching "
+                    + " data with SPARQL.");
+            logger.error("PoolPartyHarvester fetchDataUsingQuery: "
+                    + "can't write results to file.",
+                    e);
+            return false;
+        }
     }
 
     /** Glob on "exportModule.*" and delete all matching files.

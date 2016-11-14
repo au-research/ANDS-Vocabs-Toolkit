@@ -96,7 +96,7 @@ public final class ToolkitFileUtils {
     public static String saveFile(final String dirName, final String fileName,
             final String format, final String data) {
         String fileExtension =
-                ToolkitConfig.FORMAT_TO_FILEEXT_MAP.get(
+                RDFUtils.FORMAT_TO_FILEEXT_MAP.get(
                         format.toLowerCase(Locale.ROOT));
         String filePath = dirName
                 + File.separator + fileName + fileExtension;
