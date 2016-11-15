@@ -75,7 +75,8 @@ Toolkit.downloadPrefix = http://localhost:${test.Tomcat.port}/ANDS-Vocabs-Toolki
 PoolParty.remoteUrl = https://PUT-SOMETHING-HERE/PoolParty/
 PoolParty.username = PUT-SOMETHING-HERE
 PoolParty.password = PUT-SOMETHING-HERE
-PoolPartyHarvester.defaultFormat = TriG
+# Use TriG to preserve named graphs; Turtle to lose them.
+PoolPartyHarvester.defaultFormat = Turtle
 PoolPartyHarvester.defaultExportModule = concepts
 
 # local OpenRDF Sesame server
