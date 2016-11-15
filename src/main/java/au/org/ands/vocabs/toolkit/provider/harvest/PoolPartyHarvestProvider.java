@@ -125,7 +125,7 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
      * of the harvest.
      * @param ppProjectId The PoolParty project id.
      * @param outputDir The directory in which to store output files.
-     * @param getMetadata Whether or not to get ADMS and VOID metadata
+     * @param getMetadata Whether or not to get ADMS and VoID metadata.
      * @param returnOutputPaths Whether or not to store the full path
      * of each harvested file in the results map.
      * @param results HashMap representing the result of the harvest.
@@ -258,9 +258,10 @@ public class PoolPartyHarvestProvider extends HarvestProvider {
             if (!fetchDataUsingQuery(outputDirPath,
                     poolPartyProjects[projectIndex],
                     GET_DEPRECATED_CONCEPTS_TEMPLATE,
-                    "deprecated." + format.toLowerCase(Locale.ROOT),
+                    "deprecated" + RDFUtils.FORMAT_TO_FILEEXT_MAP.get(
+                            format.toLowerCase(Locale.ROOT)),
                     RDFUtils.getRDFFormatForName(format).
-                          getDefaultMIMEType(),
+                        getDefaultMIMEType(),
                     results)) {
                 return false;
             }
