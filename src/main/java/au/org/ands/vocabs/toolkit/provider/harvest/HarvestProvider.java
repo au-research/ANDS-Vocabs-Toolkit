@@ -35,7 +35,7 @@ public abstract class HarvestProvider {
      * @param repositoryId the repository_id of the given vocabulary
      */
     public abstract HashMap<String, String> getMetadata(
-            final String repositoryId);
+            String repositoryId);
 
     /** Do a harvest. Update the message parameter with the result
      * of the harvest.
@@ -44,9 +44,9 @@ public abstract class HarvestProvider {
      * @param results HashMap representing the result of the harvest.
      * @return True, iff the harvest succeeded.
      */
-    public abstract boolean harvest(final TaskInfo taskInfo,
+    public abstract boolean harvest(TaskInfo taskInfo,
             JsonNode subtask,
-            final HashMap<String, String> results);
+            HashMap<String, String> results);
 
     /** Do an unharvest. Update the message parameter with the result
      * of the unharvest.

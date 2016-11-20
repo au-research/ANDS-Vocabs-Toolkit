@@ -16,7 +16,7 @@ public abstract class BackupProvider {
      * If the value is null, backup all projects.
      * @return All information and files produced by the backup.
      */
-    public abstract HashMap<String, Object> backup(final String projectId);
+    public abstract HashMap<String, Object> backup(String projectId);
 
 
 }

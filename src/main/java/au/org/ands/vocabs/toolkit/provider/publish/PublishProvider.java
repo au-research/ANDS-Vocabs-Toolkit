@@ -21,9 +21,9 @@ public abstract class PublishProvider {
      * @param results HashMap representing the result of the publish.
      * @return True, iff the publish succeeded.
      */
-    public abstract boolean publish(final TaskInfo taskInfo,
-            final JsonNode subtask,
-            final HashMap<String, String> results);
+    public abstract boolean publish(TaskInfo taskInfo,
+            JsonNode subtask,
+            HashMap<String, String> results);
 
     /** Do an unpublish. Update the message parameter with the result
      * of the unpublish.
