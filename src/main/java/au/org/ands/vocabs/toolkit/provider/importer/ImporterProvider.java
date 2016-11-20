@@ -22,9 +22,9 @@ public abstract class ImporterProvider {
      * @param results HashMap representing the result of the import.
      * @return True, iff the import succeeded.
      */
-    public abstract boolean doImport(final TaskInfo taskInfo,
-            final JsonNode subtask,
-            final HashMap<String, String> results);
+    public abstract boolean doImport(TaskInfo taskInfo,
+            JsonNode subtask,
+            HashMap<String, String> results);
 
     /** Do an unimport. Update the message parameter with the result
      * of the unimport.
@@ -33,8 +33,8 @@ public abstract class ImporterProvider {
      * @param results HashMap representing the result of the unimport.
      * @return True, iff the unimport succeeded.
      */
-    public abstract boolean unimport(final TaskInfo taskInfo,
-            final JsonNode subtask,
-            final HashMap<String, String> results);
+    public abstract boolean unimport(TaskInfo taskInfo,
+            JsonNode subtask,
+            HashMap<String, String> results);
 
 }

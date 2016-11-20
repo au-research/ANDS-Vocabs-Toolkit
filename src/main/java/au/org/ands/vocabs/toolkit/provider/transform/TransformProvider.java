@@ -25,9 +25,9 @@ public abstract class TransformProvider {
      * @param results HashMap representing the result of the transform.
      * @return True, iff the transform succeeded.
      */
-    public abstract boolean transform(final TaskInfo taskInfo,
+    public abstract boolean transform(TaskInfo taskInfo,
             JsonNode subtask,
-            final HashMap<String, String> results);
+            HashMap<String, String> results);
 
     /** Undo a transform. Update the message parameter with the result
      * of the untransform. Note: not all transforms can be undone!
@@ -36,9 +36,9 @@ public abstract class TransformProvider {
      * @param results HashMap representing the result of the untransform.
      * @return True, iff the untransform succeeded.
      */
-    public abstract boolean untransform(final TaskInfo taskInfo,
+    public abstract boolean untransform(TaskInfo taskInfo,
             JsonNode subtask,
-            final HashMap<String, String> results);
+            HashMap<String, String> results);
 
 
 }
