@@ -52,10 +52,12 @@ Toolkit.downloadPrefix = [URL probably ending with /download/]
 
 ## POOLPARTY
 
-PoolPartyHarvester.remoteUrl = [pool party api url]
-PoolPartyHarvester.username = [pool party username]
-PoolPartyHarvester.password = [pool party user password]
-PoolPartyHarvester.defaultFormat = TriG
+# PoolParty.remoteUrl should be a URL ending with "/PoolParty/".
+PoolParty.remoteUrl = [pool party api url]
+PoolParty.username = [pool party username]
+PoolParty.password = [pool party user password]
+# Use TriG to preserve named graphs; Turtle to lose them.
+PoolPartyHarvester.defaultFormat = Turtle
 PoolPartyHarvester.defaultExportModule = concepts
 
 # local OpenRDF Sesame server

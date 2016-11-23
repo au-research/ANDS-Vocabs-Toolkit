@@ -31,7 +31,12 @@
     <module name="IllegalImport"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
-    <module name="LineLength"/>
+    <module name="LineLength">
+      <!-- Ignore lines of Javadoc comments that can't be split,
+           and Eclipse-generated imports. -->
+      <property name="ignorePattern"
+                value="^ *\* *[^ ]+$|^import [^ ]+;$"/>
+    </module>
     <module name="MethodLength"/>
     <module name="ParameterNumber"/>
     <module name="EmptyForIteratorPad"/>
