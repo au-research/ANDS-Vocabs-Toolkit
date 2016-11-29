@@ -1,0 +1,26 @@
+<!DOCTYPE configuration>
+<configuration>
+
+  <appender name="FILE"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>/var/log/tomcat/ands-vocabs-toolkit-backup-poolparty.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- monthly rollover -->
+      <fileNamePattern>/var/log/tomcat/ands-vocabs-toolkit-backup-poolparty.%d{yyyy-MM}.log</fileNamePattern>
+      <!-- Optional: uncomment the following setting to limit the number
+        of log files kept. -->
+      <!-- Keep 12 months' worth of history -->
+      <!-- <maxHistory>12</maxHistory> -->
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d [%thread] %level %logger - %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="${root-level:-INFO}">
+    <appender-ref ref="FILE" />
+  </root>
+  <logger name="au.org.ands.vocabs" level="ERROR" />
+  <logger name="org.hibernate" level="OFF" />
+
+</configuration>
