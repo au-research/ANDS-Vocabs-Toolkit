@@ -354,6 +354,11 @@
           value="-DdumpClasspath" />
         <jvmarg
           value="-DdumpProperties" />
+        <!-- Uncomment to allow Hibernate logging to be configured
+             using our logback.xml.
+        <jvmarg
+            value="-Dorg.jboss.logging.provider=slf4j" />
+        -->
         <xmlfileset dir="src/test/resources" includes="arquillian-tests.xml"/>
       </testng>
     </jacoco:coverage>

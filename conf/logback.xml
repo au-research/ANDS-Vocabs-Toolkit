@@ -30,4 +30,7 @@
   <!-- Set to INFO for production. -->
   <logger name="au.org.ands.vocabs" level="DEBUG" />
   <!-- <logger name="au.org.ands.vocabs" level="INFO" /> -->
+  <!-- Uncomment for lots of Hibernate output.
+  <logger name="org.hibernate" level="DEBUG" />
+  -->
 </configuration>

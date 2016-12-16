@@ -35,5 +35,8 @@
   <!-- Uncomment for lots of Mean Bean output.
   <logger name="org.meanbean" level="DEBUG" />
   -->
+  <!-- Uncomment for lots of Hibernate output.
+  <logger name="org.hibernate" level="DEBUG" />
+  -->
 
 </configuration>
