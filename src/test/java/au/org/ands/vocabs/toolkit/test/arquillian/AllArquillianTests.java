@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
+import au.org.ands.vocabs.toolkit.db.ResourceOwnerHostUtils;
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
 import au.org.ands.vocabs.toolkit.db.model.ResourceMapEntry;
@@ -906,5 +908,49 @@ public class AllArquillianTests extends ArquillianBaseTest {
         }
     }
 
+    /** Test of date/time conversion at the time of the
+     * daylight savings changeover, using {@link ResourceOwnerHost}
+     * as an example entity class..
+     * @throws DatabaseUnitException If a problem with DbUnit.
+     * @throws HibernateException If a problem getting the underlying
+     *          JDBC connection.
+     * @throws IOException If a problem getting test data for DbUnit,
+     *          or reading JSON from the correct and test output files.
+     * @throws SQLException If DbUnit has a problem performing
+     *           performing JDBC operations.
+     *  */
+    @Test
+    @SuppressWarnings("checkstyle:MagicNumber")
+    public final void testResourceOwnerHostDateTimeConversion()
+            throws HibernateException, DatabaseUnitException,
+            IOException, SQLException {
+        logger.info("In testResourceOwnerHostDateTimeConversion()");
+        ArquillianTestUtils.clearDatabase();
+        ResourceOwnerHost roh = new ResourceOwnerHost();
+        // Doesn't matter what these are; we're testing start and end dates.
+        roh.setHost("http://www");
+        roh.setOwner("me");
+        // The date/time 2016-10-02T02:01:00 is fine in UTC,
+        // but it does not exist in the Australia/Sydney time zone!
+        // If the implementation treats the value as a time in
+        // the Australia/Sydney time zone, it will be persisted
+        // incorrectly.
+        LocalDateTime startDate = LocalDateTime.of(2016, 10, 2, 2, 1, 0);
+        // The endDate must be after the present time, so that
+        // the subsequent call to getResourceOwnerHostMapEntriesForOwner()
+        // returns the instance we inserted!
+        LocalDateTime endDate =
+                LocalDateTime.now(ZoneOffset.UTC).plusHours(1);
+        roh.setStartDate(startDate);
+        roh.setEndDate(endDate);
+        ResourceOwnerHostUtils.saveResourceOwnerHost(roh);
+        List<ResourceOwnerHost> rohList = ResourceOwnerHostUtils.
+                getResourceOwnerHostMapEntriesForOwner("me");
+        roh = rohList.get(0);
+        Assert.assertEquals(roh.getStartDate(), startDate,
+                "Start date different");
+        Assert.assertEquals(roh.getEndDate(), endDate,
+                "End date different");
+    }
 
 }
