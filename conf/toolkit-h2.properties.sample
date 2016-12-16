@@ -45,6 +45,13 @@ hibernate.c3p0.testConnectionOnCheckout=true
 # visible to JPA queries.
 hibernate.connection.isolation=2
 
+# Absolutely necessary to force instances of java.sql.Timestamp
+# to be sent back and forth to the database using UTC.
+# Unfortunately, this is Hibernate-specific; there doesn't
+# seem to be a way to do this in "pure" JPA.
+# See http://in.relation.to/2016/09/12/jdbc-time-zone-configuration-property/
+hibernate.jdbc.time_zone=UTC
+
 ## FILE STORAGE
 
 # The top level directory storing all Toolkit data

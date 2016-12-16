@@ -4,13 +4,17 @@ package au.org.ands.vocabs.toolkit.db.model;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 /** Converter between {@link java.sql.Timestamp}
- *  and {@link java.time.LocalDateTime} values.
+ *  and {@link java.time.LocalDateTime} values that are in UTC.
  *  Automatically applied by JPA.
+ *  NB: this currently requires Hibernate, and some Hibernate-specific
+ *  configuration:
+ *  {@code hibernate.jdbc.time_zone=UTC}
  */
 @Converter(autoApply = true)
 public class LocalDateTimeConverter implements
@@ -22,7 +26,7 @@ public class LocalDateTimeConverter implements
         if (attribute == null) {
             return null;
         }
-        return Timestamp.valueOf(attribute);
+        return Timestamp.from(attribute.toInstant(ZoneOffset.UTC));
     }
 
     @Override
@@ -31,6 +35,6 @@ public class LocalDateTimeConverter implements
         if (dbData == null) {
             return null;
         }
-        return dbData.toLocalDateTime();
+        return LocalDateTime.ofInstant(dbData.toInstant(), ZoneOffset.UTC);
     }
 }
