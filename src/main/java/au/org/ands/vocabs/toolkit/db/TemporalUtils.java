@@ -34,11 +34,11 @@ public final class TemporalUtils {
     public static final String E3 = "e3";
 
     /** Start date field name. Must match the property name in the entity
-     * class.*/
+     * class. */
     public static final String START_DATE = "startDate";
 
     /** End date field name. Must match the property name in the entity
-     * class.*/
+     * class. */
     public static final String END_DATE = "endDate";
 
     /** Suffix template for JPQL queries to select only currently-valid rows
@@ -98,7 +98,7 @@ public final class TemporalUtils {
      * @param dateTime The date/time value to be used in the query.
      * @return The modified query.
      */
-    public static Query setCurrentDatetimeParameterNow(final Query q,
+    public static Query setCurrentDatetimeParameter(final Query q,
             final LocalDateTime dateTime) {
         return q.setParameter(CURRENT_DATETIME, dateTime);
     }
@@ -110,7 +110,7 @@ public final class TemporalUtils {
      * @param dateTime The date/time value to be used in the query.
      * @return The modified query.
      */
-    public static <T> TypedQuery<T> setCurrentDatetimeParameterNow(
+    public static <T> TypedQuery<T> setCurrentDatetimeParameter(
             final TypedQuery<T> q, final LocalDateTime dateTime) {
         return q.setParameter(CURRENT_DATETIME, dateTime);
     }
