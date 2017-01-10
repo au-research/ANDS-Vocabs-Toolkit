@@ -119,22 +119,22 @@ public class ResourceMapTransformProvider extends TransformProvider {
      */
 
     /** Name of the binding for iri
-     *  used within {@link EXTRACT_IRIS_QUERY_TEMPLATE}.
+     *  used within {@link #EXTRACT_IRIS_QUERY_TEMPLATE}.
      */
     private static final String BINDING_NAME_IRI = "iri";
 
     /** Name of the binding for type
-     *  used within {@link EXTRACT_IRIS_QUERY_TEMPLATE}.
+     *  used within {@link #EXTRACT_IRIS_QUERY_TEMPLATE}.
      */
     private static final String BINDING_NAME_TYPE = "type";
 
     /** Name of the binding for owned
-     *  used within {@link EXTRACT_IRIS_QUERY_TEMPLATE}.
+     *  used within {@link #EXTRACT_IRIS_QUERY_TEMPLATE}.
      */
     private static final String BINDING_NAME_OWNED = "owned";
 
     /** Name of the binding for deprecated
-     *  used within {@link EXTRACT_IRIS_QUERY_TEMPLATE}.
+     *  used within {@link #EXTRACT_IRIS_QUERY_TEMPLATE}.
      */
     private static final String BINDING_NAME_DEPRECATED = "deprecated";
 

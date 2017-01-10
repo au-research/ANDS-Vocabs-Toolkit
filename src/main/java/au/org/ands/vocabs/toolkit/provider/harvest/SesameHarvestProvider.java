@@ -152,7 +152,7 @@ public class SesameHarvestProvider extends HarvestProvider {
     }
 
     /** Extract the metadata for a given repository from a Sesame server.
-     * @param repositoryId.
+     * @param repositoryId The repository ID.
      * @return The metadata for the repository.
      */
     @Override
