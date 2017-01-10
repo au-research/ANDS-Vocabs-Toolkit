@@ -24,7 +24,7 @@ public class LocalDateTimeFactory extends RandomFactoryBase<LocalDateTime>
     private static final long EPOCH_SECONDS_MODULUS = 4000000000L;
 
     /** Modulus used in calculation of a random number of nanoseconds.
-     * Should be relatively prime to {@link EPOCH_SECONDS_MODULUS}
+     * Should be relatively prime to {@link #EPOCH_SECONDS_MODULUS}
      * to make the calculation "interesting". */
     private static final int EPOCH_NANO_MODULUS = 987654;
 
