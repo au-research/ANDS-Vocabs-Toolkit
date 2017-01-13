@@ -1,0 +1,110 @@
+# Test of a multilingual vocabulary.
+# CC-1866 Give preference to English prefLabels.
+#   In fact, give preference to a non-tagged prefLabel,
+#   and then, if there isn't one, give preference to one tagged as @en.
+
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix my:    <http://test/> .
+
+# No prefLabel at all.
+my:uri0 a skos:Concept
+    .
+
+# One prefLabel; three possibilities.
+
+my:uri1 a skos:Concept ;
+  skos:prefLabel
+    "Label 1 no language tag"
+    .
+
+my:uri2-1 a skos:Concept ;
+  skos:prefLabel
+    "Label 2-1 en only"@en
+    .
+
+my:uri2-2 a skos:Concept ;
+  skos:prefLabel
+    "Label 2-2 de only"@de
+    .
+
+# Two prefLabels; six possibilities.
+
+my:uri3-1 a skos:Concept ;
+  skos:prefLabel
+    "Label 3-1 no language tag first",
+    "Label 3-2 en second"@en
+    .
+
+my:uri3-2 a skos:Concept ;
+  skos:prefLabel
+    "Label 3-2 en first"@en,
+    "Label 3-2 no language tag second"
+    .
+
+my:uri4-1 a skos:Concept ;
+  skos:prefLabel
+    "Label 4-1 no language tag first",
+    "Label 4-1 de second"@de
+    .
+
+my:uri4-2 a skos:Concept ;
+  skos:prefLabel
+    "Label 4-2 de first"@de,
+    "Label 4-2 no language tag second"
+    .
+
+my:uri5-1 a skos:Concept ;
+  skos:prefLabel
+    "Label 5-1 en first"@en,
+    "Label 5-1 de second"@de
+    .
+
+my:uri5-2 a skos:Concept ;
+  skos:prefLabel
+    "Label 5-2 de first"@de,
+    "Label 5-2 en second"@en
+    .
+
+# Three prefLabels; six possibilities.
+
+my:uri6-1 a skos:Concept ;
+  skos:prefLabel
+    "Label 6-1 no language tag first",
+    "Label 6-1 en second"@en,
+    "Label 6-1 de third"@de
+    .
+
+my:uri6-2 a skos:Concept ;
+  skos:prefLabel
+    "Label 6-2 no language tag first",
+    "Label 6-2 de second"@de,
+    "Label 6-2 en third"@en
+    .
+
+my:uri6-3 a skos:Concept ;
+  skos:prefLabel
+    "Label 6-3 en first"@en,
+    "Label 6-3 no language tag second",
+    "Label 6-3 de third"@de
+    .
+
+my:uri6-4 a skos:Concept ;
+  skos:prefLabel
+    "Label 6-4 de first"@de,
+    "Label 6-4 no language tag second",
+    "Label 6-4 en third"@en
+    .
+
+my:uri6-5 a skos:Concept ;
+  skos:prefLabel
+    "Label 6-5 en first"@en,
+    "Label 6-5 de second"@de,
+    "Label 6-5 no language tag third"
+    .
+
+my:uri6-6 a skos:Concept ;
+  skos:prefLabel
+    "Label 6-6 de first"@de,
+    "Label 6-6 en second"@en,
+    "Label 6-6 no language tag third"
+    .
