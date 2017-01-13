@@ -50,6 +50,27 @@
     <classpath path="libdev/jacoco-0.7.6.201602180812/jacocoant.jar" />
   </taskdef>
 
+  <property name="jaxb-plugin-jar" value="tools/bin/jaxb-plugin.jar" />
+  <property name="build-jaxb-plugin" value="tools/build/build-jaxb-plugin" />
+  <path id="jaxb-plugin-jar.classpath">
+    <fileset dir="tools/dist/jaxb-ri-2.2.11" includes="**/*.jar" />
+  </path>
+  <target name="jaxb-plugin-jar">
+    <mkdir dir="${build-jaxb-plugin}" />
+    <javac debug="true" debuglevel="${debuglevel}"
+           destdir="${build-jaxb-plugin}"
+           includeantruntime="false" source="${source}" target="${target}">
+      <src path="tools/src/jaxb-utils/java" />
+      <classpath refid="jaxb-plugin-jar.classpath" />
+    </javac>
+    <jar destfile="${jaxb-plugin-jar}">
+      <fileset dir="${build-jaxb-plugin}"
+               includes="au/org/ands/vocabs/registry/schema/utils/*.class" />
+      <service type="com.sun.tools.xjc.Plugin"
+               provider="au.org.ands.vocabs.registry.schema.utils.JaxbPrivateMemberPlugin"/>
+    </jar>
+  </target>
+
   <target name="clean">
     <delete dir="${build}" />
     <delete dir="${build-jar}" />
