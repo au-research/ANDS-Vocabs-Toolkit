@@ -104,7 +104,8 @@
 
   <target name="compile-main">
     <mkdir dir="${build}" />
-    <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
+    <javac debug="true" debuglevel="${debuglevel}" destdir="${build}"
+           includeantruntime="false" source="${source}" target="${target}">
       <src path="src/main/java" />
       <!-- Don't include test classes. For now, if you want to use
            the test classes, use the project in Eclipse.
@@ -138,7 +139,9 @@
 
   <target name="compile-test" depends="compile-main">
     <mkdir dir="${build-test}" />
-    <javac debug="true" debuglevel="${debuglevel}" destdir="${build-test}" includeantruntime="false" source="${source}" target="${target}">
+    <javac debug="true" debuglevel="${debuglevel}"
+           destdir="${build-test}"
+           includeantruntime="false" source="${source}" target="${target}">
       <src path="src/test/java" />
       <classpath refid="compile-test.classpath" />
     </javac>
@@ -239,7 +242,8 @@
   <target name="update-version-string" depends="-timestamp" unless="Toolkit.version">
     <!-- get a new version string using git describe if possible -->
     <echo message="Updating version string..." />
-    <exec executable="git" outputproperty="Toolkit.version" failifexecutionfails="false">
+    <exec executable="git" outputproperty="Toolkit.version"
+          failifexecutionfails="false">
       <arg value="describe" />
     </exec>
     <antcall target="-store-version-string" />
@@ -249,17 +253,21 @@
 
   <target name="-timestamp">
     <tstamp>
-      <format property="Toolkit.versionTimestamp" timezone="UTC" pattern="yyyy-MM-dd'T'HH:mm'Z'" />
-      <format property="Toolkit.buildDate" timezone="UTC" pattern="yyyy-MM-dd" />
+      <format property="Toolkit.versionTimestamp" timezone="UTC"
+              pattern="yyyy-MM-dd'T'HH:mm'Z'" />
+      <format property="Toolkit.buildDate" timezone="UTC"
+              pattern="yyyy-MM-dd" />
     </tstamp>
   </target>
 
-  <target name="-store-version-string" depends="-timestamp" if="Toolkit.version">
+  <target name="-store-version-string" depends="-timestamp"
+          if="Toolkit.version">
     <!-- store the new  version string in the correct property file -->
     <echo message="version=${Toolkit.version}" />
     <propertyfile file="${conf}/version.properties">
       <entry key="Toolkit.version" value="${Toolkit.version}" />
-      <entry key="Toolkit.versionTimestamp" value="${Toolkit.versionTimestamp}" />
+      <entry key="Toolkit.versionTimestamp"
+             value="${Toolkit.versionTimestamp}" />
       <entry key="Toolkit.buildDate" value="${Toolkit.buildDate}" />
     </propertyfile>
     <exec executable="git">
