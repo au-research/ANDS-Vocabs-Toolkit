@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE ant>
+<project
+  basedir="."
+  name="ANDS-Vocabs-Toolkit"
+  >
+  <property environment="env" />
+  <property name="debuglevel" value="source,lines,vars" />
+  <property name="target" value="1.8" />
+  <property name="source" value="1.8" />
+
+  <property name="build" value="bin" />
+  <property name="build-jar" value="bin-jar" />
+
+  <!-- JAR files that contain a JPA persistence unit. -->
+  <property name="toolkit-db-model-jar"
+            value="${build-jar}/toolkit-db-model.jar" />
+  <property name="registry-db-model-jar"
+            value="${build-jar}/registry-db-model.jar" />
+
+  <property name="jar" value="vocabtoolkit.jar" />
+  <property name="war" value="vocabtoolkit.war" />
+
+  <target name="clean-build-jar">
+    <!-- Used to delete the entire ${build-jar} directory,
+         but this seems to confuse Eclipse sometimes. -->
+    <delete file="${toolkit-db-model-jar}" />
+    <delete file="${registry-db-model-jar}" />
+  </target>
+
+  <target name="toolkit-db-model-jar">
+    <jar destfile="${toolkit-db-model-jar}">
+      <!-- Generated JAR file has META-INF directory first anyway, so it's
+           neater to include persistence.xml first ... -->
+      <mappedresources>
+        <fileset
+            dir="src/main/java/au/org/ands/vocabs/toolkit/db/model/META-INF"
+            />
+        <globmapper from="*" to="META-INF/*" />
+      </mappedresources>
+      <!-- ... and then the class files. -->
+      <fileset
+        dir="${build}"
+        includes ="au/org/ands/vocabs/toolkit/db/model/*.class"
+      />
+    </jar>
+  </target>
+
+  <target name="registry-db-model-jar">
+    <jar destfile="${registry-db-model-jar}">
+      <!-- Generated JAR file has META-INF directory first anyway, so it's
+           neater to include persistence.xml first ... -->
+      <mappedresources>
+        <fileset
+            dir="src/main/java/au/org/ands/vocabs/registry/db/entity/META-INF"
+            />
+        <globmapper from="*" to="META-INF/*" />
+      </mappedresources>
+      <!-- ... and then the class files. -->
+      <fileset
+        dir="${build}"
+        includes ="au/org/ands/vocabs/registry/db/entity/*.class"
+      />
+    </jar>
+  </target>
+
+</project>
