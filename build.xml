@@ -82,6 +82,9 @@
     <delete dir="${test-output}" />
     <delete file="${jacoco-output}" />
     <delete dir="${jacoco-report}" />
+    <!-- Files created by testng-bamboo target -->
+    <delete file="conf/toolkit-h2-bamboo.properties" />
+    <delete file="conf/registry-h2-bamboo.properties" />
   </target>
 
   <path id="compile-main.classpath">
