@@ -88,4 +88,24 @@
                 }
               ]"
       />
+  <TASK
+      ID="5"
+      VOCABULARY_ID="1"
+      VERSION_ID="1"
+      PARAMS="[
+                {
+                  ''type'': ''UNHARVEST'',
+                  ''provider_type'': ''File''
+                },
+                {
+                  ''type'': ''HARVEST'',
+                  ''provider_type'': ''File'',
+                  ''file_path'': ''src/test/resources/input/au.org.ands.vocabs.toolkit.test.arquillian.AllArquillianTests.testJsonTreeTransformProvider1/test-data5.ttl''
+                },
+                {
+                  ''type'': ''TRANSFORM'',
+                  ''provider_type'': ''JsonTree''
+                }
+              ]"
+      />
 </dataset>

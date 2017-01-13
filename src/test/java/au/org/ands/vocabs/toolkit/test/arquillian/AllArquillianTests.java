@@ -337,6 +337,22 @@ public class AllArquillianTests extends ArquillianBaseTest {
                 "JsonTreeTransformProvider task 4 returned wrong value for "
                 + "concepts_tree_not_provided");
 
+        // Multilingual vocabularies, based on CC-1866.
+        taskInfo = ToolkitFileUtils.getTaskInfo(5);
+        Assert.assertNotNull(taskInfo, "Test data not loaded, task 5");
+        runner = new TaskRunner(taskInfo);
+        runner.runTask();
+        results = runner.getResults();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(results.get("status"), "success",
+                "JsonTreeTransformProvider failed on task 5");
+        conceptsTreeFilename = results.get("concepts_tree");
+        ArquillianTestUtils.compareJson(conceptsTreeFilename,
+                "src/test/resources/input/"
+                + "au.org.ands.vocabs.toolkit.test.arquillian."
+                + "AllArquillianTests.testJsonTreeTransformProvider1/"
+                + "test-data5-concepts_tree.json");
     }
 
     // Tests of class

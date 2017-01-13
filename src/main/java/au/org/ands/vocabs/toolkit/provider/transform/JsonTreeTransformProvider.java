@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
+import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -158,7 +159,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
 
     /** A map of SKOS types to take note of. */
     private static HashMap<URI, String> typesToLookFor =
-            new HashMap<URI, String>();
+            new HashMap<>();
 
     static {
         typesToLookFor.put(SKOS.CONCEPT_SCHEME, "ConceptScheme");
@@ -318,11 +319,51 @@ public class JsonTreeTransformProvider extends TransformProvider {
             return iri;
         }
 
-        /** Set the prefLabel.
+        /** The language tag associated with the prefLabel, if there
+         * is one; null, otherwise.
+         */
+        private String prefLabelLanguage;
+
+        /** Set the prefLabel. Call this setter if the prefLabel has no
+         * language tag.
          * @param aPrefLabel The value of the prefLabel.
          */
         public void setPrefLabel(final String aPrefLabel) {
+            // Always give priority to a prefLabel without a language tag.
             prefLabel = aPrefLabel;
+            // Reset this, in case we have already seen a prefLabel
+            // with a language tag.
+            prefLabelLanguage = null;
+        }
+
+        /** Set the prefLabel. Call this setter if the prefLabel has a
+         * language tag.
+         * @param aPrefLabel The value of the prefLabel.
+         * @param aLanguage The language tag of the prefLabel.
+         */
+        public void setPrefLabel(final String aPrefLabel,
+                final String aLanguage) {
+            // CC-1866 For now, give preference to English labels.
+            // That means:
+            // 1. If this method is called when there is not already a
+            //    prefLabel recorded, then use aPrefLabel/aLanguage.
+            // 2. If this method is called when there _is_ already a
+            //    prefLabel recorded, but (a) there _is_ a language
+            //    recorded, and it is not "en", and (b) aLanguage is "en",
+            //    then use aPrefLabel/aLanguage.
+            // 3. Otherwise, leave the existing prefLabel/prefLabelLanguage
+            //    values unchanged.
+            if (prefLabel == null
+                    ||
+                    (prefLabelLanguage != null
+                        && !"en".equals(prefLabelLanguage)
+                        && "en".equals(aLanguage))
+                    ) {
+                // No prefLabel already recorded, so we take this one.
+                prefLabel = aPrefLabel;
+                prefLabelLanguage = aLanguage;
+            }
+            // Otherwise, leave the existing prefLabel unchanged.
         }
 
         /** Get the prefLabel.
@@ -369,7 +410,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          */
         public void addNarrower(final Concept aNarrower) {
             if (narrower == null) {
-                narrower = new TreeSet<Concept>();
+                narrower = new TreeSet<>();
             }
             narrower.add(aNarrower);
         }
@@ -482,7 +523,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          * Concept class.
          */
         private Map<String, Concept> iriConceptMap =
-                new HashMap<String, Concept>();
+                new HashMap<>();
 
         /** Map from concept IRI to a map that maps
          * property name to the property value(s).
@@ -504,7 +545,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          * {@code Set<Concept>}.
          * */
         private Map<Concept, HashMap<String, Object>> conceptMap =
-                new HashMap<Concept, HashMap<String, Object>>();
+                new HashMap<>();
 
         /** The top-most concepts of the vocabulary. This is based on
          * finding all concepts that do not have a broader concept.
@@ -514,7 +555,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          * over to produce the Set that is actually returned by
          * {@link #buildForest()}. */
         private Map<Concept, HashMap<String, Object>> topmostConcepts =
-                new HashMap<Concept, HashMap<String, Object>>();
+                new HashMap<>();
 
         /** Get the Concept object for an IRI from the iriConceptMap
          * cache. Create such an object and add it to the cache,
@@ -564,7 +605,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          * When the set is empty again, construction of the spanning
          * forest is complete.
          */
-        private Set<Concept> nodesNotVisited = new HashSet<Concept>();
+        private Set<Concept> nodesNotVisited = new HashSet<>();
 
         /** A set into which concepts are added while they are the
          * subject of the depth-first search. A concept is added to this
@@ -573,7 +614,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
          * only if, during DFS we are considering visiting a node,
          * and it is currently in this set.
          */
-        private Set<Concept> nodesActive = new HashSet<Concept>();
+        private Set<Concept> nodesActive = new HashSet<>();
 
         /** When either a broader or narrower triple is encountered,
          * keep track of that relationship and infer its inverse.
@@ -648,7 +689,14 @@ public class JsonTreeTransformProvider extends TransformProvider {
                 // somehow wish to support prefLabels on things
                 // other than Concepts, uncomment/modify as needed.
                 // concept.put("prefLabel", st.getObject().stringValue());
-                subjectConcept.setPrefLabel(st.getObject().stringValue());
+                Value stObject = st.getObject();
+                if (stObject instanceof Literal
+                        && ((Literal) stObject).getLanguage() != null) {
+                    subjectConcept.setPrefLabel(stObject.stringValue(),
+                            ((Literal) stObject).getLanguage());
+                } else {
+                    subjectConcept.setPrefLabel(st.getObject().stringValue());
+                }
             }
             // Future work: uncomment/modify the next six lines
             // when the portal is ready to receive it.
@@ -710,7 +758,7 @@ public class JsonTreeTransformProvider extends TransformProvider {
             // the broader/narrower relations.
             // More technically: the elements of roots are the roots
             // of a depth-first spanning forest.
-            TreeSet<Concept> roots = new TreeSet<Concept>();
+            TreeSet<Concept> roots = new TreeSet<>();
             populateRoots();
             for (Entry<Concept, HashMap<String, Object>> topmostConcept
                     : topmostConcepts.entrySet()) {
