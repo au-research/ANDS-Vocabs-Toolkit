@@ -1,7 +1,11 @@
 /bin/
+/bin-jaxb/
 /build/
+/build-jar/
 /build-test/
 /catalina.base_IS_UNDEFINED/
+/conf/registry.properties
+/conf/registry-h2-bamboo.properties
 /conf/toolkit.properties
 /conf/toolkit-h2-bamboo.properties
 /doc/javadoc/

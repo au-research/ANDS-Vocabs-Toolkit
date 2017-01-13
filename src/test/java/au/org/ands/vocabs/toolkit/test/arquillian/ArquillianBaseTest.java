@@ -10,8 +10,10 @@ import java.nio.file.Paths;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +57,56 @@ public class ArquillianBaseTest extends Arquillian {
 
 
     /** Create deployment for testing.
+     * The deployment is a WAR file, that contains most of the
+     * source classes directly under WEB-INF/classes.
+     * There are two persistence units; each of these is packaged
+     * into a JAR file. (Each JAR file contains its own
+     * persistence.xml, and the entity classes that belong to
+     * the persistence unit.)
+     * Note that for running under Tomcat, we rely on Hibernate
+     * generously providing more that it is required to in (what is
+     * properly) a Java SE environment, i.e., that it does the
+     * correct entity scanning without the need to specify each
+     * class in persistence.xml.
      * @return The WebArchive to be deployed for testing.
      */
     @Deployment
     public static WebArchive createTestArchive() {
+        // Create WAR, and add all classes except those in packages
+        // that we provide as JAR files.
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-                .addPackages(true, "au.org.ands.vocabs");
+                .addPackages(true,
+                        Filters.exclude("/au/org/ands/vocabs/"
+                                + "toolkit/db/model/.*.class|"
+                                + "/au/org/ands/vocabs/"
+                                + "registry/db/entity/.*.class"),
+                        "au.org.ands.vocabs");
         try {
+            JavaArchive toolkitDbModelJar =
+                    ShrinkWrap.create(JavaArchive.class,
+                            "toolkit-db-model.jar");
+            toolkitDbModelJar.addPackage("au.org.ands.vocabs.toolkit.db.model");
+            toolkitDbModelJar.addAsManifestResource(new File(
+                    "src/main/java/au/org/ands/vocabs/toolkit/db/model/"
+                            + "META-INF/persistence.xml"));
+            toolkitDbModelJar.addManifest();
+            logger.info("toolkitDbModelJar = "
+                    + toolkitDbModelJar.toString(Formatters.VERBOSE));
+            war.addAsLibrary(toolkitDbModelJar);
+
+            JavaArchive registryDbModelJar =
+                    ShrinkWrap.create(JavaArchive.class,
+                            "registry-db-model.jar");
+            registryDbModelJar.addPackage(
+                    "au.org.ands.vocabs.registry.db.entity");
+            registryDbModelJar.addAsManifestResource(new File(
+                    "src/main/java/au/org/ands/vocabs/registry/db/entity/"
+                            + "META-INF/persistence.xml"));
+            registryDbModelJar.addManifest();
+            logger.info("registryDbModelJar = "
+                    + registryDbModelJar.toString(Formatters.VERBOSE));
+            war.addAsLibrary(registryDbModelJar);
+
             // Add all the JAR files from the lib directory.
             Files.walk(Paths.get("lib"))
                 .filter(Files::isRegularFile)
@@ -107,15 +152,19 @@ public class ArquillianBaseTest extends Arquillian {
             // Logback logging configuration.
             war.addAsResource(new File("conf-test/logback-test.xml"),
                     "logback.xml");
-            war.addAsResource(new File(
-                    "src/main/java/META-INF/persistence.xml"),
-                    "META-INF/persistence.xml");
             //war.addAsResource(new File("conf/toolkit-h2.properties"),
             //        "toolkit.properties");
             try {
                 // Optional resource.
                 war.addAsResource(new File("conf/toolkit-h2.properties"),
                         "toolkit-h2.properties");
+            } catch (IllegalArgumentException e) {
+                // No problem if these files don't exist.
+            }
+            try {
+                // Optional resource.
+                war.addAsResource(new File("conf/registry-h2.properties"),
+                        "registry-h2.properties");
             } catch (IllegalArgumentException e) {
                 // No problem if these files don't exist.
             }
@@ -130,7 +179,7 @@ public class ArquillianBaseTest extends Arquillian {
                     "version.properties");
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception during packaging", e);
         }
         logger.info(war.toString(Formatters.VERBOSE));
         return war;
