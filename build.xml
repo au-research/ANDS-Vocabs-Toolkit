@@ -12,10 +12,18 @@
   <property name="source" value="1.8" />
 
   <property name="build" value="build" />
+  <property name="build-jar" value="build-jar" />
   <property name="build-test" value="build-test" />
   <!-- Configuration files: toolkit.properties, logback.xml -->
   <property name="conf" value="conf" />
   <property name="conf-test" value="conf-test" />
+
+  <!-- JAR files that contain a JPA persistence unit. -->
+  <property name="toolkit-db-model-jar"
+            value="${build-jar}/toolkit-db-model.jar" />
+  <property name="registry-db-model-jar"
+            value="${build-jar}/registry-db-model.jar" />
+
   <property name="jar" value="vocabtoolkit.jar" />
   <property name="war" value="vocabtoolkit.war" />
   <property name="javadoc-output" value="doc/javadoc" />
@@ -44,6 +52,7 @@
 
   <target name="clean">
     <delete dir="${build}" />
+    <delete dir="${build-jar}" />
     <delete dir="${build-test}" />
     <delete file="${jar}" />
     <delete file="${war}" />
@@ -123,15 +132,48 @@
         </jar>
     </target>
    -->
-  <target name="war" depends="compile-main,update-version-string">
+
+  <target name="toolkit-db-model-jar" depends="compile-main">
+    <jar destfile="${toolkit-db-model-jar}">
+      <!-- Generated JAR file has META-INF directory first anyway, so it's
+           neater to include persistence.xml first ... -->
+      <mappedresources>
+        <fileset
+            dir="src/main/java/au/org/ands/vocabs/toolkit/db/model/META-INF"
+            />
+        <globmapper from="*" to="META-INF/*" />
+      </mappedresources>
+      <!-- ... and then the class files. -->
+      <fileset
+        dir="${build}"
+        includes ="au/org/ands/vocabs/toolkit/db/model/*.class"
+      />
+    </jar>
+  </target>
+
+  <target name="registry-db-model-jar" depends="compile-main">
+    <jar destfile="${registry-db-model-jar}">
+      <!-- Generated JAR file has META-INF directory first anyway, so it's
+           neater to include persistence.xml first ... -->
+      <mappedresources>
+        <fileset
+            dir="src/main/java/au/org/ands/vocabs/registry/db/entity/META-INF"
+            />
+        <globmapper from="*" to="META-INF/*" />
+      </mappedresources>
+      <!-- ... and then the class files. -->
+      <fileset
+        dir="${build}"
+        includes ="au/org/ands/vocabs/registry/db/entity/*.class"
+      />
+    </jar>
+  </target>
+
+  <target name="war"
+          depends="compile-main,update-version-string,toolkit-db-model-jar,registry-db-model-jar">
     <war destfile="${war}">
       <metainf dir="WebContent/META-INF" />
       <webinf dir="WebContent/WEB-INF" />
-      <!-- Copy persistence.xml -->
-      <mappedresources>
-        <fileset dir="src/main/java/META-INF" />
-        <globmapper from="*" to="WEB-INF/classes/META-INF/*" />
-      </mappedresources>
       <!-- Need to use this trick instead of a lib element because
            the JAR files are stored in subdirectories.
            See http://stackoverflow.com/questions/2802671/how-to-perform-ant-path-mapping-in-a-war-task -->
@@ -142,10 +184,14 @@
           <globmapper from="*" to="WEB-INF/lib/*" />
         </chainedmapper>
       </mappedresources>
-      <!-- Can't use JAR; see above. -->
-      <!-- <lib file="${jar}" /> -->
-      <!-- Include raw classes instead. -->
-      <classes dir="${build}" />
+      <lib file="${toolkit-db-model-jar}" />
+      <lib file="${registry-db-model-jar}" />
+      <!-- Include other raw classes. -->
+      <classes dir="${build}">
+        <!-- Exclude the classes put into the JARs. -->
+        <exclude name="au/org/ands/vocabs/toolkit/db/model/*.class" />
+        <exclude name="au/org/ands/vocabs/registry/db/entity/*.class" />
+      </classes>
       <mappedresources>
         <fileset dir="${conf}" />
         <globmapper from="*" to="WEB-INF/classes/*" />
@@ -338,7 +384,7 @@
     <pathelement path="${resources-test-input}" />
   </path>
 
-  <target name="testng" depends="compile-test">
+  <target name="testng" depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
     <jacoco:coverage
       destfile="${jacoco-output}">
       <testng
@@ -348,6 +394,8 @@
           value="-DPROPS_FILE=WEB-INF/classes/toolkit-h2.properties" />
         <jvmarg
           value="-DPROPS_FILE_CLIENT_MODE=conf/toolkit-h2.properties" />
+        <jvmarg
+          value="-DREGISTRY_PROPS_FILE=WEB-INF/classes/registry-h2.properties" />
         <jvmarg
           value="-DVERSION_PROPS_FILE=conf/version.properties" />
         <jvmarg
@@ -395,7 +443,7 @@
       -DbambooPoolPartyHarvesterPassword=password-splat \
       testng-bamboo
   -->
-  <target name="testng-bamboo" depends="compile-test">
+  <target name="testng-bamboo" depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
     <copy
       file="conf/toolkit-h2-bamboo-template.properties"
       tofile="conf/toolkit-h2-bamboo.properties">
@@ -414,6 +462,15 @@
           value="${bambooPoolPartyHarvesterPassword}" />
       </filterset>
     </copy>
+    <copy
+      file="conf/registry-h2-bamboo-template.properties"
+      tofile="conf/registry-h2-bamboo.properties">
+      <filterset>
+        <filter
+          token="bambooBuildWorkingDirectory"
+          value="${bambooBuildWorkingDirectory}" />
+      </filterset>
+    </copy>
     <jacoco:coverage
       destfile="${jacoco-output}">
       <testng
@@ -423,6 +480,8 @@
           "-DPROPS_FILE=WEB-INF/classes/toolkit-h2-bamboo.properties" />
         <jvmarg
           value="-DPROPS_FILE_CLIENT_MODE=conf/toolkit-h2-bamboo.properties" />
+        <jvmarg
+          value="-DREGISTRY_PROPS_FILE=WEB-INF/classes/registry-h2-bamboo.properties" />
         <jvmarg
           value="-DVERSION_PROPS_FILE=conf/version.properties" />
         <jvmarg
