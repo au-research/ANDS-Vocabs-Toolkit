@@ -348,18 +348,25 @@ public class JsonTreeTransformProvider extends TransformProvider {
             // 1. If this method is called when there is not already a
             //    prefLabel recorded, then use aPrefLabel/aLanguage.
             // 2. If this method is called when there _is_ already a
-            //    prefLabel recorded, but (a) there _is_ a language
-            //    recorded, and it is not "en", and (b) aLanguage is "en",
-            //    then use aPrefLabel/aLanguage.
+            //    prefLabel recorded, but there _is_ a language
+            //    recorded, and it is not "en". (This gives "last one
+            //    wins" behaviour.)
             // 3. Otherwise, leave the existing prefLabel/prefLabelLanguage
             //    values unchanged.
+
+            // Please note the clarification of what is allowed for multiple
+            // prefLabels at
+            // https://www.w3.org/2006/07/SWD/SKOS/reference/20090811-errata#S14
+            // "A resource has no more than one value of skos:prefLabel
+            // per language tag, and no more than one value of skos:prefLabel
+            // without language tag.".
+            // So we make no attempt to specify the behaviour in the case of
+            // multiple prefLabels with language tag "en".
             if (prefLabel == null
                     ||
                     (prefLabelLanguage != null
-                        && !"en".equals(prefLabelLanguage)
-                        && "en".equals(aLanguage))
+                        && !"en".equals(prefLabelLanguage))
                     ) {
-                // No prefLabel already recorded, so we take this one.
                 prefLabel = aPrefLabel;
                 prefLabelLanguage = aLanguage;
             }

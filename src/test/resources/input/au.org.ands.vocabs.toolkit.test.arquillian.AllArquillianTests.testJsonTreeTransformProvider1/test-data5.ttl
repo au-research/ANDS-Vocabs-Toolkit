@@ -108,3 +108,19 @@ my:uri6-6 a skos:Concept ;
     "Label 6-6 en second"@en,
     "Label 6-6 no language tag third"
     .
+
+# Last one wins.
+# Please note clarification of what is allowed for multiple prefLabels at
+# https://www.w3.org/2006/07/SWD/SKOS/reference/20090811-errata#S14
+# "A resource has no more than one value of skos:prefLabel
+# per language tag, and no more than one value of skos:prefLabel
+# without language tag.".
+# Therefore, we _don't_ bother having test cases with:
+# * multiple prefLabels with an "en" language tag
+# * multiple prefLabels without a language
+
+my:uri7-1 a skos:Concept ;
+  skos:prefLabel
+    "Label 7-1 de first"@de,
+    "Label 7-1 fr second"@fr
+    .
