@@ -88,6 +88,9 @@ public class AllArquillianTests extends ArquillianBaseTest {
     /** Embedded Tomcat for running OpenRDF Sesame. */
     private static Tomcat tomcat;
 
+    /** Have we run setupSuite on server side at least once? */
+    private static boolean setupSuiteRunServerSide;
+
     // Test setup/shutdown
 
     /** Set up the suite. This means:
@@ -141,9 +144,22 @@ public class AllArquillianTests extends ArquillianBaseTest {
                 tomcat.start();
             }
         } else {
-            logger.info("In AllArquillianTests.setupSuite() on server side");
-            FileUtils.deleteDirectory(new File(
-                    ToolkitConfig.ROOT_FILES_PATH));
+            // Arquillian runs BeforeSuite/AfterSuite for each test,
+            // which I think is not the normal TestNG behaviour!
+            // So we use static field setupSuiteRunServerSide to
+            // keep track of this code being run.
+            if (!setupSuiteRunServerSide) {
+                logger.info("In AllArquillianTests.setupSuite() "
+                        + "on server side for first time");
+                setupSuiteRunServerSide = true;
+                logger.info("ROOT_FILES_PATH = " + new File(
+                        ToolkitConfig.ROOT_FILES_PATH).getAbsolutePath());
+                FileUtils.deleteDirectory(new File(
+                        ToolkitConfig.ROOT_FILES_PATH));
+            } else {
+                logger.info("In AllArquillianTests.setupSuite() "
+                        + "on server side not for first time");
+            }
         }
     }
 
