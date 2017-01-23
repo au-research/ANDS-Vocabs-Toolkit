@@ -17,5 +17,6 @@
 /src/jaxb-gen/
 /test-output/
 /tomcattest/
+/tools/bin/xjc-private-fields-plugin.jar
 /vocabtoolkit.jar
 /vocabtoolkit.war

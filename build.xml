@@ -68,6 +68,12 @@
     <delete dir="${build-jar}" />
     <delete dir="${build-test}" />
     <delete dir="${build-tools}" />
+    <delete dir="${build-xjc-private-fields-plugin}" />
+    <delete file="${xjc-private-fields-plugin-jar}" />
+    <!-- Delete tools-bin iff it is empty. -->
+    <delete includeemptydirs="true">
+      <fileset dir="${tools-bin}" excludes="**/*" />
+    </delete>
     <delete file="${jar}" />
     <delete file="${war}" />
     <delete dir="${javadoc-output}" />
@@ -82,8 +88,10 @@
 
   <!-- xjc plugin to make generated fields private -->
 
+  <property name="tools-bin"
+            value="tools/bin" />
   <property name="xjc-private-fields-plugin-jar"
-            value="tools/bin/xjc-private-fields-plugin.jar" />
+            value="${tools-bin}/xjc-private-fields-plugin.jar" />
   <property name="build-xjc-private-fields-plugin"
             value="${build-tools}/build-xjc-plugin" />
   <target name="xjc-private-fields-plugin-jar">
