@@ -1,0 +1,24 @@
+<!DOCTYPE bindings>
+<jaxb:bindings
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    jaxb:extensionBindingPrefixes="xjc"
+    version="2.1">
+
+  <jaxb:bindings schemaLocation="registry-schema.xsd">
+
+    <jaxb:schemaBindings>
+      <jaxb:package
+        name="au.org.ands.vocabs.registry.schema.vocabulary201701" />
+    </jaxb:schemaBindings>
+
+    <!-- access point discriminator -->
+    <jaxb:bindings
+        node="//xs:element[@name='access-point']//xs:choice">
+      <jaxb:property name="AP" />
+    </jaxb:bindings>
+
+  </jaxb:bindings>
+
+</jaxb:bindings>

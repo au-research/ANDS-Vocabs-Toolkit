@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://vocabs.ands.org.au/registry/schema/2017/01/db-json"
+    xmlns="http://vocabs.ands.org.au/registry/schema/2017/01/db-json"
+    xmlns:common="http://vocabs.ands.org.au/registry/schema/2017/01/common">
+    <xs:import namespace="http://vocabs.ands.org.au/registry/schema/2017/01/common"
+        schemaLocation="common-types.xsd"/>
+    <xs:element name="vocabulary-json">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="poolparty_project">
+                    <xs:complexType>
+                        <xs:attribute name="server_id" type="xs:int"/>
+                        <xs:attribute name="project_id" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="subjects">
+                    <xs:complexType>
+                        <xs:attribute name="source" use="required" type="xs:string"/>
+                        <xs:attribute name="label" use="required" type="xs:string"/>
+                        <xs:attribute name="notation" type="xs:string"/>
+                        <xs:attribute name="iri" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" name="languages" type="xs:string"> </xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="top_concepts" type="xs:string"
+                />
+            </xs:sequence>
+            <xs:attribute name="title" type="xs:string"/>
+            <xs:attribute name="acronym" type="xs:string"/>
+            <xs:attribute name="description" type="xs:string"/>
+            <xs:attribute name="note" type="xs:string"/>
+            <xs:attribute name="revision_cycle" type="xs:string"/>
+            <xs:attribute name="creation_date" type="xs:string"/>
+            <xs:attribute name="primary_language" type="xs:string"/>
+            <xs:attribute name="licence" type="xs:string"/>
+            <xs:attribute name="draft_created_date" type="xs:string"/>
+            <xs:attribute name="draft_modified_date" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="version-json">
+        <xs:complexType>
+            <xs:attribute name="title" type="xs:string"/>
+            <xs:attribute name="note" type="xs:string"/>
+            <xs:attribute name="do_publish" type="xs:boolean"/>
+            <xs:attribute name="draft_created_date" type="xs:string"/>
+            <xs:attribute name="draft_modified_date" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="access-point-json">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="ap-api-sparql" type="ap-api-sparql"/>
+                <xs:element name="ap-file" type="ap-file"/>
+                <xs:element name="ap-sesame-download" type="ap-sesame-download"/>
+                <xs:element name="ap-sissvoc" type="ap-sissvoc"/>
+                <xs:element name="ap-web-page" type="ap-web-page"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ap-common"/>
+    <xs:complexType name="ap-api-sparql">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="source" type="common:ap-source" use="required"/>
+                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-file">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="format" type="xs:string"/>
+                <xs:attribute name="path" type="xs:string" use="required"/>
+                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-sesame-download">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="repository" type="xs:string"/>
+                <xs:attribute name="server-base" type="xs:anyURI"/>
+                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-sissvoc">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="source" type="common:ap-source" use="required"/>
+                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-web-page">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="version-artefact-json">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="va-concepts-list" type="va-concept-list"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="va-common"/>
+    <xs:complexType name="va-concept-list">
+        <xs:complexContent>
+            <xs:extension base="va-common">
+                <xs:attribute name="path" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="va-concept-tree">
+        <xs:complexContent>
+            <xs:extension base="va-common">
+                <xs:attribute name="path" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

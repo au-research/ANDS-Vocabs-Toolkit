@@ -14,6 +14,7 @@
   <property name="build" value="build" />
   <property name="build-jar" value="build-jar" />
   <property name="build-test" value="build-test" />
+  <property name="build-tools" value="tools/build" />
   <!-- Configuration files: toolkit.properties, logback.xml -->
   <property name="conf" value="conf" />
   <property name="conf-test" value="conf-test" />
@@ -31,6 +32,8 @@
   <property name="test-output" value="test-output" />
   <property name="jacoco-output" value="jacoco.exec" />
   <property name="jacoco-report" value="jacoco-report" />
+
+  <!-- Task definitions -->
 
   <taskdef
     resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
@@ -50,31 +53,21 @@
     <classpath path="libdev/jacoco-0.7.6.201602180812/jacocoant.jar" />
   </taskdef>
 
-  <property name="jaxb-plugin-jar" value="tools/bin/jaxb-plugin.jar" />
-  <property name="build-jaxb-plugin" value="tools/build/build-jaxb-plugin" />
-  <path id="jaxb-plugin-jar.classpath">
+  <!-- JAXB RI classpath, and xjc taskdef -->
+
+  <path id="jaxb-ri.classpath">
     <fileset dir="tools/dist/jaxb-ri-2.2.11" includes="**/*.jar" />
   </path>
-  <target name="jaxb-plugin-jar">
-    <mkdir dir="${build-jaxb-plugin}" />
-    <javac debug="true" debuglevel="${debuglevel}"
-           destdir="${build-jaxb-plugin}"
-           includeantruntime="false" source="${source}" target="${target}">
-      <src path="tools/src/jaxb-utils/java" />
-      <classpath refid="jaxb-plugin-jar.classpath" />
-    </javac>
-    <jar destfile="${jaxb-plugin-jar}">
-      <fileset dir="${build-jaxb-plugin}"
-               includes="au/org/ands/vocabs/registry/schema/utils/*.class" />
-      <service type="com.sun.tools.xjc.Plugin"
-               provider="au.org.ands.vocabs.registry.schema.utils.JaxbPrivateMemberPlugin"/>
-    </jar>
-  </target>
+
+  <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+    <classpath refid="jaxb-ri.classpath" />
+  </taskdef>
 
   <target name="clean">
     <delete dir="${build}" />
     <delete dir="${build-jar}" />
     <delete dir="${build-test}" />
+    <delete dir="${build-tools}" />
     <delete file="${jar}" />
     <delete file="${war}" />
     <delete dir="${javadoc-output}" />
@@ -86,6 +79,61 @@
     <delete file="conf/toolkit-h2-bamboo.properties" />
     <delete file="conf/registry-h2-bamboo.properties" />
   </target>
+
+  <!-- xjc plugin to make generated fields private -->
+
+  <property name="xjc-private-fields-plugin-jar"
+            value="tools/bin/xjc-private-fields-plugin.jar" />
+  <property name="build-xjc-private-fields-plugin"
+            value="${build-tools}/build-xjc-plugin" />
+  <target name="xjc-private-fields-plugin-jar">
+    <mkdir dir="${build-xjc-private-fields-plugin}" />
+    <javac debug="true" debuglevel="${debuglevel}"
+           destdir="${build-xjc-private-fields-plugin}"
+           includeantruntime="false" source="${source}" target="${target}">
+      <src path="tools/src/jaxb-utils/java" />
+      <classpath refid="jaxb-ri.classpath" />
+    </javac>
+    <jar destfile="${xjc-private-fields-plugin-jar}">
+      <fileset dir="${build-xjc-private-fields-plugin}"
+               includes="au/org/ands/vocabs/registry/schema/utils/*.class" />
+      <service type="com.sun.tools.xjc.Plugin"
+               provider="au.org.ands.vocabs.registry.schema.utils.JaxbPrivateMemberPlugin"/>
+    </jar>
+  </target>
+
+  <!-- Code generation -->
+
+  <target name="generate-jaxb-source"
+          depends="xjc-private-fields-plugin-jar">
+    <!-- Common classes: enums -->
+    <mkdir dir="src/jaxb-gen/java" />
+    <xjc destdir="src/jaxb-gen/java"
+         readonly="true"
+         removeOldOutput="true"
+         >
+      <!-- Option -Xpf to use our xjc plugin for private fields,
+           and classpath element to tell xjc how to find it.
+      -->
+      <classpath location="${xjc-private-fields-plugin-jar}" />
+      <arg line="-Xpf"/>
+      <binding dir="src/main/jaxb">
+        <include name="**/*.xjb"/>
+      </binding>
+      <schema dir="src/main/jaxb">
+        <include name="**/*.xsd"/>
+      </schema>
+      <produces dir="src/jaxb-gen/java"
+                includes="**/*.java" />
+    </xjc>
+    <!-- Remove all trailing whitespace from generated files. -->
+    <replaceregexp match="\s+$" replace="" byline="true">
+      <fileset dir="src/jaxb-gen/java"
+               includes="**/*.java" />
+    </replaceregexp>
+  </target>
+
+  <!-- Compilation of source code -->
 
   <path id="compile-main.classpath">
     <fileset dir="lib" includes="**/*.jar" />
@@ -110,6 +158,7 @@
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build}"
            includeantruntime="false" source="${source}" target="${target}">
       <src path="src/main/java" />
+      <src path="src/jaxb-gen/java" />
       <!-- Don't include test classes. For now, if you want to use
            the test classes, use the project in Eclipse.
       <src path="src/test/java" />
@@ -160,6 +209,8 @@
     </target>
    -->
 
+  <!-- JAR files containing persistence units -->
+
   <target name="toolkit-db-model-jar" depends="compile-main">
     <jar destfile="${toolkit-db-model-jar}">
       <!-- Generated JAR file has META-INF directory first anyway, so it's
@@ -196,6 +247,8 @@
     </jar>
   </target>
 
+  <!-- Deployable objects -->
+
   <target name="war"
           depends="compile-main,update-version-string,toolkit-db-model-jar,registry-db-model-jar">
     <war destfile="${war}">
@@ -226,6 +279,8 @@
     </war>
   </target>
 
+  <!-- Configuration management -->
+
   <!-- The following targets are based on:
        http://llbit.se/?p=1876 -->
 
@@ -242,7 +297,8 @@
        inhibits the update-version-string target.) -->
 
   <!-- this target is only run if the 'version' property is undefined -->
-  <target name="update-version-string" depends="-timestamp" unless="Toolkit.version">
+  <target name="update-version-string" depends="-timestamp"
+          unless="Toolkit.version">
     <!-- get a new version string using git describe if possible -->
     <echo message="Updating version string..." />
     <exec executable="git" outputproperty="Toolkit.version"
@@ -280,8 +336,10 @@
     </exec>
   </target>
 
+  <!-- Documentation generation -->
+
   <target name="javadoc">
-    <javadoc sourcepath="src/main/java;src/test/java"
+    <javadoc sourcepath="src/main/java;src/jaxb-gen/java;src/test/java"
              destdir="${javadoc-output}"
              classpathref="dev-compile-main.classpath"
              linksource="true"
@@ -315,6 +373,8 @@
     </javadoc>
   </target>
 
+  <!-- Coding conventions, style, static analysis -->
+
   <target name="checkstyle"
           description="Generates a report of code convention violations.">
 
@@ -331,8 +391,9 @@
       <!-- Define "samedir" property as used in the config. (The
            "samedir" property is an Eclipse-CS thing. -->
       <property key="samedir" value="." />
-      <fileset dir="src/main" includes="**/*.java"/>
-      <fileset dir="src/test" includes="**/*.java"/>
+      <fileset dir="src/main/java" includes="**/*.java"/>
+      <fileset dir="src/jaxb-gen/java" includes="**/*.java"/>
+      <fileset dir="src/test/java" includes="**/*.java"/>
     </checkstyle>
 
     <!-- Possible future work: if generating a report, make a pretty
@@ -382,6 +443,8 @@
     </forbiddenapis>
   </target>
 
+  <!-- Automated testing, test coverage -->
+
   <property name="resources-test-input" value="src/test/resources/deploy" />
 
   <path id="testng.classpath">
@@ -416,7 +479,8 @@
     <pathelement path="${resources-test-input}" />
   </path>
 
-  <target name="testng" depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
+  <target name="testng"
+          depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
     <jacoco:coverage
       destfile="${jacoco-output}">
       <testng
@@ -475,7 +539,8 @@
       -DbambooPoolPartyHarvesterPassword=password-splat \
       testng-bamboo
   -->
-  <target name="testng-bamboo" depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
+  <target name="testng-bamboo"
+          depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
     <copy
       file="conf/toolkit-h2-bamboo-template.properties"
       tofile="conf/toolkit-h2-bamboo.properties">

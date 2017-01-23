@@ -9,11 +9,12 @@
 /conf/toolkit.properties
 /conf/toolkit-h2-bamboo.properties
 /doc/javadoc/
-/filestore
+/filestore/
 /h2db/
 /jacoco-report/
 /jacoco.exec
 /log.txt
+/src/jaxb-gen/
 /test-output/
 /tomcattest/
 /vocabtoolkit.jar

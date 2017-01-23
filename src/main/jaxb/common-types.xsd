@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://vocabs.ands.org.au/registry/schema/2017/01/common"
+    xmlns="http://vocabs.ands.org.au/registry/schema/2017/01/common">
+    <xs:simpleType name="vocabulary-status">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="published"/>
+            <xs:enumeration value="draft"/>
+            <xs:enumeration value="deprecated"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="version-status">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="current"/>
+            <xs:enumeration value="superseded"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ap-source">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="system"/>
+            <xs:enumeration value="user"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="access-point-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="api-sparql"/>
+            <xs:enumeration value="file"/>
+            <xs:enumeration value="sesameDownload"/>
+            <xs:enumeration value="sissvoc"/>
+            <xs:enumeration value="web-page"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="version-artefact-status">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="current"/>
+            <xs:enumeration value="pending"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="version-artefact-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="concept-list"/>
+            <xs:enumeration value="concept-tree"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="related-entity-type">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="related-entity-identifier-type">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="related-entity-relation">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="related-vocabulary-relation">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="registry-event-element-type">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+</xs:schema>

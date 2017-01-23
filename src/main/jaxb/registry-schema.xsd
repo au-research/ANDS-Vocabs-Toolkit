@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://vocabs.ands.org.au/registry/schema/2017/01/vocabulary"
+    xmlns="http://vocabs.ands.org.au/registry/schema/2017/01/vocabulary"
+    xmlns:common="http://vocabs.ands.org.au/registry/schema/2017/01/common">
+    <xs:import id="common" namespace="http://vocabs.ands.org.au/registry/schema/2017/01/common"
+        schemaLocation="common-types.xsd"/>
+    <xs:simpleType name="id-type">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="vocabulary">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="poolparty-project">
+                    <xs:complexType>
+                        <xs:attribute name="server-id" type="xs:int"/>
+                        <xs:attribute name="project-id"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="subject">
+                    <xs:complexType>
+                        <xs:attribute name="source" use="required"/>
+                        <xs:attribute name="label" use="required"/>
+                        <xs:attribute name="notation"/>
+                        <xs:attribute name="iri"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="version"/>
+                <xs:element maxOccurs="unbounded" name="language">
+                    <xs:complexType mixed="true">
+                        <xs:attribute name="primary" type="xs:boolean"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="top-concept" type="xs:string"/>
+                <xs:element maxOccurs="unbounded" name="related-entity">
+                    <xs:complexType>
+                        <xs:attribute name="id" type="id-type"/>
+                        <xs:attribute name="relation" type="related-relation"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="id" type="id-type" use="required"> </xs:attribute>
+            <xs:attribute name="title" use="required"/>
+            <xs:attribute name="owner" use="required"/>
+            <xs:attribute name="slug"/>
+            <xs:attribute name="status" use="required" type="common:vocabulary-status"> </xs:attribute>
+            <xs:attribute name="revision-cycle"/>
+            <xs:attribute name="note"/>
+            <xs:attribute name="acronym"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="version">
+        <xs:complexType>
+            <xs:attribute name="id" type="id-type" use="required"> </xs:attribute>
+            <xs:attribute name="status" use="required" type="common:version-status"> </xs:attribute>
+            <xs:attribute name="title" use="required"/>
+            <xs:attribute name="slug"/>
+            <xs:attribute name="note"/>
+            <xs:attribute name="release-date"/>
+            <xs:attribute name="import-rdf" type="xs:boolean"/>
+            <xs:attribute name="publish" type="xs:boolean"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="access-point">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="ap-file" type="ap-file"/>
+                <xs:element name="ap-web-page" type="ap-web-page"/>
+                <xs:element name="ap-api-sparql" type="ap-api-sparql"/>
+            </xs:choice>
+            <xs:attribute name="id" type="id-type" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ap-common"/>
+    <xs:complexType name="ap-file">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="format" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-web-page">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-api-sparql">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="related-entity">
+        <xs:sequence>
+            <xs:element ref="related-entity-identifier"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="uri" type="xs:anyURI"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="id-type" use="required"/>
+        <xs:attribute name="type" use="required"/>
+        <xs:attribute name="title"/>
+        <xs:attribute name="email"/>
+        <xs:attribute name="phone"/>
+    </xs:complexType>
+    <xs:element name="related-entity-identifier">
+        <xs:complexType>
+            <xs:attribute name="id"/>
+            <xs:attribute name="identifier_type"/>
+            <xs:attribute name="identifier_value"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="related-vocabulary">
+        <xs:attribute name="related-id" type="id-type" use="required"/>
+        <xs:attribute name="relation" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="related-relation">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="publishedBy"/>
+            <xs:enumeration value="hasAuthor"/>
+            <xs:enumeration value="hasContributor"/>
+            <xs:enumeration value="hasPointOfContact"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="version-artefact">
+        <xs:attribute name="id" type="id-type"/>
+        <xs:attribute name="status" type="common:version-artefact-status"/>
+        <xs:attribute name="type" type="common:version-artefact-type"/>
+    </xs:complexType>
+</xs:schema>
