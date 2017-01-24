@@ -5,6 +5,7 @@
   default="war"
   name="ANDS-Vocabs-Toolkit"
   xmlns:jacoco="antlib:org.jacoco.ant"
+  xmlns:liquibase="antlib:liquibase.integration.ant"
   >
   <property environment="env" />
   <property name="debuglevel" value="source,lines,vars" />
@@ -53,6 +54,24 @@
     <classpath path="libdev/jacoco-0.7.6.201602180812/jacocoant.jar" />
   </taskdef>
 
+  <taskdef
+      resource="liquibase/integration/ant/antlib.xml"
+      uri="antlib:liquibase.integration.ant">
+    <classpath>
+      <fileset dir="tools/dist/liquibase-3.5.3">
+        <include name="**/*.jar"/>
+      </fileset>
+      <!-- Include MySQL JDBC driver -->
+      <fileset dir="lib/mysql-connector-java-5.1.35">
+        <include name="**/*.jar"/>
+      </fileset>
+      <!-- Include H2 JDBC driver -->
+      <fileset dir="libtest/h2-1.4.191">
+        <include name="**/*.jar"/>
+      </fileset>
+    </classpath>
+  </taskdef>
+
   <!-- JAXB RI classpath, and xjc taskdef -->
 
   <path id="jaxb-ri.classpath">
@@ -62,6 +81,8 @@
   <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
     <classpath refid="jaxb-ri.classpath" />
   </taskdef>
+
+  <!-- Cleanup -->
 
   <target name="clean">
     <delete dir="${build}" />
@@ -110,7 +131,12 @@
     </jar>
   </target>
 
-  <!-- Code generation -->
+  <!-- Database code generation -->
+
+  <target name="generate-registry-db-entity-dao-source">
+  </target>
+
+  <!-- JAXB Code generation -->
 
   <target name="generate-jaxb-source"
           depends="xjc-private-fields-plugin-jar">
@@ -285,6 +311,26 @@
         <globmapper from="*" to="WEB-INF/classes/*" />
       </mappedresources>
     </war>
+  </target>
+
+  <!-- Database generation -->
+  <!-- To use this, specify this on the command line:
+      -Dregistrydb-properties=path/to/registrydb.properties \
+  -->
+  <property
+      file="${registrydb-properties}"
+      prefix="registrydb" />
+  <liquibase:database
+      id="registry-database"
+      driver="${registrydb.driver}"
+      url="${registrydb.url}"
+      user="${registrydb.username}"
+      password="${registrydb.password}" />
+
+  <target name="registry-database-update">
+    <liquibase:updateDatabase
+        databaseref="registry-database"
+        changelogfile="src/main/db/changelog/registry-master.xml"/>
   </target>
 
   <!-- Configuration management -->
