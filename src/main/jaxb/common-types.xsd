@@ -63,6 +63,10 @@
             <xs:enumeration value="hasContributor"/>
             <xs:enumeration value="pointOfContact"/>
             <xs:enumeration value="implementedBy"/>
+            <xs:enumeration value="consumerOf"/>
+            <xs:enumeration value="hasAssociationWith"/>
+            <xs:enumeration value="isPresentedBy"/>
+            <xs:enumeration value="isUsedBy"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-vocabulary-relation">
