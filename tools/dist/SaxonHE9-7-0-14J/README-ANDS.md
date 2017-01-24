@@ -4,6 +4,10 @@ This directory contains a copy of the binary distribution of Saxon HE.
 It is included here under the terms of the MPL.
 (See `notices/LICENSE.txt`.)
 
+The file `saxon9-xqj.jar` has been removed; it is not used, and this
+avoids any of the licensing issues surrounding it.  The file
+`saxon9-test.jar` is not needed either, and has also been removed.
+
 This binary distribution, and its source code, can be downloaded from:
 https://sourceforge.net/projects/saxon/files/Saxon-HE/9.7/.
 
