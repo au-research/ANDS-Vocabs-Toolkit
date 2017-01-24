@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation=
+    "http://www.liquibase.org/xml/ns/dbchangelog-ext
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+     http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+    >
+
+  <!-- See http://www.liquibase.org/bestpractices.html
+       for the official Liquibase "best practices".
+       We try to follow at least some of them. -->
+
+  <!-- A complete relative path from the top level is required; can't
+       just say "registry-0001.xml".
+  -->
+  <!-- Now list all the changelogs below. -->
+  <include file="src/main/db/changelog/registry-0001.xml" />
+
+</databaseChangeLog>

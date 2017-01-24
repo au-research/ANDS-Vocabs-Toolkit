@@ -1,0 +1,762 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation=
+    "http://www.liquibase.org/xml/ns/dbchangelog-ext
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+     http://www.liquibase.org/xml/ns/dbchangelog
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+    >
+<!--
+    objectQuotingStrategy="QUOTE_ALL_OBJECTS"
+-->
+
+  <!-- Create tables for IDs -->
+
+  <changeSet id="0001-vocabulary_ids-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create vocabulary_ids table</comment>
+    <createTable tableName="vocabulary_ids"
+                 remarks="IDs to use in the vocabularies table.">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-version_ids-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create version_ids table</comment>
+    <createTable tableName="version_ids"
+                 remarks="IDs to use in the versions table.">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-version_artefact_ids-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create version_artefact_ids table</comment>
+    <createTable tableName="version_artefact_ids"
+                 remarks="IDs to use in the version_artefacts table.">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-access_point_ids-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create access_point_ids table</comment>
+    <createTable tableName="access_point_ids"
+                 remarks="IDs to use in the access_points table.">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-related_entity_ids-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create related_entity_ids table</comment>
+    <createTable tableName="related_entity_ids"
+                 remarks="IDs to use in the related_entities table.">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-related_entity_identifier_ids-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create related_entity_identifier_ids table</comment>
+    <createTable tableName="related_entity_identifier_ids"
+                 remarks="IDs to use in the related_entity_identifiers table.">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- Create main tables -->
+
+  <changeSet id="0001-vocabularies-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create vocabularies table</comment>
+    <createTable tableName="vocabularies">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="vocabulary_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="vocabulary_ids(id)"
+                     foreignKeyName="fk_vocabularies_vocabulary_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="slug" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="owner" type="VARCHAR(255)"
+              remarks="Role ID.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="data" type="TEXT"
+              remarks="JSON object.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-versions-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create versions table</comment>
+    <createTable tableName="versions">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="version_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="version_ids(id)"
+                     foreignKeyName="fk_versions_version_id"/>
+      </column>
+      <column name="vocabulary_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="vocabulary_ids(id)"
+                     foreignKeyName="fk_versions_vocabulary_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="slug" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="release_date" type="VARCHAR(30)"
+              remarks="String value of release date, as entered by the user.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="data" type="TEXT"
+              remarks="JSON object.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- Coding of these "foreign key" triggers for MySQL (i.e., that can't be
+       implemented directly as foreign key constraints) was inspired
+       by this (now archived) article:
+       https://web.archive.org/web/20080208072328/http://dev.mysql.com/tech-resources/articles/mysql-enforcing-foreign-keys.html
+  -->
+
+  <changeSet id="0001-versions-trigger-mysql"
+             author="Richard.Walker@ands.org.au"
+             dbms="mysql">
+    <comment>Add trigger for MySQL to check versions.vocabulary_id foreign
+      key</comment>
+    <sql endDelimiter="/">
+      CREATE TRIGGER versions_vocabulary_id_insert_trigger
+      BEFORE INSERT ON versions
+      FOR EACH ROW
+      BEGIN
+        IF NEW.start_date > NEW.end_date THEN
+          SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+              'Can not add a version: start_date after end_date';
+        END IF;
+        IF (SELECT COUNT(*) FROM vocabularies
+          WHERE vocabulary_id = NEW.vocabulary_id
+          AND start_date &lt;= NEW.start_date
+          AND NEW.end_date &lt;= end_date) = 0 THEN
+          SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+              'Can not add a version: versions.vocabulary_id foreign key violation';
+        END IF;
+      END;
+      / 
+      CREATE TRIGGER versions_vocabulary_id_update_trigger
+      BEFORE UPDATE ON versions
+      FOR EACH ROW
+      BEGIN
+        IF NEW.start_date > NEW.end_date THEN
+          SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+              'Can not update a version: start_date after end_date';
+        END IF;
+        IF (SELECT COUNT(*) FROM vocabularies
+          WHERE vocabulary_id = NEW.vocabulary_id
+          AND start_date &lt;= NEW.start_date
+          AND NEW.end_date &lt;= end_date) = 0 THEN
+          SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT =
+              'Can not update or update a version: versions.vocabulary_id foreign key violation';
+        END IF;
+      END;
+    </sql>
+    <rollback>
+      DROP TRIGGER versions_vocabulary_id_update_trigger;
+      DROP TRIGGER versions_vocabulary_id_insert_trigger
+    </rollback>
+  </changeSet>
+
+  <changeSet id="0001-versions-trigger-postgresql"
+             author="Richard.Walker@ands.org.au"
+             dbms="postgresql">
+    <comment>Add trigger for PostgreSQL to check
+      versions.vocabulary_id foreign key</comment>
+    <sql endDelimiter="/">
+      CREATE FUNCTION versions_vocabulary_id_function()
+      RETURNS trigger AS $$
+      BEGIN
+        IF NEW.start_date > NEW.end_date THEN
+            RAISE EXCEPTION 'Can not add or update a version: start_date after end_date';
+        END IF;
+        IF (SELECT COUNT(*) FROM vocabularies
+          WHERE vocabulary_id = NEW.vocabulary_id
+          AND start_date &lt;= NEW.start_date
+          AND NEW.end_date &lt;= end_date) = 0 THEN
+          RAISE EXCEPTION
+              'Can not add or update a version: versions.vocabulary_id foreign key violation';
+        END IF;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql
+      /
+      CREATE TRIGGER versions_vocabulary_id_trigger
+      BEFORE INSERT OR UPDATE ON versions
+        FOR EACH ROW EXECUTE PROCEDURE versions_vocabulary_id_function()
+    </sql>
+    <rollback>
+      DROP TRIGGER versions_vocabulary_id_trigger ON versions;
+      DROP FUNCTION versions_vocabulary_id_function()
+    </rollback>
+  </changeSet>
+
+  <changeSet id="0001-version_artefacts-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create version_artefacts table</comment>
+    <createTable tableName="version_artefacts">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="version_artefact_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="version_artefact_ids(id)"
+                     foreignKeyName=
+                     "fk_version_artefacts_version_artefact_id"/>
+      </column>
+      <column name="version_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="version_ids(id)"
+                     foreignKeyName="fk_version_artefacts_version_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="data" type="TEXT"
+              remarks="JSON object.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-access_points-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create access_points table</comment>
+    <createTable tableName="access_points">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="access_point_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="access_point_ids(id)"
+                     foreignKeyName="fk_access_points_access_point_id"/>
+      </column>
+      <column name="version_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="version_ids(id)"
+                     foreignKeyName="fk_access_points_version_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="data" type="TEXT"
+              remarks="JSON object.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-related_entities-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create related_entities table</comment>
+    <createTable tableName="related_entities">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="related_entity_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="related_entity_ids(id)"
+                     foreignKeyName="fk_related_entities_related_entity_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="owner" type="VARCHAR(255)"
+              remarks="Role ID.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="title" type="TEXT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="data" type="TEXT"
+              remarks="JSON object.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-related_entity_identifiers-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create related_entity_identifiers table</comment>
+    <createTable tableName="related_entity_identifiers">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="related_entity_identifier_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="related_entity_identifier_ids(id)"
+                     foreignKeyName=
+              "fk_related_entity_identifiers_related_entity_identifier_id"/>
+      </column>
+      <column name="related_entity_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="related_entity_ids(id)"
+                     foreignKeyName=
+              "fk_related_entity_identifiers_related_entity_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="owner" type="VARCHAR(255)"
+              remarks="Role ID.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="identifier_type" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="identifier_value" type="TEXT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-vocabulary_related_entities-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create vocabulary_related_entities table</comment>
+    <createTable tableName="vocabulary_related_entities">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="vocabulary_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="vocabulary_ids(id)"
+                     foreignKeyName=
+              "fk_vocabulary_related_entities_vocabulary_id"/>
+      </column>
+      <column name="related_entity_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="related_entity_ids(id)"
+                     foreignKeyName=
+              "fk_vocabulary_related_entities_related_entity_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="relation" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-vocabulary_related_vocabularies-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create vocabulary_related_vocabularies table</comment>
+    <createTable tableName="vocabulary_related_vocabularies">
+      <column name="id" type="INTEGER"
+              autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="vocabulary_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="vocabulary_ids(id)"
+                     foreignKeyName=
+              "fk_vocabulary_related_vocabularies_vocabulary_id"/>
+      </column>
+      <column name="related_vocabulary_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="vocabulary_ids(id)"
+                     foreignKeyName=
+              "fk_vocabulary_related_vocabualaries_related_vocabulary_id"/>
+      </column>
+      <column name="modified_by" type="VARCHAR(45)"
+              remarks="Role ID responsible for this row.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="relation" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- Create table tasks -->
+
+  <changeSet id="0001-tasks-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create tasks table</comment>
+    <createTable tableName="tasks">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="vocabulary_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="vocabulary_ids(id)"
+                     foreignKeyName="fk_tasks_vocabulary_id"/>
+      </column>
+      <column name="version_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="version_ids(id)"
+                     foreignKeyName="fk_tasks_version_id"/>
+      </column>
+      <column name="params" type="TEXT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="response" type="TEXT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- Create table poolparty_servers -->
+
+  <changeSet id="0001-poolparty_servers-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create poolparty_servers table</comment>
+    <createTable tableName="poolparty_servers">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="api_url" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="username" type="VARCHAR(45)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="password" type="VARCHAR(45)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- Create table vocabulary_events -->
+<!--
+  <changeSet id="0001-vocabulary_events-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create vocabulary_events table</comment>
+    <createTable tableName="vocabulary_events">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="vocabulary_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="vocabulary_ids(id)"
+                     foreignKeyName="fk_vocabulary_events_vocabulary_id"/>
+      </column>
+      <column name="event_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_type" type="VARCHAR(45)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_details" type="TEXT"
+              remarks="JSON object.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+-->
+
+  <!-- Create table registry_events -->
+
+  <changeSet id="0001-registry_events-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create registry_events table</comment>
+    <createTable tableName="registry_events">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="element_type" type="VARCHAR(45)"
+              remarks="Enumerated type.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="element_id" type="INTEGER">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_type" type="VARCHAR(45)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_details" type="TEXT"
+              remarks="JSON object.">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- Create tables for global IRI resolution -->
+
+  <changeSet id="0001-resource_owner_hosts-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create resource_owner_hosts table</comment>
+    <createTable tableName="resource_owner_hosts">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="start_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATETIME"
+              remarks="Values in UTC.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="owner" type="VARCHAR(255)"
+              remarks="Role ID.">
+        <constraints nullable="false"/>
+      </column>
+      <column name="host" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="0001-resource_map-createTable"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create resource_map table</comment>
+    <createTable tableName="resource_map">
+      <column autoIncrement="true" name="id" type="INTEGER">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="iri" type="VARCHAR(1023)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="access_point_id" type="INTEGER">
+        <constraints nullable="false"
+                     references="access_point_ids(id)"
+                     foreignKeyName="fk_resource_map_access_point_id"/>
+      </column>
+      <column name="owned" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="resource_type" type="VARCHAR(1023)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="deprecated" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <!-- Indexes for global IRI resolution -->
+
+  <changeSet id="0001-resource_map_iri-createIndex"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create ix_resource_map_iri index on resource_map(iri)</comment>
+    <createIndex indexName="ix_resource_map_iri"
+                 tableName="resource_map">
+      <column name="iri"/>
+    </createIndex>
+    <!-- If reverting to "TEXT" type for the "iri" column, uncomment
+         the following:
+    <modifySql dbms="mysql">
+      <!- - MySQL requires a field length, because the iri
+           column is of a "blob" type.
+           See https://liquibase.jira.com/browse/CORE-1180
+               https://liquibase.jira.com/browse/CORE-1649
+      - ->
+      <replace replace="`iri`" with="`iri`(100)"/>
+    </modifySql> -->
+  </changeSet>
+
+
+  <!-- Probably not needed (on MySQL; what about PostgreSQL?),
+       as the access_point_id is already a
+       foreign key.
+  <changeSet id="0001-resource_map_access_point_id-createIndex"
+             author="Richard.Walker@ands.org.au">
+    <comment>Create ix_resource_map_access_point_id index on
+    resource_map(access_point_id)</comment>
+    <createIndex indexName="ix_resource_map_access_point_id"
+                 tableName="resource_map">
+      <column name="access_point_id"/>
+    </createIndex>
+  </changeSet>
+  -->
+
+
+
+  <!--
+      <column name="" type="">
+        <constraints nullable="false"/>
+      </column>
+  -->
+
+
+
+
+<!--
+
+    <changeSet author="Richard.Walker@ands.org.au" id="1472081806630-3">
+        <createTable tableName="related">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="VARCHAR(45)"/>
+            <column name="relation" type="VARCHAR(45)"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="slug" type="VARCHAR(255)"/>
+            <column name="data" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Richard.Walker@ands.org.au" id="1472081806630-6">
+        <createTable tableName="version_access_points">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="version_id" type="INTEGER"/>
+            <column name="identifier" type="VARCHAR(255)"/>
+            <column name="format" type="VARCHAR(45)"/>
+            <column name="type" type="VARCHAR(45)"/>
+            <column name="status" type="VARCHAR(45)"/>
+        </createTable>
+    </changeSet>
+
+-->
+
+</databaseChangeLog>
