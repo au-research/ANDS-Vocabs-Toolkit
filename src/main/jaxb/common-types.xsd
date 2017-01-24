@@ -23,11 +23,11 @@
     </xs:simpleType>
     <xs:simpleType name="access-point-type">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="api-sparql"/>
+            <xs:enumeration value="apiSparql"/>
             <xs:enumeration value="file"/>
             <xs:enumeration value="sesameDownload"/>
             <xs:enumeration value="sissvoc"/>
-            <xs:enumeration value="web-page"/>
+            <xs:enumeration value="webPage"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="version-artefact-status">
@@ -38,23 +38,45 @@
     </xs:simpleType>
     <xs:simpleType name="version-artefact-type">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="concept-list"/>
-            <xs:enumeration value="concept-tree"/>
+            <xs:enumeration value="conceptList"/>
+            <xs:enumeration value="conceptTree"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-entity-type">
-        <xs:restriction base="xs:string"/>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="publisher"/>
+            <xs:enumeration value="service"/>
+            <xs:enumeration value="vocabulary"/>
+        </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-entity-identifier-type">
-        <xs:restriction base="xs:string"/>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="local"/>
+            <xs:enumeration value="handle"/>
+            <xs:enumeration value="orcid"/>
+        </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-entity-relation">
-        <xs:restriction base="xs:string"/>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="publishedBy"/>
+            <xs:enumeration value="hasAuthor"/>
+            <xs:enumeration value="hasContributor"/>
+            <xs:enumeration value="pointOfContact"/>
+            <xs:enumeration value="implementedBy"/>
+        </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-vocabulary-relation">
-        <xs:restriction base="xs:string"/>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="hasAssociationWith"/>
+            <xs:enumeration value="isDerivedFrom"/>
+            <xs:enumeration value="enriches"/>
+            <xs:enumeration value="isPartOf"/>
+        </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="registry-event-element-type">
-        <xs:restriction base="xs:string"/>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="vocabularies"/>
+            <xs:enumeration value="versions"/>
+        </xs:restriction>
     </xs:simpleType>
 </xs:schema>
