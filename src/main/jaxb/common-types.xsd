@@ -77,6 +77,13 @@
             <xs:enumeration value="isPartOf"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="task-status">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="success"/>
+            <xs:enumeration value="error"/>
+            <xs:enumeration value="exception"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:simpleType name="registry-event-element-type">
         <xs:restriction base="xs:string">
             <xs:enumeration value="vocabularies"/>
