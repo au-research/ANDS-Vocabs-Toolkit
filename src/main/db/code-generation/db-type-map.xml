@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<db-entity-map>
+
+  <map dbType="BOOLEAN"
+       fieldType="Boolean">
+  </map>
+
+  <!-- We don't use CLOB in our own spec, but this is what comes
+       back from generateChangelog applied to an H2 database. -->
+  <map dbType="CLOB"
+       fieldType="String"
+       extraColumnAnnotation=", length = 65535">
+  </map>
+
+  <map dbType="DATETIME"
+       fieldType="LocalDateTime">
+  </map>
+
+  <map dbType="INTEGER"
+       fieldType="Integer">
+  </map>
+
+  <!-- We don't use INT in our own spec, but this is what comes
+       back from generateChangelog applied to a live MySQL database. -->
+  <map dbType="INT"
+       fieldType="Integer">
+  </map>
+
+  <map dbType="TEXT"
+       fieldType="String"
+       extraColumnAnnotation=", length = 65535">
+  </map>
+
+  <!-- We don't use TIMESTAMP in our own spec, but this is what comes
+       back from generateChangelog applied to an H2 database. -->
+  <map dbType="TIMESTAMP"
+       fieldType="LocalDateTime">
+  </map>
+
+  <map dbType="VARCHAR"
+       fieldType="String">
+  </map>
+
+<!--
+  <map dbType=""
+       fieldType="">
+  </map>
+-->
+
+</db-entity-map>

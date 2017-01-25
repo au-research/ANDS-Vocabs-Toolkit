@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/db-gen/java"/>
 	<classpathentry kind="src" output="tools/bin-jaxb-utils" path="tools/src/jaxb-utils/java"/>
 	<classpathentry kind="src" path="src/jaxb-gen/java"/>
 	<classpathentry kind="src" path="src/test/java"/>

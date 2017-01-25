@@ -14,6 +14,7 @@
 /jacoco-report/
 /jacoco.exec
 /log.txt
+/src/db-gen/
 /src/jaxb-gen/
 /test-output/
 /tomcattest/

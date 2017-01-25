@@ -5,10 +5,11 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-	<!--  Entity classes have magic numbers for field sizes -->
-    <suppress checks="DesignForExtension|MagicNumber"
-              files="au[\\/]org[\\/]ands[\\/]vocabs[\\/]toolkit[\\/]db[\\/]model[\\/].*java"
-              />
+  <!--  Entity classes need to be extended by reflection. -->
+  <!--  Entity classes have magic numbers for field sizes. -->
+  <suppress checks="DesignForExtension|MagicNumber"
+            files="au[\\/]org[\\/]ands[\\/]vocabs[\\/]toolkit[\\/]db[\\/]model[\\/].*java|au[\\/]org[\\/]ands[\\/]vocabs[\\/]registry[\\/]db[\\/]entity[\\/].*java"
+            />
 
   <!-- package-info.java may be in src/main, even though missing
        in src/test -->
@@ -25,9 +26,11 @@
   <!-- xjc does not generate a package-info.java file for
        au.org.ands.vocabs.registry.enums. We have a manually-created
        one in src/main/java, but Checkstyle doesn't look for it there.
+       Similarly, we have a hand-crafted package-info.java for
+       the two packages generated for the Registry database.
   -->
   <suppress checks="JavadocPackage"
-            files="au[\\/]org[\\/]ands[\\/]vocabs[\\/]registry[\\/]enums[\\/].*java"
+            files="au[\\/]org[\\/]ands[\\/]vocabs[\\/]registry[\\/]enums[\\/].*java|au[\\/]org[\\/]ands[\\/]vocabs[\\/]registry[\\/]db[\\/]dao[\\/].*java|au[\\/]org[\\/]ands[\\/]vocabs[\\/]registry[\\/]db[\\/]entity[\\/].*java"
             />
 
 </suppressions>

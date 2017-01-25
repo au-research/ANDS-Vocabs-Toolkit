@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<db-entity-map>
+
+  <!-- Only need to specify column elements if the camelcasing
+       doesn't give the right result.
+  -->
+
+  <map tableName="vocabulary_ids"
+       entityName="VocabularyId"
+       serialVersionUID="-5030331935734628785L"
+       >
+    <!-- Column customization. Not needed for now.
+         <column db="" field="" />
+    -->
+  </map>
+  <map tableName="version_ids"
+       entityName="VersionId"
+       serialVersionUID="-8371217985547585670L"
+       >
+  </map>
+  <map tableName="version_artefact_ids"
+       entityName="VersionArtefactId"
+       serialVersionUID="8396225985093911526L"
+       >
+  </map>
+  <map tableName="access_point_ids"
+       entityName="AccessPointId"
+       serialVersionUID="-7135716758902970708L"
+       >
+  </map>
+  <map tableName="related_entity_ids"
+       entityName="RelatedEntityId"
+       serialVersionUID="7857590494290614252L"
+       >
+  </map>
+  <map tableName="related_entity_identifier_ids"
+       entityName="RelatedEntityIdentifierId"
+       serialVersionUID="664683346701966074L"
+       >
+  </map>
+  <map tableName="vocabularies"
+       entityName="Vocabulary"
+       serialVersionUID="2667395213718191086L"
+       >
+    <idKey keyColumn="vocabulary_id" entityName="VocabularyId" />
+    <column db="status" enum="VocabularyStatus" />
+  </map>
+  <map tableName="versions"
+       entityName="Version"
+       serialVersionUID="-9118585204277776513L"
+       >
+    <idKey keyColumn="version_id" entityName="VersionId" />
+    <column db="status" enum="VersionStatus" />
+  </map>
+  <map tableName="version_artefacts"
+       entityName="VersionArtefact"
+       serialVersionUID="-1298821649186846122L"
+       >
+    <idKey keyColumn="version_artefact_id" entityName="VersionArtefactId" />
+    <column db="status" enum="VersionArtefactStatus" />
+    <column db="type" enum="VersionArtefactType" />
+  </map>
+  <map tableName="access_points"
+       entityName="AccessPoint"
+       serialVersionUID="6332868269699981887L"
+       >
+    <idKey keyColumn="access_point_id" entityName="AccessPointId" />
+    <column db="type" enum="AccessPointType" />
+    <foreignKeyQueries>
+      <foreignKeyQuery keyColumn="versionId" entityName="Version" />
+    </foreignKeyQueries>
+  </map>
+  <map tableName="related_entities"
+       entityName="RelatedEntity"
+       serialVersionUID="-4871628368369543812L"
+       >
+    <idKey keyColumn="related_entity_id" entityName="RelatedEntityId" />
+    <column db="type" enum="RelatedEntityType" />
+  </map>
+  <map tableName="related_entity_identifiers"
+       entityName="RelatedEntityIdentifier"
+       serialVersionUID="-4092084965564024230L"
+       >
+    <idKey keyColumn="related_entity_identifier_id"
+           entityName="RelatedEntityIdentifierId" />
+    <column db="identifier_type" enum="RelatedEntityIdentifierType" />
+  </map>
+  <map tableName="vocabulary_related_entities"
+       entityName="VocabularyRelatedEntity"
+       serialVersionUID="-8491635774415411143L"
+       >
+    <column db="relation" enum="RelatedEntityRelation" />
+  </map>
+  <map tableName="vocabulary_related_vocabularies"
+       entityName="VocabularyRelatedVocabulary"
+       serialVersionUID="-9169766097390954402L"
+       >
+    <column db="relation" enum="RelatedVocabularyRelation" />
+  </map>
+  <map tableName="tasks"
+       entityName="Task"
+       serialVersionUID="3258582216313958016L"
+       >
+    <column db="status" enum="TaskStatus" />
+  </map>
+  <map tableName="poolparty_servers"
+       entityName="PoolPartyServer"
+       serialVersionUID="8549740134610632315L"
+       >
+  </map>
+<!--
+  <map tableName="vocabulary_events"
+       entityName="VocabularyEvent"
+       serialVersionUID="5339415610349523516L"
+       >
+  </map>
+-->
+  <map tableName="registry_events"
+       entityName="RegistryEvent"
+       serialVersionUID="-2085702449839519639L"
+       >
+    <column db="element_type" enum="RegistryEventElementType" />
+  </map>
+  <map tableName="resource_owner_hosts"
+       entityName="ResourceOwnerHost"
+       serialVersionUID="-2913007035002774527L"
+       >
+  </map>
+  <map tableName="resource_map"
+       entityName="ResourceMapEntry"
+       serialVersionUID="-7521129755199622960L"
+       >
+  </map>
+
+</db-entity-map>
