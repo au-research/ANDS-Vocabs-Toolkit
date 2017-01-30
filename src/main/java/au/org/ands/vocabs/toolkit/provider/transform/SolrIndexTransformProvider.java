@@ -43,7 +43,7 @@ public class SolrIndexTransformProvider extends TransformProvider {
 
     @Override
     public final String getInfo() {
-        // TODO Auto-generated method stub
+        // Return null for now.
         return null;
     }
 

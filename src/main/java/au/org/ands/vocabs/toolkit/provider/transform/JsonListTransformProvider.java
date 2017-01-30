@@ -44,7 +44,7 @@ public class JsonListTransformProvider extends TransformProvider {
 
     @Override
     public final String getInfo() {
-        // TODO Auto-generated method stub
+        // Return null for now.
         return null;
     }
 
@@ -106,7 +106,7 @@ public class JsonListTransformProvider extends TransformProvider {
         /** Map from concept IRI to a map that maps
          * property name to the property value(s). */
         private HashMap<String, HashMap<String, Object>> conceptMap =
-                new HashMap<String, HashMap<String, Object>>();
+                new HashMap<>();
 
         @Override
         public void handleStatement(final Statement st) {

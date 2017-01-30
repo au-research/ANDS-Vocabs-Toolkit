@@ -1,13 +1,13 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.toolkit.test;
 
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.config.RepositoryConfig;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.config.RepositoryImplConfig;
 import org.openrdf.repository.manager.RepositoryManager;
 import org.openrdf.repository.manager.RepositoryProvider;
 import org.openrdf.repository.sail.config.SailRepositoryConfig;
-import org.openrdf.repository.RepositoryException;
 import org.openrdf.sail.config.SailImplConfig;
 import org.openrdf.sail.inferencer.fc.config.
             ForwardChainingRDFSInferencerConfig;
@@ -52,10 +52,8 @@ public final class TestCreateRepo {
 
     // Repository repository = manager.getRepository(repositoryID);
     } catch (RepositoryConfigException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
     } catch (RepositoryException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
     }
 

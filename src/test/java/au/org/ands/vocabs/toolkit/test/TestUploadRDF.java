@@ -54,20 +54,16 @@ public final class TestUploadRDF {
      // con.add(url, url.toString(), RDFFormat.RDFXML);
 
     } catch (RDFParseException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
     } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
     } finally {
           con.close();
        }
 
     } catch (RepositoryConfigException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
     } catch (RepositoryException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
     }
 
