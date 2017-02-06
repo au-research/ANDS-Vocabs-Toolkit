@@ -77,6 +77,7 @@ public abstract class HarvestProvider {
      * @param subtask The details of the subtask
      * @param results HashMap representing the result of the unharvest.
      */
+    @SuppressWarnings("unused")
     protected void unharvestProviderSpecific(final TaskInfo taskInfo,
             final JsonNode subtask,
             final HashMap<String, String> results) {

@@ -48,7 +48,7 @@ public class Download {
     /** Mapping of Sesame Download formats to MIME types. */
     public static final Hashtable<String, String>
     SESAME_FORMAT_TO_MIMETYPE_MAP =
-    new Hashtable<String, String>();
+    new Hashtable<>();
 
     // List taken from:
     // http://rdf4j.org/sesame/2.8/docs/system.docbook?view#content-types
@@ -67,7 +67,7 @@ public class Download {
     /** Mapping of file formats to MIME types. */
     public static final Hashtable<String, String>
     FILE_FORMAT_TO_MIMETYPE_MAP =
-    new Hashtable<String, String>();
+    new Hashtable<>();
 
     // The keys should match those in:
     // ANDS-Registry-Core/applications/portal/vocabs/assets/js/versionCtrl.js
@@ -154,7 +154,7 @@ public class Download {
             // and the downloadFormat parameter may need some care
             // (i.e., it may be wrong, but the wrongness may or may not be
             // a problem).
-            fileDownload(response, accessPointId, ap);
+            fileDownload(response, ap);
             break;
         case "sesameDownload":
             // Have a look at the downloadFormat before proceeding.
@@ -247,11 +247,10 @@ public class Download {
 
     /** Return a file download.
      * @param response The response back to the browser.
-     * @param accessPointId The access point id.
      * @param ap The access point.
      */
     private void fileDownload(final AsyncResponse response,
-            final int accessPointId, final AccessPoint ap) {
+            final AccessPoint ap) {
         String format = AccessPointUtils.getFormat(ap);
         if (format == null) {
             response.resume(Response.status(Status.NOT_FOUND).

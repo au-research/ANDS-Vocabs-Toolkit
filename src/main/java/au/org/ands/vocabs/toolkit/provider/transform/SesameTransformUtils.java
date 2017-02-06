@@ -19,8 +19,6 @@ import org.openrdf.repository.manager.RepositoryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.tasks.TaskInfo;
 import au.org.ands.vocabs.toolkit.tasks.TaskStatus;
@@ -80,7 +78,6 @@ public final class SesameTransformUtils {
 
     /** Run a SPARQL Update on a repository.
      * @param taskInfo The TaskInfo object describing the entire task.
-     * @param subtask The specification of this transform subtask
      * @param results HashMap representing the result of the transform.
      * @param updateString The text of the SPARQL Update to run.
      * @param bindings Any bindings that are to be applied. Keys are
@@ -89,7 +86,6 @@ public final class SesameTransformUtils {
      * @return True, iff the update succeeded.
     */
     public static boolean runUpdate(final TaskInfo taskInfo,
-            final JsonNode subtask,
             final HashMap<String, String> results,
             final String updateString,
             final HashMap<String, Value> bindings) {

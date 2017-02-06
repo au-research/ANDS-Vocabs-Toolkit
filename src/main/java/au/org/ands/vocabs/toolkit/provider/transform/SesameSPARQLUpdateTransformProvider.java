@@ -43,7 +43,7 @@ public class SesameSPARQLUpdateTransformProvider extends TransformProvider {
             return false;
         }
         String sparqlUpdateText = subtask.get("sparql_update").asText();
-        return SesameTransformUtils.runUpdate(taskInfo, subtask, results,
+        return SesameTransformUtils.runUpdate(taskInfo, results,
                 sparqlUpdateText, new HashMap<String, Value>());
     }
 

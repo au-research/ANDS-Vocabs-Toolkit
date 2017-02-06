@@ -58,7 +58,7 @@ public class SISSVocPublishProvider extends PublishProvider {
 
     /** Values to be substituted in the spec file template. */
     private final HashMap<String, String> specProperties =
-            new HashMap<String, String>();
+            new HashMap<>();
 
     @Override
     public final String getInfo() {
@@ -71,7 +71,7 @@ public class SISSVocPublishProvider extends PublishProvider {
             final HashMap<String, String> results) {
         addBasicSpecProperties(taskInfo);
         addAdditionalSpecProperties(subtask);
-        if (!writeSpecFile(taskInfo, subtask, results)) {
+        if (!writeSpecFile(taskInfo, results)) {
             return false;
         }
 
@@ -100,7 +100,7 @@ public class SISSVocPublishProvider extends PublishProvider {
         // supports it.
         //        removeSpecFile(taskInfo, subtask, results);
         // For now, use the truncation method.
-        if (!truncateSpecFileIfExists(taskInfo, subtask, results)) {
+        if (!truncateSpecFileIfExists(taskInfo, results)) {
             return false;
         }
 
@@ -204,12 +204,10 @@ public class SISSVocPublishProvider extends PublishProvider {
 
     /** Write out the spec file for SISSVoc.
      * @param taskInfo The TaskInfo object for this task.
-     * @param subtask The specification of this publish subtask
      * @param results HashMap representing the result of the publish.
      * @return True iff success.
      */
     private boolean writeSpecFile(final TaskInfo taskInfo,
-            final JsonNode subtask,
             final HashMap<String, String> results) {
         File templateFile = new File(sissvocSpecTemplatePath);
         String specTemplate;
@@ -248,12 +246,10 @@ public class SISSVocPublishProvider extends PublishProvider {
      * for unpublication until the elda library supports detection
      * of deleted files.
      * @param taskInfo The TaskInfo object for this task.
-     * @param subtask The specification of this publish subtask
      * @param results HashMap representing the result of the unpublish.
      * @return True iff success.
      */
     private boolean truncateSpecFileIfExists(final TaskInfo taskInfo,
-            final JsonNode subtask,
             final HashMap<String, String> results) {
         try {
             Path specFilePath = Paths.get(sissvocSpecOutputPath).
