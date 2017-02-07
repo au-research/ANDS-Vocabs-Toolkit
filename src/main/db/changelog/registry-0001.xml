@@ -425,10 +425,13 @@
               remarks="Role ID responsible for this row.">
         <constraints nullable="false"/>
       </column>
+      <!-- No owner, because each record is tied to exactly
+           one related_entity record via foreign key.
       <column name="owner" type="VARCHAR(255)"
               remarks="Role ID.">
         <constraints nullable="false"/>
       </column>
+      -->
       <column name="identifier_type" type="VARCHAR(45)"
               remarks="Enumerated type.">
         <constraints nullable="false"/>
