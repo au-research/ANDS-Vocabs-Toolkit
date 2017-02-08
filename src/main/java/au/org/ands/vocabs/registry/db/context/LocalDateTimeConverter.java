@@ -16,6 +16,7 @@ import javax.persistence.Converter;
  *  configuration:
  *  {@code hibernate.jdbc.time_zone=UTC}
  */
+@SuppressWarnings("checkstyle:DesignForExtension")
 @Converter(autoApply = true)
 public class LocalDateTimeConverter implements
     AttributeConverter<LocalDateTime, Timestamp> {
