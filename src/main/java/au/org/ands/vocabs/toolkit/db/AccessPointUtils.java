@@ -43,12 +43,12 @@ public final class AccessPointUtils {
     /** Mapping of file extensions to file formats. */
     public static final Hashtable<String, String>
     EXTENSION_TO_FILE_FORMAT_MAP =
-    new Hashtable<String, String>();
+    new Hashtable<>();
 
     /** Mapping of MIME types to file formats. */
     public static final Hashtable<String, String>
     MIMETYPE_TO_FILE_FORMAT_MAP =
-    new Hashtable<String, String>();
+    new Hashtable<>();
 
     // The values should match those in:
     // ANDS-Registry-Core/applications/portal/vocabs/assets/js/versionCtrl.js
@@ -286,6 +286,26 @@ public final class AccessPointUtils {
         }
         JsonNode dataJson = TaskUtils.jsonStringToTree(ap.getToolkitData());
         JsonNode uri = dataJson.get("uri");
+        if (uri == null) {
+            return null;
+        }
+        return uri.asText();
+    }
+
+    /** Get the portal's source setting for an apiSparql or sissvoc
+     * access point.
+     * @param ap the access point
+     * @return the access point's portal source setting, if it has one,
+     * or null otherwise.
+     */
+    public static String getPortalSource(final AccessPoint ap) {
+        if (!(AccessPoint.API_SPARQL_TYPE.equals(ap.getType())
+                || (AccessPoint.SISSVOC_TYPE.equals(ap.getType())))) {
+            // Not the right type.
+            return null;
+        }
+        JsonNode dataJson = TaskUtils.jsonStringToTree(ap.getPortalData());
+        JsonNode uri = dataJson.get("source");
         if (uri == null) {
             return null;
         }
