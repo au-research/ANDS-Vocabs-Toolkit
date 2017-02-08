@@ -61,6 +61,10 @@
         dir="${build}"
         includes ="au/org/ands/vocabs/registry/db/entity/*.class"
       />
+      <fileset
+        dir="${build}"
+        includes="au/org/ands/vocabs/registry/db/context/*Converter.class"
+      />
     </jar>
   </target>
 
