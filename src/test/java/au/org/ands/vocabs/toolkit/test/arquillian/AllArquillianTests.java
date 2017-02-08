@@ -40,6 +40,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
+import au.org.ands.vocabs.registry.db.dao.VocabularyDAO;
 import au.org.ands.vocabs.toolkit.db.ResourceOwnerHostUtils;
 import au.org.ands.vocabs.toolkit.db.TaskUtils;
 import au.org.ands.vocabs.toolkit.db.model.AccessPoint;
@@ -967,6 +968,18 @@ public class AllArquillianTests extends ArquillianBaseTest {
                 "Start date different");
         Assert.assertEquals(roh.getEndDate(), endDate,
                 "End date different");
+    }
+
+    /** Test of {@link VocabularyDAO#getAllVocabulary()}.
+     * This is just a sanity test to make sure that the registry
+     * code is included correctly. */
+    @Test
+    public final void testVocabularyDAOGetAllVocabulary() {
+        logger.info("In testVocabularyDAOGetAllVocabulary()");
+        List<au.org.ands.vocabs.registry.db.entity.Vocabulary>
+            vocabularyList = VocabularyDAO.getAllVocabulary();
+        Assert.assertNotNull(vocabularyList);
+        Assert.assertEquals(vocabularyList.size(), 0, "Empty list");
     }
 
 }

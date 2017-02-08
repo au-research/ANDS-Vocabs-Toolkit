@@ -175,6 +175,14 @@ public class ArquillianBaseTest extends Arquillian {
             } catch (IllegalArgumentException e) {
                 // No problem if these files don't exist.
             }
+            try {
+                // Optional resource.
+                war.addAsResource(
+                        new File("conf/registry-h2-bamboo.properties"),
+                        "registry-h2-bamboo.properties");
+            } catch (IllegalArgumentException e) {
+                // No problem if these files don't exist.
+            }
             war.addAsResource(new File("conf/version.properties"),
                     "version.properties");
 
