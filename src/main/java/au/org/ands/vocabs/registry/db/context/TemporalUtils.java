@@ -2,7 +2,6 @@
 
 package au.org.ands.vocabs.registry.db.context;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 
 import javax.persistence.Query;
@@ -50,55 +49,97 @@ public final class TemporalUtils {
      * class. */
     public static final String END_DATE = "endDate";
 
+    /** name of a JPQL parameter to use for the constant
+     * {@link TemporalConstants#CURRENTLY_VALID_END_DATE}. */
+    private static final String CURRENTLY_VALID_END_DATE =
+            "currently_valid_end_date";
+
     /** Suffix template for JPQL queries to select only currently-valid rows
      * of entity {@link #E1}. */
     public static final String
         TEMPORAL_QUERY_TEMPLATE_VALID_SUFFIX_E1 =
+            " AND " + E1 + "." + END_DATE
+            + " = :" + CURRENTLY_VALID_END_DATE;
+            // This is what we would _like_ to do, but it doesn't currently
+            // work with Hibernate. Hibernate serializes the Timestamp
+            // literal using TimestampType.objectToSQLString(), which uses
+            // Timestamp.toString(). It should be like the code in
+            // LocalDateTimeType.objectToSQLString(), which generates
+            // a JDBC escape "{ts '9999-12-01 00:00:00.0'}".
+            /*
+            " AND " + E1 + "." + END_DATE
+            + " = au.org.ands.vocabs.registry.db.context.TemporalConstants."
+            + "CURRENTLY_VALID_END_DATE";
+            */
+            // This is a more "formal" way, but not necessary.
+            // We don't have any endDate values that are both
+            // (a) in the future, (b) less than CURRENTLY_VALID_END_DATE.
+            /*
             " AND " + E1 + "." + START_DATE
             + " <= :" + DATETIME_PARAMETER + " AND :"
             + DATETIME_PARAMETER + " < " + E1 + "." + END_DATE;
+            */
 
-    /** Suffix template for JPQL queries to select only currently-valid rows
-     * of entity {@link #E2}. */
-    public static final String
-        TEMPORAL_QUERY_TEMPLATE_VALID_SUFFIX_E2 =
-            " AND " + E2 + "." + START_DATE
-            + " <= :" + DATETIME_PARAMETER + " AND :"
-            + DATETIME_PARAMETER + " < " + E2 + "." + END_DATE;
+    // When these are needed, uncomment and make match the
+    // way we do TEMPORAL_QUERY_TEMPLATE_VALID_SUFFIX_E1.
+    // (Definitions below are "legacy" from the Toolkit version of this class.
 
-    /** Suffix template for JPQL queries to select only currently-valid rows
-     * of entity {@link #E3}. */
-    public static final String
-        TEMPORAL_QUERY_TEMPLATE_VALID_SUFFIX_E3 =
-            " AND " + E3 + "." + START_DATE
-            + " <= :" + DATETIME_PARAMETER + " AND :"
-            + DATETIME_PARAMETER + " < " + E3 + "." + END_DATE;
 
-    /** Get the current time in UTC as a LocalDateTime.
-     * @return The current time in UTC as a LocalDateTime value.
-     */
-    private static LocalDateTime nowUTC() {
-        return LocalDateTime.now(Clock.systemUTC());
-    }
+//    /** Suffix template for JPQL queries to select only currently-valid rows
+//     * of entity {@link #E2}. */
+//    public static final String
+//        TEMPORAL_QUERY_TEMPLATE_VALID_SUFFIX_E2 =
+//            " AND " + E2 + "." + START_DATE
+//            + " <= :" + DATETIME_PARAMETER + " AND :"
+//            + DATETIME_PARAMETER + " < " + E2 + "." + END_DATE;
+//
+//    /** Suffix template for JPQL queries to select only currently-valid rows
+//     * of entity {@link #E3}. */
+//    public static final String
+//        TEMPORAL_QUERY_TEMPLATE_VALID_SUFFIX_E3 =
+//            " AND " + E3 + "." + START_DATE
+//            + " <= :" + DATETIME_PARAMETER + " AND :"
+//            + DATETIME_PARAMETER + " < " + E3 + "." + END_DATE;
 
-    /** Set the datetime parameter of a query to the current
-     * date/time.
-     * @param q The query to be modified.
-     * @return The modified query.
-     */
-    public static Query setDatetimeParameterNow(final Query q) {
-        return q.setParameter(DATETIME_PARAMETER, nowUTC());
-    }
+    // The following are commented out for now, as not yet needed.
 
-    /** Set the datetime parameter of a query to the current
-     * date/time.
+//    /** Get the current time in UTC as a LocalDateTime.
+//     * @return The current time in UTC as a LocalDateTime value.
+//     */
+//    private static LocalDateTime nowUTC() {
+//        return LocalDateTime.now(Clock.systemUTC());
+//    }
+
+//    /** Set the datetime parameter of a query to the current
+//     * date/time.
+//     * @param q The query to be modified.
+//     * @return The modified query.
+//     */
+//    public static Query setDatetimeParameterNow(final Query q) {
+//        return q.setParameter(DATETIME_PARAMETER, nowUTC());
+//    }
+//
+//    /** Set the datetime parameter of a query to the current
+//     * date/time.
+//     * @param <T> The return type of the TypedQuery.
+//     * @param q The query to be modified.
+//     * @return The modified query.
+//     */
+//    public static <T> TypedQuery<T> setDatetimeParameterNow(
+//            final TypedQuery<T> q) {
+//        return q.setParameter(DATETIME_PARAMETER, nowUTC());
+//    }
+
+    /** Set any datetime constant parameters of a query to the
+     * correct values.
      * @param <T> The return type of the TypedQuery.
      * @param q The query to be modified.
      * @return The modified query.
      */
-    public static <T> TypedQuery<T> setDatetimeParameterNow(
+    public static <T> TypedQuery<T> setDatetimeConstantParameters(
             final TypedQuery<T> q) {
-        return q.setParameter(DATETIME_PARAMETER, nowUTC());
+        return q.setParameter(CURRENTLY_VALID_END_DATE,
+                TemporalConstants.CURRENTLY_VALID_END_DATE);
     }
 
     /** Set the datetime parameter of a query to a specified
