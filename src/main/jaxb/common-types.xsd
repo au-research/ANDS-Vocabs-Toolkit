@@ -44,16 +44,107 @@
     </xs:simpleType>
     <xs:simpleType name="related-entity-type">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="publisher"/>
+            <xs:enumeration value="party"/>
             <xs:enumeration value="service"/>
             <xs:enumeration value="vocabulary"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-entity-identifier-type">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="local"/>
-            <xs:enumeration value="handle"/>
-            <xs:enumeration value="orcid"/>
+            <xs:enumeration value="AU-ANL:PEAU">
+                <xs:annotation>
+                    <xs:documentation>National Library of Australia identifier.
+These are identifiers that begin with "nla.party-".
+Identifier made resolvable by prefixing the given identifier
+with "http://nla.gov.au/".</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="doi">
+                <xs:annotation>
+                    <xs:documentation>Digital Object Identifier.
+Not a URL.
+Identifier made resolvable by prefixing the given DOI
+with "http://dx.doi.org/".
+Provided DOI must start with "10.".</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="handle">
+                <xs:annotation>
+                    <xs:documentation>HANDLE System Identifier.
+Not a URL.
+Identifier made resolvable by prefixing the given handle
+with "http://hdl.handle.net/".</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="infouri">
+                <xs:annotation>
+                    <xs:documentation>"info" URI scheme.
+URIs that begin "info:".</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="isil">
+                <xs:annotation>
+                    <xs:documentation>International Standard Identifier for Libraries.
+http://biblstandard.dk/isil/</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="isni">
+                <xs:annotation>
+                    <xs:documentation>International Standard Name Identifier (ISO 27729).
+Not a URL.
+Identifier made resolvable by prefixing the given ISNI
+with "http://isni.org/isni/".
+http://www.isni.org/</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="local">
+                <xs:annotation>
+                    <xs:documentation>Catch-all for identifiers that are not URLs, and which
+do not belong to any of the other predefined schemes.
+Note: URLs should be recorded using type "uri" instead.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="orcid">
+                <xs:annotation>
+                    <xs:documentation>ORCID Identifier.
+Not a URL.
+Identifier made resolvable by prefixing the given identifier
+with "http://orcid.org/".
+http://orcid.org/</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="purl">
+                <xs:annotation>
+                    <xs:documentation>Persistent Uniform Resource Locator.
+Not a URL.
+Identifier made resolvable be prefixing the given identifier
+with 'http://purl.org/'.
+http://purl.org/</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="researcherID">
+                <xs:annotation>
+                    <xs:documentation>Thomson Reuters ResearcherID.
+Not a URL.
+Identifier made resolvable be prefixing the given identifier
+with "http://www.researcherid.com/rid/".
+http://www.researcherid.com/</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="uri">
+                <xs:annotation>
+                    <xs:documentation>URI (either a URL or URN) not covered by the other predefined schemes.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="viaf">
+                <xs:annotation>
+                    <xs:documentation>The Virtual International Authority File.
+Not a URL.
+Identifier made resolvable by prefixing the given identifier
+with "http://viaf.org/viaf/".
+http://viaf.org/</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-entity-relation">
@@ -67,6 +158,9 @@
             <xs:enumeration value="hasAssociationWith"/>
             <xs:enumeration value="isPresentedBy"/>
             <xs:enumeration value="isUsedBy"/>
+            <xs:enumeration value="isDerivedFrom"/>
+            <xs:enumeration value="enriches"/>
+            <xs:enumeration value="isPartOf"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="related-vocabulary-relation">
@@ -81,7 +175,14 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="success"/>
             <xs:enumeration value="error"/>
-            <xs:enumeration value="exception"/>
+            <xs:enumeration value="harvesting"/>
+            <xs:enumeration value="unharvesting"/>
+            <xs:enumeration value="importing"/>
+            <xs:enumeration value="unimporting"/>
+            <xs:enumeration value="transforming"/>
+            <xs:enumeration value="untransforming"/>
+            <xs:enumeration value="publishing"/>
+            <xs:enumeration value="unpublishing"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="registry-event-element-type">

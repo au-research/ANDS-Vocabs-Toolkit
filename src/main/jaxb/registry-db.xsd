@@ -58,12 +58,15 @@
             </xs:choice>
         </xs:complexType>
     </xs:element>
-    <xs:complexType name="ap-common"/>
+    <xs:complexType name="ap-common">
+        <xs:attribute name="draft_created_date" type="xs:string"/>
+        <xs:attribute name="draft_modified_date" type="xs:string"/>
+    </xs:complexType>
     <xs:complexType name="ap-api-sparql">
         <xs:complexContent>
             <xs:extension base="ap-common">
                 <xs:attribute name="source" type="common:ap-source" use="required"/>
-                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+                <xs:attribute name="url" type="xs:anyURI" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -72,7 +75,7 @@
             <xs:extension base="ap-common">
                 <xs:attribute name="format" type="xs:string"/>
                 <xs:attribute name="path" type="xs:string" use="required"/>
-                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+                <xs:attribute name="url" type="xs:anyURI" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -81,7 +84,7 @@
             <xs:extension base="ap-common">
                 <xs:attribute name="repository" type="xs:string"/>
                 <xs:attribute name="server-base" type="xs:anyURI"/>
-                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+                <xs:attribute name="urlPrefix" type="xs:anyURI" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -89,15 +92,38 @@
         <xs:complexContent>
             <xs:extension base="ap-common">
                 <xs:attribute name="source" type="common:ap-source" use="required"/>
-                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+                <xs:attribute name="urlPrefix" type="xs:anyURI" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ap-web-page">
         <xs:complexContent>
             <xs:extension base="ap-common">
-                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+                <xs:attribute name="url" type="xs:anyURI" use="required"/>
             </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="related-entity-common">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="uri" type="xs:anyURI"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="related-party-json">
+        <xs:complexContent>
+            <xs:extension base="related-entity-common">
+                <xs:attribute name="email" type="xs:string"/>
+                <xs:attribute name="phone" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="related-service-json">
+        <xs:complexContent>
+            <xs:extension base="related-entity-common"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="related-vocabulary-json">
+        <xs:complexContent>
+            <xs:extension base="related-entity-common"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:element name="version-artefact-json">
