@@ -22,6 +22,10 @@
   <property name="conf-test" value="conf-test" />
   <!-- Generated source code -->
   <property name="src-db-gen" value="src/db-gen" />
+  <!-- mapstruct -->
+  <property name="mapstruct-processor"
+        value="libdev/mapstruct-1.1.0/mapstruct-processor-1.1.0.Final.jar" />
+  <property name="mapstruct-sources" value="src/mapstruct/java" />
 
   <!-- JAR files that contain a JPA persistence unit. -->
   <property name="toolkit-db-model-jar"
@@ -93,6 +97,7 @@
     <delete dir="${build-jar}" />
     <delete dir="${build-liquibase}" />
     <delete dir="${build-tools}" />
+    <delete dir="${mapstruct-sources}" />
     <delete dir="${build-xjc-private-fields-plugin}" />
     <delete file="${xjc-private-fields-plugin-jar}" />
     <!-- Delete tools-bin iff it is empty. -->
@@ -282,6 +287,7 @@
   <target name="compile-main"
           depends="generate-registry-db-entity-dao-source,generate-jaxb-source">
     <mkdir dir="${build}" />
+    <mkdir dir="${mapstruct-sources}" />
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build}"
            includeantruntime="false" source="${source}" target="${target}">
       <src path="src/main/java" />
@@ -292,6 +298,9 @@
       <src path="src/test/java" />
       -->
       <classpath refid="compile-main.classpath" />
+      <compilerarg
+          line="-processorpath ${mapstruct-processor}"/>
+      <compilerarg line="-s ${mapstruct-sources}"/>
     </javac>
   </target>
 

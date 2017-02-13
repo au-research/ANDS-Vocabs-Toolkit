@@ -21,3 +21,4 @@
 /tools/bin/xjc-private-fields-plugin.jar
 /vocabtoolkit.jar
 /vocabtoolkit.war
+/.apt_generated/
