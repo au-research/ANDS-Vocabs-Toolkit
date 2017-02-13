@@ -22,7 +22,7 @@
                         <xs:attribute name="iri" type="xs:string"/>
                     </xs:complexType>
                 </xs:element>
-                <xs:element maxOccurs="unbounded" name="languages" type="xs:string"> </xs:element>
+                <xs:element maxOccurs="unbounded" name="other_languages" type="xs:string"> </xs:element>
                 <xs:element maxOccurs="unbounded" minOccurs="0" name="top_concepts" type="xs:string"
                 />
             </xs:sequence>

@@ -28,11 +28,8 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element maxOccurs="unbounded" minOccurs="0" ref="version"/>
-                <xs:element maxOccurs="unbounded" name="language">
-                    <xs:complexType mixed="true">
-                        <xs:attribute name="primary" type="xs:boolean"/>
-                    </xs:complexType>
-                </xs:element>
+                <xs:element maxOccurs="unbounded" name="other-language" minOccurs="0"
+                    type="xs:string"> </xs:element>
                 <xs:element maxOccurs="unbounded" minOccurs="0" name="top-concept" type="xs:string"/>
                 <xs:element maxOccurs="unbounded" name="related-entity">
                     <xs:complexType>
@@ -42,13 +39,17 @@
                 </xs:element>
             </xs:sequence>
             <xs:attribute name="id" type="id-type" use="required"> </xs:attribute>
-            <xs:attribute name="title" use="required"/>
-            <xs:attribute name="owner" use="required"/>
-            <xs:attribute name="slug"/>
             <xs:attribute name="status" use="required" type="common:vocabulary-status"> </xs:attribute>
-            <xs:attribute name="revision-cycle"/>
-            <xs:attribute name="note"/>
-            <xs:attribute name="acronym"/>
+            <xs:attribute name="owner" use="required" type="xs:string"/>
+            <xs:attribute name="slug" type="xs:string"/>
+            <xs:attribute name="title" use="required" type="xs:string"/>
+            <xs:attribute name="acronym" type="xs:string"/>
+            <xs:attribute name="description" type="xs:string"/>
+            <xs:attribute name="note" type="xs:string"/>
+            <xs:attribute name="revision-cycle" type="xs:string"/>
+            <xs:attribute name="creation-date" type="xs:string"/>
+            <xs:attribute name="primary-language" type="xs:string"/>
+            <xs:attribute name="licence" type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="version">

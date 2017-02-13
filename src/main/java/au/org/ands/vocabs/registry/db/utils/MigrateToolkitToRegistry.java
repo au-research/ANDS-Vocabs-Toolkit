@@ -702,6 +702,8 @@ public final class MigrateToolkitToRegistry {
                     hasLanguages = true;
                     // Don't assume English will be the primary language;
                     // start with the first language listed.
+                    List<String> otherLanguages =
+                            vocabularyJson.getOtherLanguages();
                     String primaryLanguage = entry.getValue().get(0).asText();
                     for (JsonNode languageElement : entry.getValue()) {
                         String language = languageElement.asText();
@@ -713,13 +715,15 @@ public final class MigrateToolkitToRegistry {
                             // vocabs_cms.js.
                             language = "en";
                         }
-                        vocabularyJson.getLanguages().add(language);
+                        otherLanguages.add(language);
                         if ("en".equals(language)) {
                             // Give preference to English.
                             primaryLanguage = "en";
                         }
                     }
                     vocabularyJson.setPrimaryLanguage(primaryLanguage);
+                    otherLanguages.remove(
+                            otherLanguages.indexOf(primaryLanguage));
                 }
                 break;
             case "subjects":
