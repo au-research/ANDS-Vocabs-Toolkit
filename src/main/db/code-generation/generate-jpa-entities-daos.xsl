@@ -198,10 +198,7 @@ import javax.persistence.Table;
  * annotations, we use constants defined in the class itself.
  * This way, they can be found (fully expanded!) in the generated Javadoc
  * in the "Constant Field Values" page.
- * See package-info.java for an explanation of the
- * GET_ALL_<xsl:value-of select="upper-case($entityName)" /> and
- * GET_ALL_TIMED_<xsl:value-of select="upper-case($entityName)" />_QUERY
- * named queries.
+ * See package-info.java for an explanation of the named queries.
  */
 @NamedQueries({
     @NamedQuery(
@@ -211,9 +208,14 @@ import javax.persistence.Table;
                 GET_ALL_<xsl:value-of select="upper-case($entityName)" />_QUERY)<xsl:choose><xsl:when test="$hasStartEndDateTime">,
     @NamedQuery(
             name = <xsl:value-of select="$entityName" />.
-                GET_ALL_TIMED_<xsl:value-of select="upper-case($entityName)" />,
+                GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" />,
             query = <xsl:value-of select="$entityName" />.
-                GET_ALL_TIMED_<xsl:value-of select="upper-case($entityName)" />_QUERY)</xsl:when><xsl:otherwise /></xsl:choose><xsl:apply-templates select="$foreignKeyQueries" mode="annotation">
+                GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" />_QUERY),</xsl:when></xsl:choose><xsl:choose><xsl:when test="$idKey">
+    @NamedQuery(
+            name = <xsl:value-of select="$entityName" />.
+                GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_BY_ID,
+            query = <xsl:value-of select="$entityName" />.
+                GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_BY_ID_QUERY)</xsl:when><xsl:otherwise /></xsl:choose><xsl:apply-templates select="$foreignKeyQueries" mode="annotation">
   <xsl:with-param name="entityName" select="$entityName" />
 </xsl:apply-templates>
 })
@@ -237,15 +239,28 @@ public class <xsl:value-of select="$entityName" />
     protected static final String GET_ALL_<xsl:value-of select="upper-case($entityName)" />_QUERY =
             "SELECT entity FROM <xsl:value-of select="$entityName" /> entity";
 
-<xsl:choose><xsl:when test="$hasStartEndDateTime">    /** Name of getAllTimed<xsl:value-of select="$entityName" /> query. */
-    public static final String GET_ALL_TIMED_<xsl:value-of select="upper-case($entityName)" /> =
-            "getAllTimed<xsl:value-of select="$entityName" />";
-    /** Query of getAllTimed<xsl:value-of select="$entityName" /> query. */
+<xsl:choose><xsl:when test="$hasStartEndDateTime">    /** Name of getAllCurrent<xsl:value-of select="$entityName" /> query. */
+    public static final String GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" /> =
+            "getAllCurrent<xsl:value-of select="$entityName" />";
+    /** Query of getAllCurrent<xsl:value-of select="$entityName" /> query. */
     protected static final String
-        GET_ALL_TIMED_<xsl:value-of
+        GET_ALL_CURRENT_<xsl:value-of
     select="upper-case($entityName)" />_QUERY =
         "SELECT entity FROM <xsl:value-of select="$entityName" /> entity"
         + TemporalUtils.WHERE_TEMPORAL_QUERY_VALID_SUFFIX;
+
+</xsl:when></xsl:choose><xsl:choose><xsl:when test="$idKey">    /** Name of getCurrent<xsl:value-of select="$entityName" />ById query. */
+    public static final String GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_BY_ID =
+            "getCurrent<xsl:value-of select="$entityName" />ById";
+    /** Query of getCurrent<xsl:value-of select="$entityName" />ById query. */
+    protected static final String
+        GET_CURRENT_<xsl:value-of
+    select="upper-case($entityName)" />_BY_ID_QUERY =
+        "SELECT entity FROM <xsl:value-of select="$entityName" /> entity"
+        + " WHERE <xsl:call-template name="CamelCaseNotFirst">
+          <xsl:with-param name="text" select="$idKey/@keyColumn" />
+        </xsl:call-template> = :id"
+        + TemporalUtils.AND_TEMPORAL_QUERY_VALID_SUFFIX;
 
 </xsl:when>
       <xsl:otherwise /></xsl:choose><xsl:apply-templates select="$foreignKeyQueries" mode="constants">
@@ -276,7 +291,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import </xsl:text><xsl:value-of select="$context-package"/>.DBContext;
-
+<xsl:choose>
+  <xsl:when test="$hasStartEndDateTime">
+<xsl:text>import </xsl:text><xsl:value-of select="$context-package"/>.TemporalUtils;
+</xsl:when>
+  <xsl:otherwise />
+</xsl:choose>
 import <xsl:value-of select="$entity-package"/>.<xsl:value-of select="$entityName" />;
 <xsl:choose>
   <xsl:when test="$idKey">import <xsl:value-of select="$entity-package"/>.<xsl:value-of select="$idKey/@entityName" />;
@@ -319,6 +339,50 @@ public final class <xsl:value-of select="$entityName" />DAO {
         em.close();
         return entityList;
     }
+
+<xsl:choose><xsl:when test="$hasStartEndDateTime">    /** Get all current <xsl:value-of select="$entityName" /> instances.
+     * @return An array of all <xsl:value-of select="$entityName" /> instances.
+     */
+    public static List&lt;<xsl:value-of select="$entityName" />&gt;
+        getAllCurrent<xsl:value-of select="$entityName" />() {
+        EntityManager em = DBContext.getEntityManager();
+        TypedQuery&lt;<xsl:value-of select="$entityName" />&gt; q = em.createNamedQuery(
+                <xsl:value-of select="$entityName" />.
+                    GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" />,
+                <xsl:value-of select="$entityName" />.class);
+        q = TemporalUtils.setDatetimeConstantParameters(q);
+        List&lt;<xsl:value-of select="$entityName" />&gt; entityList = q.getResultList();
+        em.close();
+        return entityList;
+    }
+
+</xsl:when></xsl:choose><xsl:choose><xsl:when test="$idKey">    /** Get current <xsl:value-of select="$entityName" /> instance by id.
+     * If there is no such instance, returns null.
+     * @param id The <xsl:value-of select="$entityName" />Id of the instance
+     *     to be fetched.
+     * @return The current <xsl:value-of select="$entityName" /> instance
+     *     with that <xsl:value-of select="$entityName" />Id,
+     *     or null, if there is no such instance.
+     */
+    public static <xsl:value-of select="$entityName" />
+        getCurrent<xsl:value-of select="$entityName" />By<xsl:value-of select="$entityName" />Id(
+        final Integer id) {
+        EntityManager em = DBContext.getEntityManager();
+        TypedQuery&lt;<xsl:value-of select="$entityName" />&gt; q = em.createNamedQuery(
+                <xsl:value-of select="$entityName" />.
+                    GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_BY_ID,
+                <xsl:value-of select="$entityName" />.class)
+                .setParameter("id", id);
+        q = TemporalUtils.setDatetimeConstantParameters(q);
+        List&lt;<xsl:value-of select="$entityName" />&gt; entityList = q.getResultList();
+        em.close();
+        if (entityList.isEmpty()) {
+            return null;
+        }
+        return entityList.get(0);
+    }
+
+</xsl:when></xsl:choose>
 
 <xsl:apply-templates select="$foreignKeyQueries" mode="method">
   <xsl:with-param name="entityName" select="$entityName" />

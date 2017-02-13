@@ -236,14 +236,13 @@ public final class MigrateToolkitToRegistry {
         // will be current. Select the current one.
         TypedQuery<au.org.ands.vocabs.registry.db.entity.Vocabulary> q =
                 em.createQuery(
-                "SELECT " + TemporalUtils.E1
-                + " FROM Vocabulary " + TemporalUtils.E1
-                + " WHERE (" + TemporalUtils.E1 + ".status="
+                "SELECT v FROM Vocabulary v"
+                + " WHERE (status="
                 + "au.org.ands.vocabs.registry.enums.VocabularyStatus."
-                + "PUBLISHED OR " + TemporalUtils.E1 + ".status="
+                + "PUBLISHED OR status="
                 + "au.org.ands.vocabs.registry.enums.VocabularyStatus."
-                + "DEPRECATED) AND " + TemporalUtils.E1 + ".slug=:slug"
-                + TemporalUtils.TEMPORAL_QUERY_TEMPLATE_VALID_SUFFIX_E1,
+                + "DEPRECATED) AND slug=:slug"
+                + TemporalUtils.AND_TEMPORAL_QUERY_VALID_SUFFIX,
                 au.org.ands.vocabs.registry.db.entity.Vocabulary.class);
         q.setParameter("slug", slug);
         q = TemporalUtils.setDatetimeConstantParameters(q);
@@ -2052,7 +2051,7 @@ public final class MigrateToolkitToRegistry {
         try {
             return jsonMapper.writeValueAsString(jsonObject);
         } catch (JsonProcessingException e) {
-            logger.error("Unable to serialize Json", e);
+            logger.error("Unable to serialize JSON", e);
             return "";
         }
     }
