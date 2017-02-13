@@ -1565,6 +1565,7 @@ public final class MigrateToolkitToRegistry {
      * @param isDraft Whether this is representing a draft record. Based
      *      on whether the containing vocabulary is a draft.
      */
+    @SuppressWarnings("checkstyle:MethodLength")
     private void copyVersionFields(final EntityManager toolkitEm,
             final Vocabulary vocabulary,
             final au.org.ands.vocabs.registry.db.entity.Vocabulary
@@ -1682,9 +1683,33 @@ public final class MigrateToolkitToRegistry {
                     vocabulary.getModifiedDate()).toString());
         }
 
-        // For the "do_publish" flag, see if there are any
-        // SISSVoc access points for this version.
+        // For the "do_import" flag, see if there are any
+        // local apiSparql access points for this version.
         List<AccessPoint> aps;
+        aps =
+                toolkitEm.createQuery("SELECT ap FROM AccessPoint ap "
+                        + "WHERE ap.versionId = :versionId "
+                        + "AND ap.type = 'apiSparql'",
+                        AccessPoint.class).
+                setParameter("versionId", version.getId()).
+                getResultList();
+        logger.info("Got " + aps.size() + " apiSparql access point(s).");
+        // Set import flag based on the presence of a sissvoc access point.
+        versionJson.setDoImport(false);
+        for (AccessPoint ap : aps) {
+            if (AccessPointUtils.getPortalSource(ap).
+                    equals(AccessPoint.SYSTEM_SOURCE)) {
+                // Found an apiSparql access point with source="system".
+                // We consider this to mean that the version is
+                // "published".
+                logger.info("Found an apiSparql access point with "
+                        + "source=system.");
+                versionJson.setDoImport(true);
+            }
+        }
+
+        // For the "do_publish" flag, see if there are any
+        // local SISSVoc access points for this version.
         aps =
                 toolkitEm.createQuery("SELECT ap FROM AccessPoint ap "
                         + "WHERE ap.versionId = :versionId "

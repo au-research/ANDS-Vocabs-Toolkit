@@ -42,6 +42,7 @@
         <xs:complexType>
             <xs:attribute name="title" type="xs:string"/>
             <xs:attribute name="note" type="xs:string"/>
+            <xs:attribute name="do_import" type="xs:boolean"/>
             <xs:attribute name="do_publish" type="xs:boolean"/>
             <xs:attribute name="draft_created_date" type="xs:string"/>
             <xs:attribute name="draft_modified_date" type="xs:string"/>

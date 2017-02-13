@@ -60,8 +60,8 @@
             <xs:attribute name="slug"/>
             <xs:attribute name="note"/>
             <xs:attribute name="release-date"/>
-            <xs:attribute name="import-rdf" type="xs:boolean"/>
-            <xs:attribute name="publish" type="xs:boolean"/>
+            <xs:attribute name="do-import" type="xs:boolean"/>
+            <xs:attribute name="do-publish" type="xs:boolean"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="access-point">
