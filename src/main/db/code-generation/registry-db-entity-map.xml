@@ -52,6 +52,9 @@
        >
     <idKey keyColumn="version_id" entityName="VersionId" />
     <column db="status" enum="VersionStatus" />
+    <foreignKeyQueries>
+      <foreignKeyQuery keyColumn="vocabularyId" entityName="Vocabulary" />
+    </foreignKeyQueries>
   </map>
   <map tableName="version_artefacts"
        entityName="VersionArtefact"
