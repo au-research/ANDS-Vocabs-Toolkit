@@ -15,6 +15,29 @@
     <!-- async required because we use AsyncResponse. -->
     <async-supported>true</async-supported>
   </servlet>
+
+  <!-- Swagger API. -->
+  <servlet>
+    <servlet-name>Jersey2Config</servlet-name>
+    <servlet-class>au.org.ands.vocabs.registry.api.context.SwaggerBootstrapper</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <!-- Filter to implement CORS settings for swagger.json
+       and the API itself. -->
+  <filter>
+    <filter-name>ApiOriginFilter</filter-name>
+    <filter-class>au.org.ands.vocabs.registry.api.context.ApiOriginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ApiOriginFilter</filter-name>
+    <url-pattern>/swagger.json</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>ApiOriginFilter</filter-name>
+    <url-pattern>/api/resource/*</url-pattern>
+  </filter-mapping>
+
   <servlet-mapping>
     <servlet-name>javax.ws.rs.core.Application</servlet-name>
     <url-pattern>/*</url-pattern>
