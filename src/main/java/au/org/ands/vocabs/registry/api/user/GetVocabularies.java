@@ -26,6 +26,7 @@ import au.org.ands.vocabs.registry.schema.vocabulary201701.Version;
 import au.org.ands.vocabs.registry.schema.vocabulary201701.Vocabulary;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -79,6 +80,7 @@ public class GetVocabularies {
                     response = ErrorResult.class)
             })
     public final Response getVocabularyById(
+            @ApiParam(value = "The ID of the vocabulary to get")
             @PathParam("vocabularyId") final Integer vocabularyId) {
         logger.debug("called getVocabulary: " + vocabularyId);
         au.org.ands.vocabs.registry.db.entity.Vocabulary
@@ -106,6 +108,8 @@ public class GetVocabularies {
     @ApiOperation(value = "Get the current versions of a vocabulary, "
             + "by its vocabulary id.")
     public final List<Version> getVersionsForVocabularyById(
+            @ApiParam(value = "The ID of the vocabulary from which to get "
+                    + "the current versions")
             @PathParam("vocabularyId") final Integer vocabularyId) {
         logger.debug("called getVersionsForVocabularyById: " + vocabularyId);
 
