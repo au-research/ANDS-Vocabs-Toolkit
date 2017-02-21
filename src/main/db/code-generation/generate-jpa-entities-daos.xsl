@@ -507,7 +507,8 @@ public final class <xsl:value-of select="$entityName" />DAO {
     public static final String GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_LIST_FOR_<xsl:value-of select="upper-case(@entityName)" /> =
             "getCurrent<xsl:value-of select="$entityName" />ListFor<xsl:value-of select="@entityName" />";
     /** Query of get<xsl:value-of select="$entityName" />ListFor<xsl:value-of select="@entityName" /> query. */
-    protected static final String GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_LIST_FOR_<xsl:value-of select="upper-case(@entityName)" />_QUERY =
+    protected static final String
+        GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_LIST_FOR_<xsl:value-of select="upper-case(@entityName)" />_QUERY =
             "SELECT entity FROM <xsl:value-of select="$entityName" /> entity WHERE entity.<xsl:value-of select="@keyColumn" /> = :"
             + GET_<xsl:value-of select="upper-case($entityName)" />_LIST_FOR_<xsl:value-of select="upper-case(@entityName)" />_<xsl:value-of select="upper-case(@keyColumn)" />
             + TemporalUtils.AND_TEMPORAL_QUERY_VALID_SUFFIX;
