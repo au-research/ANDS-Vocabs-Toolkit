@@ -1,5 +1,5 @@
 /** See the file "LICENSE" for the full license governing this code. */
-package au.org.ands.vocabs.registry.db.context;
+package au.org.ands.vocabs.registry.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
