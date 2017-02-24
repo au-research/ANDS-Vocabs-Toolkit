@@ -67,32 +67,51 @@
     <xs:element name="access-point">
         <xs:complexType>
             <xs:choice>
-                <xs:element name="ap-file" type="ap-file"/>
-                <xs:element name="ap-web-page" type="ap-web-page"/>
                 <xs:element name="ap-api-sparql" type="ap-api-sparql"/>
+                <xs:element name="ap-file" type="ap-file"/>
+                <xs:element name="ap-sesame-download" type="ap-sesame-download"/>
+                <xs:element name="ap-sissvoc" type="ap-sissvoc"/>
+                <xs:element name="ap-web-page" type="ap-web-page"/>
             </xs:choice>
             <xs:attribute name="id" type="id-type" use="required"/>
         </xs:complexType>
     </xs:element>
     <xs:complexType name="ap-common"/>
+    <xs:complexType name="ap-api-sparql">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="source" type="common:ap-source"/>
+                <xs:attribute name="url" type="xs:anyURI" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
     <xs:complexType name="ap-file">
         <xs:complexContent>
             <xs:extension base="ap-common">
                 <xs:attribute name="format" type="xs:string"/>
+                <xs:attribute name="url" type="xs:anyURI"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-sesame-download">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="urlPrefix" type="xs:anyURI"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ap-sissvoc">
+        <xs:complexContent>
+            <xs:extension base="ap-common">
+                <xs:attribute name="source" type="common:ap-source"/>
+                <xs:attribute name="urlPrefix" type="xs:anyURI"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ap-web-page">
         <xs:complexContent>
             <xs:extension base="ap-common">
-                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="ap-api-sparql">
-        <xs:complexContent>
-            <xs:extension base="ap-common">
-                <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+                <xs:attribute name="url" type="xs:anyURI" use="required"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
