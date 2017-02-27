@@ -37,6 +37,7 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 import au.org.ands.vocabs.registry.db.context.TemporalConstants;
 import au.org.ands.vocabs.registry.db.context.TemporalUtils;
+import au.org.ands.vocabs.registry.db.converter.JSONSerialization;
 import au.org.ands.vocabs.registry.db.dao.AccessPointDAO;
 import au.org.ands.vocabs.registry.db.dao.RelatedEntityDAO;
 import au.org.ands.vocabs.registry.db.dao.RelatedEntityIdentifierDAO;
@@ -88,7 +89,9 @@ import au.org.ands.vocabs.toolkit.db.model.ResourceOwnerHost;
 import au.org.ands.vocabs.toolkit.db.model.Task;
 import au.org.ands.vocabs.toolkit.db.model.Version;
 import au.org.ands.vocabs.toolkit.db.model.Vocabulary;
+import au.org.ands.vocabs.toolkit.utils.PropertyConstants;
 import au.org.ands.vocabs.toolkit.utils.ToolkitFileUtils;
+import au.org.ands.vocabs.toolkit.utils.ToolkitProperties;
 
 /** Utility class for migrating the contents of the "toolkit" database
  * to the "registry" database.
@@ -533,6 +536,7 @@ public final class MigrateToolkitToRegistry {
             registryAccessPoint.setStartDate(registryVersion.getStartDate());
             registryAccessPoint.setEndDate(registryVersion.getEndDate());
             AccessPointDAO.saveAccessPointWithId(registryAccessPoint);
+            fixUpAccessPointWithinURLs(ap, registryAccessPoint);
             migratedAccessPoints.put(ap.getId(),
                     registryAccessPoint.getAccessPointId());
         }
@@ -1910,6 +1914,73 @@ public final class MigrateToolkitToRegistry {
         registryAccessPoint.setVersionId(registryVersion.getVersionId());
         registryAccessPoint.setModifiedBy(registryVersion.getModifiedBy());
         registryAccessPoint.setData(serializeJsonAsString(apData));
+    }
+
+    /** Fix up the URL values within access points, so that they point
+     * to the correct new access point.
+     * @param originalAP The original, Toolkit version of the access point.
+     * @param newAP The migrated access point.
+     */
+    private void fixUpAccessPointWithinURLs(final AccessPoint originalAP,
+            final au.org.ands.vocabs.registry.db.entity.AccessPoint
+            newAP) {
+        switch (newAP.getType()) {
+        case API_SPARQL:
+        case SISSVOC:
+        case WEB_PAGE:
+            // No action required for these three types.
+            return;
+        case FILE:
+            ApFile fileData = JSONSerialization.deserializeStringAsJson(
+                    newAP.getData(), ApFile.class);
+            String url = fileData.getUrl();
+            String expectedPrefix = ToolkitProperties.getProperty(
+                    PropertyConstants.TOOLKIT_DOWNLOADPREFIX)
+                    + originalAP.getId() + "/";
+            if (url.startsWith(expectedPrefix)) {
+                String newUrl = ToolkitProperties.getProperty(
+                        PropertyConstants.TOOLKIT_DOWNLOADPREFIX)
+                        + newAP.getAccessPointId() + "/"
+                        + url.substring(expectedPrefix.length());
+                logger.info("fixUpAccessPointWithinURLs: rewrote file AP: "
+                        + newAP.getAccessPointId());
+                fileData.setUrl(newUrl);
+                newAP.setData(serializeJsonAsString(fileData));
+                AccessPointDAO.updateAccessPoint(newAP);
+            } else {
+                logger.error("fixUpAccessPointWithinURLs: file download "
+                        + "doesn't begin with expected prefix: "
+                        + expectedPrefix);
+            }
+            break;
+        case SESAME_DOWNLOAD:
+            ApSesameDownload sesameDownloadData =
+                JSONSerialization.deserializeStringAsJson(
+                    newAP.getData(), ApSesameDownload.class);
+            String urlPrefix = sesameDownloadData.getUrlPrefix();
+            expectedPrefix = ToolkitProperties.getProperty(
+                    PropertyConstants.TOOLKIT_DOWNLOADPREFIX)
+                    + originalAP.getId() + "/";
+            if (urlPrefix.startsWith(expectedPrefix)) {
+                String newUrlPrefix = ToolkitProperties.getProperty(
+                        PropertyConstants.TOOLKIT_DOWNLOADPREFIX)
+                        + newAP.getAccessPointId() + "/"
+                        + urlPrefix.substring(expectedPrefix.length());
+                logger.info("fixUpAccessPointWithinURLs: rewrote sd AP: "
+                        + newAP.getAccessPointId());
+                sesameDownloadData.setUrlPrefix(newUrlPrefix);
+                newAP.setData(serializeJsonAsString(sesameDownloadData));
+                AccessPointDAO.updateAccessPoint(newAP);
+            } else {
+                logger.error("fixUpAccessPointWithinURLs: Sesame download "
+                        + "doesn't begin with expected prefix:"
+                        + expectedPrefix);
+            }
+            break;
+        default:
+            logger.error("fixUpAccessPointWithinURLs: impossible type");
+        }
+
     }
 
     /** Create a version artefact related to a registry version.
