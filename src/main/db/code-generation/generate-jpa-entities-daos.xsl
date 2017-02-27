@@ -210,7 +210,17 @@ import javax.persistence.Table;
             name = <xsl:value-of select="$entityName" />.
                 GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" />,
             query = <xsl:value-of select="$entityName" />.
-                GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" />_QUERY),</xsl:when></xsl:choose><xsl:choose><xsl:when test="$idKey">
+                GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" />_QUERY),
+    @NamedQuery(
+            name = <xsl:value-of select="$entityName" />.
+                GET_ALL_DRAFT_<xsl:value-of select="upper-case($entityName)" />,
+            query = <xsl:value-of select="$entityName" />.
+                GET_ALL_DRAFT_<xsl:value-of select="upper-case($entityName)" />_QUERY),<xsl:choose><xsl:when test="$idKey">
+    @NamedQuery(
+            name = <xsl:value-of select="$entityName" />.
+                HAS_DRAFT_<xsl:value-of select="upper-case($entityName)" />,
+            query = <xsl:value-of select="$entityName" />.
+                HAS_DRAFT_<xsl:value-of select="upper-case($entityName)" />_QUERY),</xsl:when></xsl:choose></xsl:when></xsl:choose><xsl:choose><xsl:when test="$idKey">
     @NamedQuery(
             name = <xsl:value-of select="$entityName" />.
                 GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_BY_ID,
@@ -249,6 +259,29 @@ public class <xsl:value-of select="$entityName" />
     select="upper-case($entityName)" />_QUERY =
         "SELECT entity FROM <xsl:value-of select="$entityName" /> entity"
         + TemporalUtils.WHERE_TEMPORAL_QUERY_VALID_SUFFIX;
+
+<xsl:choose><xsl:when test="$idKey">    /** Name of hasDraft<xsl:value-of select="$entityName" /> query. */
+    public static final String HAS_DRAFT_<xsl:value-of select="upper-case($entityName)" /> =
+            "hasDraft<xsl:value-of select="$entityName" />";
+    /** Query of hasDraft<xsl:value-of select="$entityName" /> query. */
+    protected static final String
+        HAS_DRAFT_<xsl:value-of
+    select="upper-case($entityName)" />_QUERY =
+        "SELECT COUNT(entity) > 0 FROM <xsl:value-of select="$entityName" /> entity"
+        + " WHERE <xsl:call-template name="CamelCaseNotFirst">
+          <xsl:with-param name="text" select="$idKey/@keyColumn" />
+        </xsl:call-template> = :id"
+        + TemporalUtils.AND_TEMPORAL_QUERY_ALL_DRAFT_SUFFIX;
+
+</xsl:when></xsl:choose>    /** Name of getAllDraft<xsl:value-of select="$entityName" /> query. */
+    public static final String GET_ALL_DRAFT_<xsl:value-of select="upper-case($entityName)" /> =
+            "getAllDraft<xsl:value-of select="$entityName" />";
+    /** Query of getAllDraft<xsl:value-of select="$entityName" /> query. */
+    protected static final String
+        GET_ALL_DRAFT_<xsl:value-of
+    select="upper-case($entityName)" />_QUERY =
+        "SELECT entity FROM <xsl:value-of select="$entityName" /> entity"
+        + TemporalUtils.WHERE_TEMPORAL_QUERY_ALL_DRAFT_SUFFIX;
 
 </xsl:when></xsl:choose><xsl:choose><xsl:when test="$idKey">    /** Name of getCurrent<xsl:value-of select="$entityName" />ById query. */
     public static final String GET_CURRENT_<xsl:value-of select="upper-case($entityName)" />_BY_ID =
@@ -358,6 +391,42 @@ public final class <xsl:value-of select="$entityName" />DAO {
         TypedQuery&lt;<xsl:value-of select="$entityName" />&gt; q = em.createNamedQuery(
                 <xsl:value-of select="$entityName" />.
                     GET_ALL_CURRENT_<xsl:value-of select="upper-case($entityName)" />,
+                <xsl:value-of select="$entityName" />.class);
+        q = TemporalUtils.setDatetimeConstantParameters(q);
+        List&lt;<xsl:value-of select="$entityName" />&gt; entityList = q.getResultList();
+        em.close();
+        return entityList;
+    }
+
+<xsl:choose><xsl:when test="$idKey">    /** Determine if <xsl:value-of select="$entityName" /> id has a
+     *      draft instance.
+     * @param id The <xsl:value-of select="$entityName" />Id of the instance
+     *     to be checked for the presence of a draft instance.
+     * @return True, if there is a draft instance..
+     */
+    public static boolean
+        hasDraft<xsl:value-of select="$entityName" />(
+        final Integer id) {
+        EntityManager em = DBContext.getEntityManager();
+        TypedQuery&lt;Boolean&gt; q = em.createNamedQuery(
+                <xsl:value-of select="$entityName" />.
+                    HAS_DRAFT_<xsl:value-of select="upper-case($entityName)" />,
+                Boolean.class).setParameter("id", id);
+        q = TemporalUtils.setDatetimeConstantParameters(q);
+        Boolean hasDraft = q.getSingleResult();
+        em.close();
+        return hasDraft;
+    }
+
+</xsl:when></xsl:choose>    /** Get all draft <xsl:value-of select="$entityName" /> instances.
+     * @return An array of all draft <xsl:value-of select="$entityName" /> instances.
+     */
+    public static List&lt;<xsl:value-of select="$entityName" />&gt;
+        getAllDraft<xsl:value-of select="$entityName" />() {
+        EntityManager em = DBContext.getEntityManager();
+        TypedQuery&lt;<xsl:value-of select="$entityName" />&gt; q = em.createNamedQuery(
+                <xsl:value-of select="$entityName" />.
+                    GET_ALL_DRAFT_<xsl:value-of select="upper-case($entityName)" />,
                 <xsl:value-of select="$entityName" />.class);
         q = TemporalUtils.setDatetimeConstantParameters(q);
         List&lt;<xsl:value-of select="$entityName" />&gt; entityList = q.getResultList();

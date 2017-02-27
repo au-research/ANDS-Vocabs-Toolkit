@@ -64,6 +64,27 @@ public class GetVersions {
         return Response.ok().entity(outputVersion).build();
     }
 
+    /** Determine if a version has a draft instance.
+     * @param versionId The VersionId of the vocabulary to be checked.
+     * @return True, if the version has a draft instance. False,
+     *      if there is no draft instance with that version id.*/
+    @Path("version/{versionId}/hasDraft")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @GET
+    @ApiOperation(value = "Determine if a version has a draft instance.",
+            notes = "Returns true, if the version has a draft instance. "
+            + "Returns false, if there is no draft instance with that "
+            + "version id. The result is returned in the booleanValue "
+            + "property.",
+            response = SimpleResult.class)
+    public final Response hasDraftVersionById(
+            @ApiParam(value = "The ID of the version to check")
+            @PathParam("versionId") final Integer versionId) {
+        logger.debug("called hasDraftVersionById: " + versionId);
+        boolean hasDraft = VersionDAO.hasDraftVersion(versionId);
+        return Response.ok().entity(new SimpleResult(hasDraft)).build();
+    }
+
     /** Get the current access points of a version, by its version id.
      * @param versionId The VersionId of the access points to be fetched.
      * @return The list of access points, in either XML or JSON format,

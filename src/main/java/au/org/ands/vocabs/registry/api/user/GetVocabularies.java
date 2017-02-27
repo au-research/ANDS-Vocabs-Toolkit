@@ -6,10 +6,12 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -43,13 +45,22 @@ public class GetVocabularies {
     private Logger logger = LoggerFactory.getLogger(
             MethodHandles.lookup().lookupClass());
 
-    /** Get all the current vocabularies.
+    /** Get all the current vocabularies. This includes both
+     * published and deprecated vocabularies.
+     * @param includeDraft If true, also include draft vocabularies.
      * @return The list of vocabularies, in either XML or JSON format. */
     @Path("vocabulary")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @GET
-    @ApiOperation(value = "Get all the current vocabularies.")
-    public final List<Vocabulary> getVocabularies() {
+    @ApiOperation(value = "Get all the current vocabularies. This includes "
+            + "both published and deprecated vocabularies.")
+    public final List<Vocabulary> getVocabularies(
+            @ApiParam(value = "If true, also include draft vocabulary records")
+            @QueryParam("includeDraft")
+            @DefaultValue("false") final boolean includeDraft) {
+        if (includeDraft) {
+            return getVocabulariesIncludingDraft();
+        }
         logger.debug("called getVocabularies");
         List<au.org.ands.vocabs.registry.db.entity.Vocabulary>
             dbVocabularies = VocabularyDAO.getAllCurrentVocabulary();
@@ -59,6 +70,32 @@ public class GetVocabularies {
                 VocabularyDbSchemaMapper.INSTANCE;
         for (au.org.ands.vocabs.registry.db.entity.Vocabulary dbVocabulary
                 : dbVocabularies) {
+            outputVocabularies.add(mapper.sourceToTarget(dbVocabulary));
+        }
+
+        return outputVocabularies;
+    }
+
+    /** Get all the current vocabularies, of all status values,
+     * including draft.
+     * @return The list of vocabularies of all status values,
+     *      including draft. */
+    public final List<Vocabulary> getVocabulariesIncludingDraft() {
+        logger.debug("called getVocabulariesIncludingDraft");
+        List<au.org.ands.vocabs.registry.db.entity.Vocabulary>
+            dbVocabularies = VocabularyDAO.getAllCurrentVocabulary();
+        List<au.org.ands.vocabs.registry.db.entity.Vocabulary>
+            dbDraftVocabularies = VocabularyDAO.getAllDraftVocabulary();
+        List<Vocabulary> outputVocabularies = new ArrayList<>();
+
+        VocabularyDbSchemaMapper mapper =
+                VocabularyDbSchemaMapper.INSTANCE;
+        for (au.org.ands.vocabs.registry.db.entity.Vocabulary dbVocabulary
+                : dbVocabularies) {
+            outputVocabularies.add(mapper.sourceToTarget(dbVocabulary));
+        }
+        for (au.org.ands.vocabs.registry.db.entity.Vocabulary dbVocabulary
+                : dbDraftVocabularies) {
             outputVocabularies.add(mapper.sourceToTarget(dbVocabulary));
         }
 
@@ -82,7 +119,7 @@ public class GetVocabularies {
     public final Response getVocabularyById(
             @ApiParam(value = "The ID of the vocabulary to get")
             @PathParam("vocabularyId") final Integer vocabularyId) {
-        logger.debug("called getVocabulary: " + vocabularyId);
+        logger.debug("called getVocabularyById: " + vocabularyId);
         au.org.ands.vocabs.registry.db.entity.Vocabulary
             dbVocabulary = VocabularyDAO.getCurrentVocabularyByVocabularyId(
                     vocabularyId);
@@ -96,6 +133,27 @@ public class GetVocabularies {
                     new ErrorResult("No vocabulary with that id")).build();
         }
         return Response.ok().entity(outputVocabulary).build();
+    }
+
+    /** Determine if a vocabulary has a draft instance.
+     * @param vocabularyId The VocabularyId of the vocabulary to be checked.
+     * @return True, if the vocabulary has a draft instance. False,
+     *      if there is no draft instance with that vocabulary id.*/
+    @Path("vocabulary/{vocabularyId}/hasDraft")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @GET
+    @ApiOperation(value = "Determine if a vocabulary has a draft instance.",
+            notes = "Returns true, if the vocabulary has a draft instance. "
+            + "Returns false, if there is no draft instance with that "
+            + "vocabulary id. The result is returned in the booleanValue "
+            + "property.",
+            response = SimpleResult.class)
+    public final Response hasDraftVocabularyById(
+            @ApiParam(value = "The ID of the vocabulary to check")
+            @PathParam("vocabularyId") final Integer vocabularyId) {
+        logger.debug("called hasDraftVocabularyById: " + vocabularyId);
+        boolean hasDraft = VocabularyDAO.hasDraftVocabulary(vocabularyId);
+        return Response.ok().entity(new SimpleResult(hasDraft)).build();
     }
 
     /** Get the current versions of a vocabulary, by its vocabulary id.

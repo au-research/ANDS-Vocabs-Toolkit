@@ -18,10 +18,15 @@ public final class TemporalUtils {
     /** The name of the date/time parameter to use in queries. */
     private static final String DATETIME_PARAMETER = "datetime";
 
-    /** name of a JPQL parameter to use for the constant
+    /** The name of a JPQL parameter to use for the constant
      * {@link TemporalConstants#CURRENTLY_VALID_END_DATE}. */
     private static final String CURRENTLY_VALID_END_DATE =
             "currently_valid_end_date";
+
+    /** The name of a JPQL parameter to use for the constant
+     * {@link TemporalConstants#DRAFT_START_DATE}. */
+    private static final String DRAFT_START_DATE =
+            "draft_start_date";
 
     /** Start date field name. Must match the property name in the entity
      * class. */
@@ -50,6 +55,18 @@ public final class TemporalUtils {
 //    public static final String WHERE_TEMPORAL_QUERY_VALID_SUFFIX =
 //            " WHERE start_date <= :" + DATETIME_PARAMETER
 //            + " AND :" + DATETIME_PARAMETER + " < end_date";
+
+    /** Suffix for JPQL queries to select only draft rows.
+     * This version of the suffix is for queries that already
+     * have a WHERE clause. */
+    public static final String AND_TEMPORAL_QUERY_ALL_DRAFT_SUFFIX =
+            " AND " + START_DATE + " = :" + DRAFT_START_DATE;
+
+    /** Suffix for JPQL queries to select only draft rows.
+     * This version of the suffix is for queries that do not already
+     * have a WHERE clause. */
+    public static final String WHERE_TEMPORAL_QUERY_ALL_DRAFT_SUFFIX =
+            " WHERE " + START_DATE + " = :" + DRAFT_START_DATE;
 
     /** Entity name E1, for use in JPQL queries. */
     public static final String E1 = "e1";
@@ -144,8 +161,19 @@ public final class TemporalUtils {
      */
     public static <T> TypedQuery<T> setDatetimeConstantParameters(
             final TypedQuery<T> q) {
-        return q.setParameter(CURRENTLY_VALID_END_DATE,
-                TemporalConstants.CURRENTLY_VALID_END_DATE);
+        try {
+            q.setParameter(CURRENTLY_VALID_END_DATE,
+                    TemporalConstants.CURRENTLY_VALID_END_DATE);
+        } catch (IllegalArgumentException e) {
+            // No problem.
+        }
+        try {
+            q.setParameter(DRAFT_START_DATE,
+                    TemporalConstants.DRAFT_START_DATE);
+        } catch (IllegalArgumentException e) {
+            // No problem.
+        }
+        return q;
     }
 
     /** Set the datetime parameter of a query to a specified
