@@ -121,16 +121,16 @@
             <xs:element maxOccurs="unbounded" minOccurs="0" name="uri" type="xs:anyURI"/>
         </xs:sequence>
         <xs:attribute name="id" type="id-type" use="required"/>
-        <xs:attribute name="type" use="required"/>
-        <xs:attribute name="title"/>
-        <xs:attribute name="email"/>
-        <xs:attribute name="phone"/>
+        <xs:attribute name="type" use="required" type="common:related-entity-type"/>
+        <xs:attribute name="title" type="xs:string"/>
+        <xs:attribute name="email" type="xs:string"/>
+        <xs:attribute name="phone" type="xs:string"/>
     </xs:complexType>
     <xs:element name="related-entity-identifier">
         <xs:complexType>
-            <xs:attribute name="id"/>
-            <xs:attribute name="identifier_type"/>
-            <xs:attribute name="identifier_value"/>
+            <xs:attribute name="id" type="id-type"/>
+            <xs:attribute name="identifier_type" type="common:related-entity-identifier-type"/>
+            <xs:attribute name="identifier_value" type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:complexType name="related-vocabulary">
