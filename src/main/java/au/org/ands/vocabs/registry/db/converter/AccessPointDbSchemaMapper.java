@@ -24,9 +24,9 @@ public interface AccessPointDbSchemaMapper {
     AccessPointDbSchemaMapper INSTANCE =
             Mappers.getMapper(AccessPointDbSchemaMapper.class);
 
-    /** MapStruct-generated Mapper from Version database to schema.
-     * @param source The Version entity from the database.
-     * @return The schema version of the version.
+    /** MapStruct-generated Mapper from AccessPoint database to schema.
+     * @param source The AccessPoint entity from the database.
+     * @return The schema version of the access point.
      */
     @Mapping(source = "accessPointId", target = "id")
     @Mapping(target = "AP", ignore = true)

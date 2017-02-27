@@ -186,6 +186,4 @@ public class GetVocabularies {
         return outputVersions;
     }
 
-
-
 }
