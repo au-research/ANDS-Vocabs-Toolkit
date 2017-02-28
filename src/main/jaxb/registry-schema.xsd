@@ -31,7 +31,7 @@
                 <xs:element maxOccurs="unbounded" name="other-language" minOccurs="0"
                     type="xs:string"> </xs:element>
                 <xs:element maxOccurs="unbounded" minOccurs="0" name="top-concept" type="xs:string"/>
-                <xs:element maxOccurs="unbounded" name="related-entity">
+                <xs:element maxOccurs="unbounded" name="related-entity-ref">
                     <xs:complexType>
                         <xs:attribute name="id" type="id-type"/>
                         <xs:attribute name="relation" type="related-relation"/>
@@ -115,22 +115,24 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="related-entity">
-        <xs:sequence>
-            <xs:element ref="related-entity-identifier"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="uri" type="xs:anyURI"/>
-        </xs:sequence>
-        <xs:attribute name="id" type="id-type" use="required"/>
-        <xs:attribute name="type" use="required" type="common:related-entity-type"/>
-        <xs:attribute name="title" type="xs:string"/>
-        <xs:attribute name="email" type="xs:string"/>
-        <xs:attribute name="phone" type="xs:string"/>
-    </xs:complexType>
+    <xs:element name="related-entity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="related-entity-identifier" maxOccurs="unbounded" minOccurs="0"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="uri" type="xs:anyURI"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="id-type" use="required"/>
+            <xs:attribute name="type" use="required" type="common:related-entity-type"/>
+            <xs:attribute name="title" type="xs:string"/>
+            <xs:attribute name="email" type="xs:string"/>
+            <xs:attribute name="phone" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="related-entity-identifier">
         <xs:complexType>
             <xs:attribute name="id" type="id-type"/>
-            <xs:attribute name="identifier_type" type="common:related-entity-identifier-type"/>
-            <xs:attribute name="identifier_value" type="xs:string"/>
+            <xs:attribute name="identifier-type" type="common:related-entity-identifier-type"/>
+            <xs:attribute name="identifier-value" type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:complexType name="related-vocabulary">
