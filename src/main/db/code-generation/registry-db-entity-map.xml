@@ -80,6 +80,38 @@
        >
     <idKey keyColumn="related_entity_id" entityName="RelatedEntityId" />
     <column db="type" enum="RelatedEntityType" />
+    <extraQueries>
+      <extraQuery name="GET_RELATED_ENTITY_LIST_FOR_VOCABULARY">
+        <extraQueryParameter name="vocabularyId" />
+        <queryText temporal="true">
+          SELECT entity FROM RelatedEntity entity WHERE
+          relatedEntityId IN (SELECT relatedEntityId FROM
+          VocabularyRelatedEntity WHERE vocabularyId = :vocabularyId)
+        </queryText>
+        <method>    /** Get all current RelatedEntity instances for a vocabulary.
+     * @param vocabularyId The vocabulary id for which related
+     *     entities are to be looked up.
+     * @return An list of all RelatedEntity instances for the vocabulary.
+     */
+    public static List&lt;RelatedEntity&gt;
+        getCurrentRelatedEntitiesForVocabulary(final int vocabularyId) {
+        EntityManager em = DBContext.getEntityManager();
+        TypedQuery&lt;RelatedEntity&gt; q = em.createNamedQuery(
+                RelatedEntity.
+                    GET_RELATED_ENTITY_LIST_FOR_VOCABULARY,
+                RelatedEntity.class)
+                .setParameter(RelatedEntity.
+                    GET_RELATED_ENTITY_LIST_FOR_VOCABULARY_VOCABULARYID,
+                    vocabularyId);
+        q = TemporalUtils.setDatetimeConstantParameters(q);
+        List&lt;RelatedEntity&gt; entityList = q.getResultList();
+        em.close();
+        return entityList;
+    }
+
+</method>
+      </extraQuery>
+    </extraQueries>
   </map>
   <map tableName="related_entity_identifiers"
        entityName="RelatedEntityIdentifier"

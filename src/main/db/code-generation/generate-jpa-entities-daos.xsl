@@ -10,6 +10,7 @@
 <xsl:transform version="2.0"
                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                xmlns:dcl="http://www.liquibase.org/xml/ns/dbchangelog"
+               xmlns:local="http://dummy/"
                xmlns:xslOut="dummy">
 
   <xsl:param
@@ -60,6 +61,7 @@
   <xsl:strip-space elements="dcl:*" />
   <!-- Ignore spaces in some elements of the db-entity-mapping. -->
   <xsl:strip-space elements="foreignKeyQueries" />
+  <xsl:strip-space elements="extraQueries" />
 
   <xsl:template match="dcl:changeSet">
     <xsl:apply-templates />
@@ -99,6 +101,11 @@
     <xsl:variable name="foreignKeyQueries"
                   select="key('db-to-entity', lower-case(@tableName),
                           $db-entity-mapping)/foreignKeyQueries" />
+    <!-- The extraQueries element of this entity, which contains
+         sub-elements of type extraQuery. -->
+    <xsl:variable name="extraQueries"
+                  select="key('db-to-entity', lower-case(@tableName),
+                          $db-entity-mapping)/extraQueries" />
     <!-- Whether or not this entity has any columns of type DATETIME.
          This is used to decide whether or not to import the necessary
          Java date/time class. Note that we also cope with
@@ -229,6 +236,9 @@ import javax.persistence.Table;
   <xsl:with-param name="entityName" select="$entityName" />
   <xsl:with-param name="addTemporalVersion" select="$idKey" />
 </xsl:apply-templates>
+<xsl:apply-templates select="$extraQueries" mode="annotation">
+  <xsl:with-param name="entityName" select="$entityName" />
+</xsl:apply-templates>
 })
 public class <xsl:value-of select="$entityName" />
     implements Serializable {
@@ -300,6 +310,8 @@ public class <xsl:value-of select="$entityName" />
       <xsl:otherwise /></xsl:choose><xsl:apply-templates select="$foreignKeyQueries" mode="constants">
   <xsl:with-param name="entityName" select="$entityName" />
   <xsl:with-param name="addTemporalVersion" select="$idKey" />
+</xsl:apply-templates>
+<xsl:apply-templates select="$extraQueries" mode="constants">
 </xsl:apply-templates>
 <xsl:apply-templates />
 <xsl:text>}
@@ -465,6 +477,8 @@ public final class <xsl:value-of select="$entityName" />DAO {
 <xsl:apply-templates select="$foreignKeyQueries" mode="method">
   <xsl:with-param name="entityName" select="$entityName" />
   <xsl:with-param name="addTemporalVersion" select="$idKey" />
+</xsl:apply-templates>
+<xsl:apply-templates select="$extraQueries" mode="method">
 </xsl:apply-templates>    /** Save a new <xsl:value-of select="$entityName" /> to the database.
      * @param entity The <xsl:value-of select="$entityName" /> to be saved.
      */
@@ -647,6 +661,65 @@ public final class <xsl:value-of select="$entityName" />DAO {
 </xsl:when>
 </xsl:choose>
 </xsl:template>
+
+
+<!-- Support extra queries. -->
+
+  <!-- Generate NamedQuery definition for q query to get a list of
+       entities that are looked up by a "foreign key"-type key.
+       For insertion into the @NamedQueries section of the
+       entity class.
+  -->
+  <xsl:template match="extraQuery" mode="annotation">
+    <xsl:param name="entityName" />,
+    @NamedQuery(
+            name = <xsl:value-of select="$entityName" />.
+                <xsl:value-of select="@name" />,
+            query = <xsl:value-of select="$entityName" />.
+                <xsl:value-of select="@name" />_QUERY)</xsl:template>
+
+  <!-- Generate constant definitions for a query to get a list of
+       entities that are looked up by a "foreign key"-type key.  For
+       insertion into the body of the entity class.
+  -->
+  <xsl:template match="extraQuery" mode="constants">
+    <xsl:variable name="queryNameCamelCase">
+      <xsl:call-template name="CamelCaseNotFirst">
+        <xsl:with-param name="text" select="lower-case(@name)" />
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="queryTextNormalized"
+                  select="local:normalize-list(tokenize(queryText, '\r?\n'))" />    /** Name of <xsl:value-of select="$queryNameCamelCase" /> query. */
+    public static final String <xsl:value-of select="@name" /> =
+            "<xsl:value-of select="$queryNameCamelCase" />";
+<xsl:apply-templates select="extraQueryParameter" mode="constants">
+  <xsl:with-param name="queryName" select="@name" />
+  <xsl:with-param name="queryNameCamelCase" select="$queryNameCamelCase" />
+</xsl:apply-templates>    /** Query of <xsl:value-of select="$queryNameCamelCase" /> query. */
+    protected static final String <xsl:value-of select="@name" />_QUERY =
+            <xsl:for-each select="$queryTextNormalized[. != '']">
+              <xsl:if test="position() > 1">
+            + </xsl:if>"<xsl:if
+              test="position() > 1"><xsl:text> </xsl:text></xsl:if><xsl:value-of select="."/>"</xsl:for-each>;
+
+</xsl:template>
+
+  <xsl:template match="extraQueryParameter" mode="constants">
+    <xsl:param name="queryName" />
+    <xsl:param name="queryNameCamelCase" />    /** Name of <xsl:value-of select="$queryNameCamelCase" /> query's <xsl:value-of select="@name" /> parameter. */
+    public static final String <xsl:value-of select="$queryName" />_<xsl:value-of select="upper-case(@name)" /> =
+            "<xsl:value-of select="@name" />";
+</xsl:template>
+
+  <!-- Generate method body for an extra query.
+       For insertion into the DAO class.
+  -->
+  <xsl:template match="extraQuery" mode="method">
+    <xsl:value-of select="method" />
+  </xsl:template>
+
+
+<!-- Columns. -->
 
   <!-- Generate the definition of one database column,
      as a field, and as getter and setter methods.
@@ -952,5 +1025,13 @@ public final class <xsl:value-of select="$entityName" />DAO {
     </xsl:choose>
   </xsl:template>
 
+  <!-- Function to normalize spaces in every element of a sequence. -->
+
+  <xsl:function name="local:normalize-list">
+    <xsl:param name="list" />
+    <xsl:for-each select="$list">
+      <xsl:sequence select="normalize-space(.)" />
+    </xsl:for-each>
+  </xsl:function>
 
 </xsl:transform>
