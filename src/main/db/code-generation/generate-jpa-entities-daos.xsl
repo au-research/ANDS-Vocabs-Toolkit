@@ -706,8 +706,10 @@ public final class <xsl:value-of select="$entityName" />DAO {
 
   <xsl:template match="extraQueryParameter" mode="constants">
     <xsl:param name="queryName" />
-    <xsl:param name="queryNameCamelCase" />    /** Name of <xsl:value-of select="$queryNameCamelCase" /> query's <xsl:value-of select="@name" /> parameter. */
-    public static final String <xsl:value-of select="$queryName" />_<xsl:value-of select="upper-case(@name)" /> =
+    <xsl:param name="queryNameCamelCase" />    /** Name of <xsl:value-of select="$queryNameCamelCase" /> query's
+     * <xsl:value-of select="@name" /> parameter. */
+    public static final String
+    <xsl:value-of select="$queryName" />_<xsl:value-of select="upper-case(@name)" /> =
             "<xsl:value-of select="@name" />";
 </xsl:template>
 
