@@ -86,7 +86,10 @@
         <queryText temporal="true">
           SELECT entity FROM RelatedEntity entity WHERE
           relatedEntityId IN (SELECT relatedEntityId FROM
-          VocabularyRelatedEntity WHERE vocabularyId = :vocabularyId)
+          VocabularyRelatedEntity WHERE vocabularyId = :vocabularyId
+          #AND_TEMPORAL_QUERY_VALID_SUFFIX
+          )
+          #AND_TEMPORAL_QUERY_VALID_SUFFIX
         </queryText>
         <method>    /** Get all current RelatedEntity instances for a vocabulary.
      * @param vocabularyId The vocabulary id for which related
@@ -120,6 +123,9 @@
     <idKey keyColumn="related_entity_identifier_id"
            entityName="RelatedEntityIdentifierId" />
     <column db="identifier_type" enum="RelatedEntityIdentifierType" />
+    <foreignKeyQueries>
+      <foreignKeyQuery keyColumn="relatedEntityId" entityName="RelatedEntity" />
+    </foreignKeyQueries>
   </map>
   <map tableName="vocabulary_related_entities"
        entityName="VocabularyRelatedEntity"
