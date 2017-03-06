@@ -8,7 +8,7 @@
   <!--  Entity classes need to be extended by reflection. -->
   <!--  Entity classes have magic numbers for field sizes. -->
   <suppress checks="DesignForExtension|MagicNumber"
-            files="au[\\/]org[\\/]ands[\\/]vocabs[\\/]toolkit[\\/]db[\\/]model[\\/].*java|au[\\/]org[\\/]ands[\\/]vocabs[\\/]registry[\\/]db[\\/]entity[\\/].*java"
+            files="au[\\/]org[\\/]ands[\\/]vocabs[\\/]toolkit[\\/]db[\\/]model[\\/].*java|au[\\/]org[\\/]ands[\\/]vocabs[\\/]registry[\\/]db[\\/]entity[\\/].*java|au[\\/]org[\\/]ands[\\/]vocabs[\\/]roles[\\/]db[\\/]entity[\\/].*java"
             />
 
   <!-- package-info.java may be in src/main, even though missing

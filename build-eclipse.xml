@@ -17,6 +17,8 @@
             value="${build-jar}/toolkit-db-model.jar" />
   <property name="registry-db-model-jar"
             value="${build-jar}/registry-db-model.jar" />
+  <property name="roles-db-model-jar"
+            value="${build-jar}/roles-db-model.jar" />
 
   <property name="jar" value="vocabtoolkit.jar" />
   <property name="war" value="vocabtoolkit.war" />
@@ -26,6 +28,7 @@
          but this seems to confuse Eclipse sometimes. -->
     <delete file="${toolkit-db-model-jar}" />
     <delete file="${registry-db-model-jar}" />
+    <delete file="${roles-db-model-jar}" />
   </target>
 
   <target name="toolkit-db-model-jar">
@@ -64,6 +67,28 @@
       <fileset
         dir="${build}"
         includes="au/org/ands/vocabs/registry/db/context/*Converter.class"
+      />
+    </jar>
+  </target>
+
+  <target name="roles-db-model-jar">
+    <jar destfile="${roles-db-model-jar}">
+      <!-- Generated JAR file has META-INF directory first anyway, so it's
+           neater to include persistence.xml first ... -->
+      <mappedresources>
+        <fileset
+            dir="src/main/java/au/org/ands/vocabs/roles/db/entity/META-INF"
+            />
+        <globmapper from="*" to="META-INF/*" />
+      </mappedresources>
+      <!-- ... and then the class files. -->
+      <fileset
+        dir="${build}"
+        includes ="au/org/ands/vocabs/roles/db/entity/*.class"
+      />
+      <fileset
+        dir="${build}"
+        includes="au/org/ands/vocabs/roles/db/context/*Converter.class"
       />
     </jar>
   </target>

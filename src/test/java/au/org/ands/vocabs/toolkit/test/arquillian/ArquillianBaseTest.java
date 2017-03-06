@@ -79,7 +79,9 @@ public class ArquillianBaseTest extends Arquillian {
                         Filters.exclude("/au/org/ands/vocabs/"
                                 + "toolkit/db/model/.*.class|"
                                 + "/au/org/ands/vocabs/"
-                                + "registry/db/entity/.*.class"),
+                                + "registry/db/entity/.*.class|"
+                                + "/au/org/ands/vocabs/"
+                                + "roles/db/entity/.*.class"),
                         "au.org.ands.vocabs");
         try {
             JavaArchive toolkitDbModelJar =
@@ -106,6 +108,19 @@ public class ArquillianBaseTest extends Arquillian {
             logger.info("registryDbModelJar = "
                     + registryDbModelJar.toString(Formatters.VERBOSE));
             war.addAsLibrary(registryDbModelJar);
+
+            JavaArchive rolesDbModelJar =
+                    ShrinkWrap.create(JavaArchive.class,
+                            "roles-db-model.jar");
+            rolesDbModelJar.addPackage(
+                    "au.org.ands.vocabs.roles.db.entity");
+            rolesDbModelJar.addAsManifestResource(new File(
+                    "src/main/java/au/org/ands/vocabs/roles/db/entity/"
+                            + "META-INF/persistence.xml"));
+            rolesDbModelJar.addManifest();
+            logger.info("rolesDbModelJar = "
+                    + rolesDbModelJar.toString(Formatters.VERBOSE));
+            war.addAsLibrary(rolesDbModelJar);
 
             // Add all the JAR files from the lib directory.
             Files.walk(Paths.get("lib"))
@@ -154,35 +169,18 @@ public class ArquillianBaseTest extends Arquillian {
                     "logback.xml");
             //war.addAsResource(new File("conf/toolkit-h2.properties"),
             //        "toolkit.properties");
-            try {
-                // Optional resource.
-                war.addAsResource(new File("conf/toolkit-h2.properties"),
-                        "toolkit-h2.properties");
-            } catch (IllegalArgumentException e) {
-                // No problem if these files don't exist.
-            }
-            try {
-                // Optional resource.
-                war.addAsResource(new File("conf/registry-h2.properties"),
-                        "registry-h2.properties");
-            } catch (IllegalArgumentException e) {
-                // No problem if these files don't exist.
-            }
-            try {
-                // Optional resource.
-                war.addAsResource(new File("conf/toolkit-h2-bamboo.properties"),
-                        "toolkit-h2-bamboo.properties");
-            } catch (IllegalArgumentException e) {
-                // No problem if these files don't exist.
-            }
-            try {
-                // Optional resource.
-                war.addAsResource(
-                        new File("conf/registry-h2-bamboo.properties"),
-                        "registry-h2-bamboo.properties");
-            } catch (IllegalArgumentException e) {
-                // No problem if these files don't exist.
-            }
+            addOptionalResource(war, "conf/toolkit-h2.properties",
+                    "toolkit-h2.properties");
+            addOptionalResource(war, "conf/registry-h2.properties",
+                    "registry-h2.properties");
+            addOptionalResource(war, "conf/roles-h2.properties",
+                    "roles-h2.properties");
+            addOptionalResource(war, "conf/toolkit-h2-bamboo.properties",
+                     "toolkit-h2-bamboo.properties");
+            addOptionalResource(war, "conf/registry-h2-bamboo.properties",
+                    "registry-h2-bamboo.properties");
+            addOptionalResource(war, "conf/roles-h2-bamboo.properties",
+                    "roles-h2-bamboo.properties");
             war.addAsResource(new File("conf/version.properties"),
                     "version.properties");
 
@@ -191,6 +189,23 @@ public class ArquillianBaseTest extends Arquillian {
         }
         logger.info(war.toString(Formatters.VERBOSE));
         return war;
+    }
+
+    /** Add an optional resource. Any exception generated when locating
+     * the file is ignored.
+     * @param war The WAR file to which the resource is to be added.
+     * @param originalFilename The path to the resource, if it exists.
+     *      The path is relative to the current working directory.
+     * @param mappedFilename The path to the resource, as it will be
+     *      inside the WAR file, under the WEB-INF/classes directory.
+     */
+    private static void addOptionalResource(final WebArchive war,
+            final String originalFilename, final String mappedFilename) {
+        try {
+            war.addAsResource(new File(originalFilename), mappedFilename);
+        } catch (IllegalArgumentException e) {
+            // No problem if the file doesn't exist.
+        }
     }
 
 }

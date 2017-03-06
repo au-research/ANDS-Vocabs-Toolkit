@@ -32,6 +32,8 @@
             value="${build-jar}/toolkit-db-model.jar" />
   <property name="registry-db-model-jar"
             value="${build-jar}/registry-db-model.jar" />
+  <property name="roles-db-model-jar"
+            value="${build-jar}/roles-db-model.jar" />
 
   <property name="jar" value="vocabtoolkit.jar" />
   <property name="war" value="vocabtoolkit.war" />
@@ -114,6 +116,7 @@
     <!-- Files created by testng-bamboo target -->
     <delete file="conf/toolkit-h2-bamboo.properties" />
     <delete file="conf/registry-h2-bamboo.properties" />
+    <delete file="conf/roles-h2-bamboo.properties" />
   </target>
 
   <!-- xjc plugin to make generated fields private -->
@@ -388,10 +391,32 @@
     </jar>
   </target>
 
+  <target name="roles-db-model-jar" depends="compile-main">
+    <jar destfile="${roles-db-model-jar}">
+      <!-- Generated JAR file has META-INF directory first anyway, so it's
+           neater to include persistence.xml first ... -->
+      <mappedresources>
+        <fileset
+            dir="src/main/java/au/org/ands/vocabs/roles/db/entity/META-INF"
+            />
+        <globmapper from="*" to="META-INF/*" />
+      </mappedresources>
+      <!-- ... and then the class files. -->
+      <fileset
+        dir="${build}"
+        includes="au/org/ands/vocabs/roles/db/entity/*.class"
+      />
+      <fileset
+        dir="${build}"
+        includes="au/org/ands/vocabs/roles/db/context/*Converter.class"
+      />
+    </jar>
+  </target>
+
   <!-- Deployable objects -->
 
   <target name="war"
-          depends="compile-main,update-version-string,toolkit-db-model-jar,registry-db-model-jar">
+          depends="compile-main,update-version-string,toolkit-db-model-jar,registry-db-model-jar,roles-db-model-jar">
     <war destfile="${war}">
       <metainf dir="WebContent/META-INF" />
       <webinf dir="WebContent/WEB-INF" />
@@ -407,11 +432,13 @@
       </mappedresources>
       <lib file="${toolkit-db-model-jar}" />
       <lib file="${registry-db-model-jar}" />
+      <lib file="${roles-db-model-jar}" />
       <!-- Include other raw classes. -->
       <classes dir="${build}">
         <!-- Exclude the classes put into the JARs. -->
         <exclude name="au/org/ands/vocabs/toolkit/db/model/*.class" />
         <exclude name="au/org/ands/vocabs/registry/db/entity/*.class" />
+        <exclude name="au/org/ands/vocabs/roles/db/entity/*.class" />
       </classes>
       <mappedresources>
         <fileset dir="${conf}" />
@@ -642,7 +669,7 @@
   </path>
 
   <target name="testng"
-          depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
+          depends="compile-test,toolkit-db-model-jar,registry-db-model-jar,roles-db-model-jar">
     <jacoco:coverage
       destfile="${jacoco-output}">
       <testng
@@ -654,6 +681,8 @@
           value="-DPROPS_FILE_CLIENT_MODE=conf/toolkit-h2.properties" />
         <jvmarg
           value="-DREGISTRY_PROPS_FILE=WEB-INF/classes/registry-h2.properties" />
+        <jvmarg
+          value="-DROLES_PROPS_FILE=WEB-INF/classes/roles-h2.properties" />
         <jvmarg
           value="-DVERSION_PROPS_FILE=conf/version.properties" />
         <jvmarg
@@ -702,7 +731,7 @@
       testng-bamboo
   -->
   <target name="testng-bamboo"
-          depends="compile-test,toolkit-db-model-jar,registry-db-model-jar">
+          depends="compile-test,toolkit-db-model-jar,registry-db-model-jar,roles-db-model-jar">
     <copy
       file="conf/toolkit-h2-bamboo-template.properties"
       tofile="conf/toolkit-h2-bamboo.properties">
@@ -730,6 +759,15 @@
           value="${bambooBuildWorkingDirectory}" />
       </filterset>
     </copy>
+    <copy
+      file="conf/roles-h2-bamboo-template.properties"
+      tofile="conf/roles-h2-bamboo.properties">
+      <filterset>
+        <filter
+          token="bambooBuildWorkingDirectory"
+          value="${bambooBuildWorkingDirectory}" />
+      </filterset>
+    </copy>
     <jacoco:coverage
       destfile="${jacoco-output}">
       <testng
@@ -741,6 +779,8 @@
           value="-DPROPS_FILE_CLIENT_MODE=conf/toolkit-h2-bamboo.properties" />
         <jvmarg
           value="-DREGISTRY_PROPS_FILE=WEB-INF/classes/registry-h2-bamboo.properties" />
+        <jvmarg
+          value="-DROLES_PROPS_FILE=WEB-INF/classes/roles-h2-bamboo.properties" />
         <jvmarg
           value="-DVERSION_PROPS_FILE=conf/version.properties" />
         <jvmarg

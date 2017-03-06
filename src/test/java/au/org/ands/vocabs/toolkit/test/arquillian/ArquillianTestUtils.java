@@ -82,6 +82,8 @@ public final class ArquillianTestUtils {
         return inputStream;
     }
 
+    /* Methods for the Toolkit database. */
+
     /** Clear the database. Tables are truncated, and sequence values
      * for auto-incrementing columns are reset.
      * @throws DatabaseUnitException If a problem with DbUnit.
@@ -130,7 +132,7 @@ public final class ArquillianTestUtils {
                     + tableNamesForQuery
                     + ") AND SEQUENCE_NAME IS NOT NULL";
 
-            Set<String> sequences = new HashSet<String>();
+            Set<String> sequences = new HashSet<>();
             try (Statement s = conn.createStatement();
                     ResultSet rs = s.executeQuery(getSequencesQuery)) {
                 while (rs.next()) {
@@ -408,6 +410,81 @@ public final class ArquillianTestUtils {
         // correctJson.equals(testJson). The TestNG one seems to give
         // the same end result, but gives better diagnostics in case
         // a difference is found.
+    }
+
+    /* Methods for the Roles database. */
+
+    /** Clear the roles database.
+     * @throws DatabaseUnitException If a problem with DbUnit.
+     * @throws HibernateException If a problem getting the underlying
+     *          JDBC connection.
+     * @throws IOException If a problem getting test data for DbUnit.
+     * @throws SQLException If DBUnit has a problem performing
+     *           performing JDBC operations.
+     */
+    public static void clearRolesDatabase() throws
+        DatabaseUnitException, HibernateException, IOException, SQLException {
+        EntityManager em =
+            au.org.ands.vocabs.roles.db.context.DBContext.getEntityManager();
+        try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
+
+            IDatabaseConnection connection = new H2Connection(conn, null);
+
+            logger.info("doing clean_insert");
+            FlatXmlDataSet dataset = new FlatXmlDataSetBuilder()
+                    .setMetaDataSetFromDtd(getResourceAsInputStream(
+                            "test/dbunit-roles-export-choice.dtd"))
+                    .build(getResourceAsInputStream(
+                            "test/blank-roles-dbunit.xml"));
+
+            DatabaseOperation.DELETE_ALL.execute(connection, dataset);
+            // Force commit at the JDBC level, as closing the EntityManager
+            // does a rollback!
+            conn.commit();
+        }
+        em.close();
+    }
+
+    /** Load a DbUnit test file into the roles database.
+     * The file is loaded as a {@code FlatXmlDataSet}.
+     * To make it more convenient to enter JSON data, the dataset is
+     * wrapped as a {@code ReplacementDataSet}, and all instances
+     * of '' (two contiguous apostrophes) are replaced with "
+     * (one double quote).
+     * @param testName The name of the test method. Used to generate
+     *      the filename of the file to load.
+     * @throws DatabaseUnitException If a problem with DbUnit.
+     * @throws HibernateException If a problem getting the underlying
+     *          JDBC connection.
+     * @throws IOException If a problem getting test data for DbUnit.
+     * @throws SQLException If DbUnit has a problem performing
+     *           performing JDBC operations.
+     */
+    public static void loadDbUnitRolesTestFile(final String testName) throws
+        DatabaseUnitException, HibernateException, IOException, SQLException {
+        EntityManager em =
+            au.org.ands.vocabs.roles.db.context.DBContext.getEntityManager();
+        try (Connection conn = em.unwrap(SessionImpl.class).connection()) {
+
+            IDatabaseConnection connection = new H2Connection(conn, null);
+
+            FlatXmlDataSet xmlDataset = new FlatXmlDataSetBuilder()
+                    .setMetaDataSetFromDtd(getResourceAsInputStream(
+                            "test/dbunit-toolkit-export-choice.dtd"))
+                    .build(getResourceAsInputStream(
+                            "test/tests/au.org.ands.vocabs.toolkit."
+                            + "test.arquillian.AllArquillianTests."
+                            + testName
+                            + "/input-roles-dbunit.xml"));
+            ReplacementDataSet dataset = new ReplacementDataSet(xmlDataset);
+            dataset.addReplacementSubstring("''", "\"");
+            logger.info("doing clean_insert");
+            DatabaseOperation.CLEAN_INSERT.execute(connection, dataset);
+            // Force commit at the JDBC level, as closing the EntityManager
+            // does a rollback!
+            conn.commit();
+        }
+        em.close();
     }
 
 }
