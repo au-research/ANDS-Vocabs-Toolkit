@@ -47,7 +47,7 @@ public class ResourceOwnerHost {
     /** Name of getResourceOwnerHostsForOwner query's owner parameter. */
     public static final String GET_RESOURCEOWNERHOSTS_FOR_OWNER_OWNER =
             "owner";
-    /** Query of getResourceMapEntriesForIRI query. */
+    /** Query of getResourceOwnerHostsForOwner query. */
     protected static final String GET_RESOURCEOWNERHOSTS_FOR_OWNER_QUERY =
             "SELECT " + E1 + " FROM ResourceOwnerHost " + E1
             + " WHERE " + E1 + ".owner = :"
