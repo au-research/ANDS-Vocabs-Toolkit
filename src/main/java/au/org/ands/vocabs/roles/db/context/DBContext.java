@@ -11,7 +11,7 @@ import au.org.ands.vocabs.roles.db.utils.RolesProperties;
 public final class DBContext {
 
     /** The persistence unit name as specified in persistence.xml. */
-    public static final String UNIT_NAME = "ANDS-Roles";
+    public static final String UNIT_NAME = "ANDS-Vocabs-Roles";
 
     /** Access to persistence context. */
     private static EntityManagerFactory entityManagerFactory =
