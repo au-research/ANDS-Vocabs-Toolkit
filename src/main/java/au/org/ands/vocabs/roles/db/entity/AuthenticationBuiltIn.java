@@ -83,7 +83,7 @@ public class AuthenticationBuiltIn {
     /** Set the passphraseSHA1.
      * @param aPassphraseSHA1 The passphraseSHA1.
      */
-    public void setname(final String aPassphraseSHA1) {
+    public void setPassphraseSHA1(final String aPassphraseSHA1) {
         passphraseSHA1 = aPassphraseSHA1;
     }
 
