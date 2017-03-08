@@ -47,7 +47,7 @@
 
   <taskdef
     resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-    classpath="libdev/checkstyle-6.19/checkstyle-6.19-all.jar" />
+    classpath="libdev/checkstyle-7.6/checkstyle-7.6-all.jar" />
 
   <taskdef
       name="forbiddenapis"
