@@ -11,21 +11,45 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Roles model class.
+ * Role model class.
  */
 @Entity
 @EntityListeners(ReadOnly.class)
-@Table(name = Roles.TABLE_NAME)
-public class Roles {
+@Table(name = Role.TABLE_NAME)
+/* Rather than including the text of the queries directly in the
+ * annotations, we use constants defined in the class itself.
+ * This way, they can be found (fully expanded!) in the generated Javadoc
+ * in the "Constant Field Values" page. */
+@NamedQueries({
+    @NamedQuery(
+            name = Role.GET_ROLES_FOR_ROLEID,
+            query = Role.GET_ROLES_FOR_ROLEID_QUERY)
+})
+public class Role {
 
     /** The name of the underlying database table.
      * Use this in the class's {@code @Table} annotation. */
     public static final String TABLE_NAME = "roles";
+
+    /** Name of getRolesForRoleId query. */
+    public static final String GET_ROLES_FOR_ROLEID =
+            "getRolesForId";
+    /** Name of getRolesForRoleId query's roleId parameter. */
+    public static final String GET_ROLES_FOR_ROLEID_ROLEID =
+            "roleId";
+    /** Query of getRolesForRoleId query. */
+    protected static final String GET_ROLES_FOR_ROLEID_QUERY =
+            "SELECT role FROM Role role "
+            + " WHERE roleId = :"
+            + GET_ROLES_FOR_ROLEID_ROLEID
+            + " AND enabled = '1'";
 
     /** id. */
     private Integer id;
@@ -36,7 +60,7 @@ public class Roles {
     /** name. */
     private String name;
     /** authenticationServiceId. */
-    private String authenticationServiceId;
+    private AuthenticationServiceId authenticationServiceId;
     /** enabled. */
     private String enabled;
     /** createdWhen. */
@@ -127,7 +151,8 @@ public class Roles {
      * @return The value of authenticationServiceId.
      */
     @Column(name = "authentication_service_id", length = 32)
-    public String getAuthenticationServiceId() {
+    @Enumerated(EnumType.STRING)
+    public AuthenticationServiceId getAuthenticationServiceId() {
         return this.authenticationServiceId;
     }
 
@@ -136,7 +161,7 @@ public class Roles {
      *      to set.
      */
     public void setAuthenticationServiceId(
-            final String aAuthenticationServiceId) {
+            final AuthenticationServiceId aAuthenticationServiceId) {
         authenticationServiceId = aAuthenticationServiceId;
     }
 

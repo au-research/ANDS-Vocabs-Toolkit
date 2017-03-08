@@ -9,21 +9,50 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * RoleRelations model class.
+ * RoleRelation model class.
  */
 @Entity
 @EntityListeners(ReadOnly.class)
-@Table(name = RoleRelations.TABLE_NAME)
-public class RoleRelations {
+@Table(name = RoleRelation.TABLE_NAME)
+/* Rather than including the text of the queries directly in the
+ * annotations, we use constants defined in the class itself.
+ * This way, they can be found (fully expanded!) in the generated Javadoc
+ * in the "Constant Field Values" page. */
+@NamedQueries({
+    @NamedQuery(
+            name = RoleRelation.GET_PARENT_ROLES_FOR_ROLEID,
+            query = RoleRelation.GET_PARENT_ROLES_FOR_ROLEID_QUERY)
+})
+public class RoleRelation {
 
     /** The name of the underlying database table.
      * Use this in the class's {@code @Table} annotation. */
     public static final String TABLE_NAME = "role_relations";
+
+    /** Name of getParentRolesForRoleId query. */
+    public static final String GET_PARENT_ROLES_FOR_ROLEID =
+            "getParentRolesForId";
+    /** Name of getParentRolesForRoleId query's roleId parameter. */
+    public static final String GET_PARENT_ROLES_FOR_ROLEID_ROLEID =
+            "roleId";
+    /** Query of getParentRolesForRoleId query. */
+    protected static final String GET_PARENT_ROLES_FOR_ROLEID_QUERY =
+            "SELECT DISTINCT"
+            + " NEW au.org.ands.vocabs.roles.Role"
+            + "(r.roleId, r.roleTypeId, r.name)"
+            + " FROM RoleRelation rr, Role r"
+            + " WHERE r.roleId = rr.parentRoleId"
+            + " AND rr.childRoleId = :" + GET_PARENT_ROLES_FOR_ROLEID_ROLEID
+            + " AND enabled = '1'"
+            + " AND rr.parentRoleId <> :"
+            + GET_PARENT_ROLES_FOR_ROLEID_ROLEID;
 
     /** id. */
     private Integer id;
